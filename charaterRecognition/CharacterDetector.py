@@ -73,7 +73,7 @@ class CharacterDetector:
             #mask_file = result_folder + "/res_" + filename + '_mask.jpg'
             #cv2.imwrite(mask_file, score_text)
 
-            file_utils.saveResult(image_path, image[:,:,::-1], polys, dirname=result_folder)
+            file_utils.saveResult(image_path, image[:,:,::-1], polys, dirname=args.result_folder)
         print("elapsed time : {}s".format(time.time() - t))
 
     @staticmethod
@@ -158,11 +158,11 @@ class CharacterDetector:
 ###
 
 if __name__ == '__main__':
-    result_folder = './result/'
-    if not os.path.isdir(result_folder):
-        os.mkdir(result_folder)
-
     config = Config()
+
+    if not os.path.isdir(config.result_folder):
+        os.mkdir(config.result_folder)
+
     image_path_list, _, _ = file_utils.get_files(config.test_folder)
 
     detector = CharacterDetector()

@@ -26,14 +26,15 @@ from dataclasses import dataclass
 @dataclass
 class Config:
     trained_model = 'craft/weights/craft_mlt_25k.pth'
-    text_threshold = 0.7
-    low_text = 0.4 # 0.1
+    text_threshold = 0.7 # 0.7
+    low_text = 0.4 # 0.4
     link_threshold = 0.4
-    cuda = False
-    canvas_size = 1280 # 4096
+    cuda = True
+    canvas_size = 1300 # 1280
     mag_ratio = 1.5
     poly = False
-    show_time = False
-    test_folder = '../sample/'
-    refine = False
+    show_time = True
+    test_folder = '../dataset/Chapter_99'
+    refine = True
     refiner_model = 'craft/weights/craft_refiner_CTW1500.pth'
+    result_folder = './result/'
