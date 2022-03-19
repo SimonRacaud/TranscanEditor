@@ -26,7 +26,7 @@ from CraftConfig import Config
 
 import sys
 sys.path.insert(1, "../textExtraction")
-import tesseract
+from textExtractor import character_extraction
 
 class CharacterDetector:
     @classmethod
@@ -77,7 +77,7 @@ class CharacterDetector:
             #mask_file = result_folder + "/res_" + filename + '_mask.jpg'
             #cv2.imwrite(mask_file, score_text)
 
-            tesseract.character_extraction(image[:,:,::-1], bboxes)
+            character_extraction(image[:,:,::-1], bboxes)
             file_utils.saveResult(image_path, image[:,:,::-1], polys, dirname=args.result_folder)
             break # DEBUG
         print("elapsed time : {}s".format(time.time() - t))
