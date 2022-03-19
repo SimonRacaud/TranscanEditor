@@ -7,28 +7,28 @@ MIT License
 import os
 import time
 from numpy import ndarray
-
+from collections import OrderedDict
 import torch
 import torch.backends.cudnn as cudnn
 from torch.autograd import Variable
-
 import cv2
 import numpy as np
-import craft.craft_utils as craft_utils
-import craft.imgproc as imgproc
-import craft.file_utils as file_utils
 
-from craft.craft import CRAFT
-from craft.refinenet import RefineNet
+import src.charaterRecognition.craft.craft_utils as craft_utils
+import src.charaterRecognition.craft.imgproc as imgproc
+import src.charaterRecognition.craft.file_utils as file_utils
 
-from collections import OrderedDict
-from model import Config
+from src.charaterRecognition.craft.craft import CRAFT
+from src.charaterRecognition.craft.refinenet import RefineNet
 
-from textExtractor import character_extraction, text_insert
+from src.model import CraftConfig
+from src.textErase import textErase
+
+from src.textExtractor import character_extraction, text_insert
 
 class CharacterDetector:
     @classmethod
-    def process(cls, args: Config, image_list: list):
+    def process(cls, args: CraftConfig, image_list: list):
         """ Load test images in folder """
         # load net
         net = CRAFT()     # initialize
@@ -77,11 +77,19 @@ class CharacterDetector:
             #filename, file_ext = os.path.splitext(os.path.basename(image_path))
             #mask_file = result_folder + "/res_" + filename + '_mask.jpg'
             #cv2.imwrite(mask_file, score_text)
+            
+            test = image.copy()
+            file_utils.saveResult(image_path, test, bboxes, dirname=args.result_folder)
 
             textBlockList = character_extraction(image, bboxes)
-            image = text_insert(textBlockList, image)
-            file_utils.saveResult(image_path, image, polys, dirname=args.result_folder)
-            break # DEBUG
+
+            image_clean = textErase(image, textBlockList) # TODO: debug
+            image_clean = text_insert(textBlockList, image_clean)
+
+            filename, _ = os.path.splitext(os.path.basename(image_path))
+            res_img_file = args.result_folder + "res_" + filename + '.jpg'
+            cv2.imwrite(res_img_file, image_clean)
+            #break # TODO debug
         print("elapsed time : {}s".format(time.time() - t))
 
     @staticmethod
@@ -103,7 +111,7 @@ class CharacterDetector:
     def __eval_image(
         net: CRAFT,
         image: ndarray,
-        config: Config,
+        config: CraftConfig,
         refine_net=None):
         """
             Execute craft AI network
@@ -163,15 +171,3 @@ class CharacterDetector:
         if config.show_time : print("\ninfer/postproc time : {:.3f}/{:.3f}".format(t0, t1))
 
         return boxes, polys, ret_score_text
-###
-
-if __name__ == '__main__':
-    config = Config()
-
-    if not os.path.isdir(config.result_folder):
-        os.mkdir(config.result_folder)
-
-    image_path_list, _, _ = file_utils.get_files(config.test_folder)
-
-    detector = CharacterDetector()
-    detector.process(config, image_path_list)

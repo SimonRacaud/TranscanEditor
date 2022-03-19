@@ -44,7 +44,7 @@ def saveResult(img_file, img, boxes, dirname='./result/', verticals=None, texts=
 
         # result directory
         #res_file = dirname + "res_" + filename + '.txt'
-        res_img_file = dirname + "res_" + filename + '.jpg'
+        res_img_file = dirname + "res_" + filename + '_2.jpg'
 
         if not os.path.isdir(dirname):
             os.mkdir(dirname)

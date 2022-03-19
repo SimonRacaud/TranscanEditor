@@ -1,10 +1,9 @@
-from dataclasses import replace
-from typing import Sequence, Text
+from typing import Sequence
 import pytesseract
 import numpy as np
 import cv2
 
-from model import TextBlock
+from src.model import TextBlock
 
 def get_optimal_font_scale(text, width):
     height = 1
@@ -33,13 +32,24 @@ def character_extraction(image, bboxes) -> Sequence[TextBlock]:
     for i, box in enumerate(bboxes):
         poly = np.array(box).astype(np.int32).reshape((-1))
         poly = poly.reshape(-1, 2)
-        # 
+        #
         area = image[poly[0][1]:poly[2][1], poly[0][0]:poly[2][0]]
-        gray = cv2.cvtColor(area, cv2.COLOR_BGR2GRAY)
+
+        if not area.size:
+            continue
+        try:
+            gray = cv2.cvtColor(area, cv2.COLOR_BGR2GRAY)
+        except:
+            print("area", area, len(area))
+            raise Exception
         #
         text = pytesseract.image_to_string(gray, lang='eng', config='--psm 6 --oem 1')
         text = filter_non_printable(text)
-        #
+
+        print(text) # TODO: debug
+        cv2.imshow("test", area)
+        cv2.waitKey(0)
+        
         width = (poly[2][0] - poly[0][0])
         font_scale, text_height = get_optimal_font_scale(text, width)
         position = get_optimal_text_position(poly, text_height)
