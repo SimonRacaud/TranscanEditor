@@ -29,12 +29,12 @@ class Config:
     text_threshold = 0.7 # 0.7
     low_text = 0.4 # 0.4
     link_threshold = 0.4
-    cuda = True
+    cuda = False
     canvas_size = 1300 # 1280
     mag_ratio = 1.5
     poly = False
     show_time = True
-    test_folder = '../dataset/Chapter_99'
+    test_folder = '../../dataset/Chapter_99'
     refine = True
     refiner_model = 'craft/weights/craft_refiner_CTW1500.pth'
     result_folder = './result/'

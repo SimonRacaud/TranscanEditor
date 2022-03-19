@@ -24,6 +24,10 @@ from craft.refinenet import RefineNet
 from collections import OrderedDict
 from CraftConfig import Config
 
+import sys
+sys.path.insert(1, "../textExtraction")
+import tesseract
+
 class CharacterDetector:
     @classmethod
     def process(cls, args: Config, image_list: list):
@@ -61,19 +65,21 @@ class CharacterDetector:
 
         t = time.time()
 
-        # load data
+        # load data : process result
         for k, image_path in enumerate(image_list):
             print("Test image {:d}/{:d}: {:s}".format(k+1, len(image_list), image_path), end='\r')
             image: ndarray = imgproc.loadImage(image_path)
 
             bboxes, polys, score_text = cls.__eval_image(net, image, args, refine_net)
 
-            # save score text
+            """ save score text """
             #filename, file_ext = os.path.splitext(os.path.basename(image_path))
             #mask_file = result_folder + "/res_" + filename + '_mask.jpg'
             #cv2.imwrite(mask_file, score_text)
 
+            tesseract.character_extraction(image[:,:,::-1], bboxes)
             file_utils.saveResult(image_path, image[:,:,::-1], polys, dirname=args.result_folder)
+            break # DEBUG
         print("elapsed time : {}s".format(time.time() - t))
 
     @staticmethod
