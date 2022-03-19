@@ -22,11 +22,9 @@ from craft.craft import CRAFT
 from craft.refinenet import RefineNet
 
 from collections import OrderedDict
-from CraftConfig import Config
+from model import Config
 
-import sys
-sys.path.insert(1, "../textExtraction")
-from textExtractor import character_extraction
+from textExtractor import character_extraction, text_insert
 
 class CharacterDetector:
     @classmethod
@@ -72,13 +70,17 @@ class CharacterDetector:
 
             bboxes, polys, score_text = cls.__eval_image(net, image, args, refine_net)
 
+            image = image[:,:,::-1]
+            image = np.array(image)
+
             """ save score text """
             #filename, file_ext = os.path.splitext(os.path.basename(image_path))
             #mask_file = result_folder + "/res_" + filename + '_mask.jpg'
             #cv2.imwrite(mask_file, score_text)
 
-            character_extraction(image[:,:,::-1], bboxes)
-            file_utils.saveResult(image_path, image[:,:,::-1], polys, dirname=args.result_folder)
+            textBlockList = character_extraction(image, bboxes)
+            image = text_insert(textBlockList, image)
+            file_utils.saveResult(image_path, image, polys, dirname=args.result_folder)
             break # DEBUG
         print("elapsed time : {}s".format(time.time() - t))
 

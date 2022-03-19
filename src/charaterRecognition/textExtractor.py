@@ -1,7 +1,10 @@
 from dataclasses import replace
+from typing import Sequence, Text
 import pytesseract
 import numpy as np
 import cv2
+
+from model import TextBlock
 
 def get_optimal_font_scale(text, width):
     height = 1
@@ -24,11 +27,8 @@ def get_optimal_text_position(box, text_height):
     pos_y = box[3][1] - round((box_height - text_height) / 2)
     return (pos_x, pos_y)
 
-def character_extraction(image, bboxes):
-    image = np.array(image)
-
-    # if not os.path.isdir(dirname):
-    #     os.mkdir(dirname)
+def character_extraction(image, bboxes) -> Sequence[TextBlock]:
+    result = []
 
     for i, box in enumerate(bboxes):
         poly = np.array(box).astype(np.int32).reshape((-1))
@@ -40,10 +40,16 @@ def character_extraction(image, bboxes):
         text = pytesseract.image_to_string(gray, lang='eng', config='--psm 6 --oem 1')
         text = filter_non_printable(text)
         #
-        font = cv2.FONT_HERSHEY_SIMPLEX
         width = (poly[2][0] - poly[0][0])
         font_scale, text_height = get_optimal_font_scale(text, width)
         position = get_optimal_text_position(poly, text_height)
-        color = (255, 255, 0)
-        cv2.putText(image, "{}".format(text), position, font, font_scale, color, thickness=2)
-    cv2.imwrite("./result/res.jpg", image)
+
+        result.append(TextBlock(text, position, font_scale, box))
+    return result
+
+def text_insert(textBlockList: Sequence[TextBlock], image):
+    for block in textBlockList:
+        cv2.putText(image, "{}".format(block.str), block.position, 
+            block.font, block.font_scale, block.color, thickness=block.thickness)
+    return image
+        

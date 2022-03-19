@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+import string
+import cv2
 
 ##
 ### Parse arguments
@@ -38,3 +40,13 @@ class Config:
     refine = True
     refiner_model = 'craft/weights/craft_refiner_CTW1500.pth'
     result_folder = './result/'
+
+@dataclass
+class TextBlock:
+    str: string
+    position: any
+    font_scale: int
+    bbox: any
+    font: int = cv2.FONT_HERSHEY_SIMPLEX
+    color: any = (0, 0, 255)
+    thickness: int = 2
