@@ -16,7 +16,7 @@ def get_angle(poly):
             point_bot = coord
     horizontal_len = round(np.sqrt(np.power((point_top[0] - point_left[0]), 2) + np.power((point_left[1] - point_top[1]), 2)))
     vertical_len = round(np.sqrt(np.power((point_bot[0] - point_left[0]), 2) + np.power((point_bot[1] - point_left[1]), 2)))
-    max_x = max(poly[:,1])
+    max_x = max(poly[:,0])
     # Compute angle
     if horizontal_len == 0 or horizontal_len > vertical_len:
         adjacent = point_top[0] - point_left[0]
@@ -46,13 +46,13 @@ def extract_image_area(poly, image):
     # rotate image
     rotate_matrix = cv2.getRotationMatrix2D(center=pivot, angle=angle, scale=1)
     rotated_image = cv2.warpAffine(src=area, M=rotate_matrix, dsize=(shape[1], shape[0]))
-    # if angle != 0:
-    #     print(pivot, width, height, angle)
-    #     result = rotated_image[pivot[1]:pivot[1]+height, pivot[0]:pivot[0]+width]
-    #     cv2.imshow("area", cv2.resize(area, (562, 800)))
-    #     cv2.imshow("rotate", cv2.resize(rotated_image, (562, 800)))
-    #     cv2.waitKey(0)
-    #     cv2.imshow("test", result)
-    #     cv2.waitKey(0)
+    #if angle != 0:
+    # print(pivot, width, height, angle)
+    # result = rotated_image[pivot[1]:pivot[1]+height, pivot[0]:pivot[0]+width]
+    # cv2.imshow("area", cv2.resize(area, (562, 800)))
+    # cv2.imshow("rotate", cv2.resize(rotated_image, (562, 800)))
+    # cv2.waitKey(0)
+    # cv2.imshow("test", result)
+    # cv2.waitKey(0)
     # crop image
     return rotated_image[pivot[1]:pivot[1]+height, pivot[0]:pivot[0]+width]
