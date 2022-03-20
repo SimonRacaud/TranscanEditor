@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 
 from src.model import TextBlock
+from src.utility.extract_image_area import extract_image_area
 
 def get_optimal_font_scale(text, width):
     height = 1
@@ -29,27 +30,17 @@ def get_optimal_text_position(box, text_height):
 def character_extraction(image, bboxes) -> Sequence[TextBlock]:
     result = []
 
-    for i, box in enumerate(bboxes):
-        poly = np.array(box).astype(np.int32).reshape((-1))
+    for box in enumerate(bboxes):
+        poly = np.array(box[1]).astype(np.int32).reshape((-1))
         poly = poly.reshape(-1, 2)
-        #
-        area = image[poly[0][1]:poly[2][1], poly[0][0]:poly[2][0]]
 
+        area = extract_image_area(poly, image)
         if not area.size:
             continue
-        try:
-            gray = cv2.cvtColor(area, cv2.COLOR_BGR2GRAY)
-        except:
-            print("area", area, len(area))
-            raise Exception
-        #
+        gray = cv2.cvtColor(area, cv2.COLOR_BGR2GRAY)
         text = pytesseract.image_to_string(gray, lang='eng', config='--psm 6 --oem 1')
         text = filter_non_printable(text)
 
-        print(text) # TODO: debug
-        cv2.imshow("test", area)
-        cv2.waitKey(0)
-        
         width = (poly[2][0] - poly[0][0])
         font_scale, text_height = get_optimal_font_scale(text, width)
         position = get_optimal_text_position(poly, text_height)
