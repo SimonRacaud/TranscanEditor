@@ -12,17 +12,14 @@ def textErase(image, textBlockList: Sequence[TextBlock]):
     mask = np.zeros(image.shape[:2], dtype="uint8")
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
+    # Build suppression mask
     for block in textBlockList:
         if block.str == "":
             continue
         box = block.bbox
-        poly = np.array(box).astype(np.int32)
-        area = gray[poly[0][1]:poly[2][1], poly[0][0]:poly[2][0]]
-        if area == []:
-            continue
-        area = cv2.bitwise_not(area)
-        try:
-            mask[poly[0][1]:poly[2][1], poly[0][0]:poly[2][0]] = area
-        except:
-            print(area) # TODO : temp
+        poly = np.array(box[1]).astype(np.int32)
+        cv2.fillPoly(mask, [poly.reshape((-1, 1, 2))], color=(255, 255, 255))
+    gray = cv2.bitwise_not(gray)
+    mask = cv2.bitwise_and(gray, gray, mask=mask)
+    # Apply mask on image
     return cv2.inpaint(image, mask, 7, cv2.INPAINT_NS)
