@@ -44,9 +44,12 @@ class CraftConfig:
 @dataclass
 class TextBlock:
     str: string
-    position: any
+    position: any # (int, int)
     font_scale: int
-    bbox: any
+    bbox: any # (int, int, int, int)
+    pivot: any # (int, int)
+    angle: float
+    size: any # (int, int)
     font: int = cv2.FONT_HERSHEY_SIMPLEX
     color: any = (0, 0, 255)
     thickness: int = 2

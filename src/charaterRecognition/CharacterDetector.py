@@ -78,18 +78,22 @@ class CharacterDetector:
             #mask_file = result_folder + "/res_" + filename + '_mask.jpg'
             #cv2.imwrite(mask_file, score_text)
             
+            print("## Save debug picture => Bounding boxes")
             test = image.copy()
             file_utils.saveResult(image_path, test, bboxes, dirname=args.result_folder)
 
+            print("## Character extraction")
             textBlockList = character_extraction(image, bboxes)
 
+            print("## Clean image")
             image_clean = textErase(image, textBlockList) # TODO: debug
+            print("## Insert text")
             image_clean = text_insert(textBlockList, image_clean)
 
+            print("## Save result")
             filename, _ = os.path.splitext(os.path.basename(image_path))
             res_img_file = args.result_folder + "res_" + filename + '.jpg'
             cv2.imwrite(res_img_file, image_clean)
-            #break # TODO debug
         print("elapsed time : {}s".format(time.time() - t))
 
     @staticmethod

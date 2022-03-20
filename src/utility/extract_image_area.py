@@ -23,7 +23,7 @@ def get_angle(poly):
         opposite = point_left[1] - point_top[1]
         pivot = (point_left[0], point_left[1])
         if adjacent == 0:
-            return (0, pivot, (max_x - point_left[0]), (point_bot[1] - point_top[1]))
+            return (0, (point_left[0], point_top[1]), (max_x - point_left[0]), (point_bot[1] - point_top[1]))
         angle = np.arctan(opposite / adjacent) * (180/np.pi)
         return (-angle, pivot, horizontal_len, vertical_len)
     else:
@@ -31,7 +31,7 @@ def get_angle(poly):
         opposite = point_bot[1] - point_left[1] # vertical axis
         pivot = (point_top[0], point_top[1])
         if adjacent == 0:
-            return (0, pivot, (point_bot[1] - point_top[1]), (max_x - point_left[0]))
+            return (0, (point_left[0], point_top[1]), (point_bot[1] - point_top[1]), (max_x - point_left[0]))
         angle = np.arctan(opposite / adjacent) * (180/np.pi)
         return (-angle, pivot, vertical_len, horizontal_len)
 
@@ -55,4 +55,5 @@ def extract_image_area(poly, image):
     # cv2.imshow("test", result)
     # cv2.waitKey(0)
     # crop image
-    return rotated_image[pivot[1]:pivot[1]+height, pivot[0]:pivot[0]+width]
+    rotated_area = rotated_image[pivot[1]:pivot[1]+height, pivot[0]:pivot[0]+width]
+    return rotated_area, angle, pivot, (width, height)
