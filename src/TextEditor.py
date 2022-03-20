@@ -30,7 +30,7 @@ class TextEditor:
     def __rotate_segment(block: TextBlock, segment):
         rotate_matrix = cv2.getRotationMatrix2D(center=block.pivot, angle=-block.angle, scale=1)
         shape = segment.shape[:2]
-        return cv2.warpAffine(src=segment, M=rotate_matrix, dsize=(shape[1], shape[0]))
+        return cv2.warpAffine(src=segment, M=rotate_matrix, dsize=(shape[1], shape[0]), borderValue=(255,255,255))
     
     @staticmethod
     def __apply_segment_on_image(segment, block: TextBlock, image):
