@@ -26,6 +26,36 @@ def get_optimal_text_position(text_height, box_size, pivot):
     pos_y = pivot[1] + box_size[1] - round((box_size[1] - text_height) / 2)
     return (pos_x, pos_y)
 
+def get_text_color(image_area, size):
+    max_y = size[1] - 1
+    max_x = size[0] - 1
+    color_buffer = []
+
+    # pick border colors
+    for x in range(0, size[0], 1):
+        color_buffer.append(image_area[0][x])
+        color_buffer.append(image_area[max_y][x])
+    for y in range(0, size[1], 1):
+        color_buffer.append(image_area[y][0])
+        color_buffer.append(image_area[y][max_x])
+    # filter colors
+    freq_dict = dict()
+    for el in color_buffer:
+        key = el.tostring()
+        if key in freq_dict:
+            freq_dict[key][0] += 1
+        else:
+            freq_dict[key] = [1, el]
+    values = freq_dict.values()
+    # Get most used color
+    max = None
+    for el in values:
+        if max == None or el[0] > max[0]:
+            max = el
+    # inverse color
+    return (int(255 - max[1][0]), int(255 - max[1][1]), int(255 - max[1][2]))
+        
+
 def character_extraction(image, bboxes) -> Sequence[TextBlock]:
     result = []
 
@@ -42,8 +72,9 @@ def character_extraction(image, bboxes) -> Sequence[TextBlock]:
 
         font_scale, text_height = get_optimal_font_scale(text, size[0])
         position = get_optimal_text_position(text_height, size, pivot)
+        color = get_text_color(area, size)
 
-        result.append(TextBlock(text, position, font_scale, box, pivot, angle, size))
+        result.append(TextBlock(text, position, font_scale, box, pivot, angle, size, color))
     return result
 
 def text_insert(textBlockList: Sequence[TextBlock], image):
