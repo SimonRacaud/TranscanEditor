@@ -25,6 +25,7 @@ from src.model import CraftConfig
 from src.textErase import textErase
 
 from src.textExtractor import character_extraction, text_insert
+from src.utility.draw_bouncing_box import draw_bouncing_box
 
 class CharacterDetector:
     @classmethod
@@ -77,10 +78,6 @@ class CharacterDetector:
             #filename, file_ext = os.path.splitext(os.path.basename(image_path))
             #mask_file = result_folder + "/res_" + filename + '_mask.jpg'
             #cv2.imwrite(mask_file, score_text)
-            
-            print("## Save debug picture => Bounding boxes")
-            test = image.copy()
-            file_utils.saveResult(image_path, test, bboxes, dirname=args.result_folder)
 
             print("## Character extraction")
             textBlockList = character_extraction(image, bboxes)
@@ -88,12 +85,15 @@ class CharacterDetector:
             print("## Clean image")
             image_clean = textErase(image, textBlockList) # TODO: debug
             print("## Insert text")
-            image_clean = text_insert(textBlockList, image_clean)
+            image_final = text_insert(textBlockList, image_clean)
+
+            ## DEBUG : add bouncing boxes
+            draw_bouncing_box(image_final, bboxes)
 
             print("## Save result")
             filename, _ = os.path.splitext(os.path.basename(image_path))
             res_img_file = args.result_folder + "res_" + filename + '.jpg'
-            cv2.imwrite(res_img_file, image_clean)
+            cv2.imwrite(res_img_file, image_final)
         print("elapsed time : {}s".format(time.time() - t))
 
     @staticmethod
