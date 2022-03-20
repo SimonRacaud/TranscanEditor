@@ -33,11 +33,12 @@ def get_angle(poly):
         if adjacent == 0:
             return (0, (point_left[0], point_top[1]), (point_bot[1] - point_top[1]), (max_x - point_left[0]))
         angle = np.arctan(opposite / adjacent) * (180/np.pi)
-        return (-angle, pivot, vertical_len, horizontal_len)
+        return (angle, pivot, vertical_len, horizontal_len)
 
 def extract_image_area(poly, image):
     shape = image.shape[:2]
 
+    # Extract text segment
     mask = np.zeros(shape, dtype="uint8")
     cv2.fillPoly(mask, [poly.reshape((-1, 1, 2))], color=(255, 255, 255))
     area = cv2.bitwise_and(image, image, mask=mask)
@@ -46,14 +47,6 @@ def extract_image_area(poly, image):
     # rotate image
     rotate_matrix = cv2.getRotationMatrix2D(center=pivot, angle=angle, scale=1)
     rotated_image = cv2.warpAffine(src=area, M=rotate_matrix, dsize=(shape[1], shape[0]))
-    #if angle != 0:
-    # print(pivot, width, height, angle)
-    # result = rotated_image[pivot[1]:pivot[1]+height, pivot[0]:pivot[0]+width]
-    # cv2.imshow("area", cv2.resize(area, (562, 800)))
-    # cv2.imshow("rotate", cv2.resize(rotated_image, (562, 800)))
-    # cv2.waitKey(0)
-    # cv2.imshow("test", result)
-    # cv2.waitKey(0)
     # crop image
     rotated_area = rotated_image[pivot[1]:pivot[1]+height, pivot[0]:pivot[0]+width]
     return rotated_area, angle, pivot, (width, height)
