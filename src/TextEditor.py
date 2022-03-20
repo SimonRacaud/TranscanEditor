@@ -12,7 +12,7 @@ class TextEditor:
             # Create text segment
             segment, backgroundColor = cls.__create_text_segment(block, image)
             # Rotate segment
-            if block.angle != 0:
+            if abs(block.angle) > 2:
                 segment = cls.__rotate_segment(block, segment, backgroundColor)
             # Apply segment on image
             image = cls.__apply_segment_on_image(segment, block, image)
