@@ -1,10 +1,4 @@
-"""  
-Copyright (c) 2019-present NAVER Corp.
-MIT License
-"""
-
 # -*- coding: utf-8 -*-
-import os
 import time
 from numpy import ndarray
 from collections import OrderedDict
@@ -16,16 +10,11 @@ import numpy as np
 
 import src.charaterRecognition.craft.craft_utils as craft_utils
 import src.charaterRecognition.craft.imgproc as imgproc
-import src.charaterRecognition.craft.file_utils as file_utils
 
 from src.charaterRecognition.craft.craft import CRAFT
 from src.charaterRecognition.craft.refinenet import RefineNet
 
 from src.model import CraftConfig
-from src.textErase import textErase
-
-from src.textExtractor import character_extraction, text_insert
-from src.utility.draw_bouncing_box import draw_bouncing_box
 
 class CharacterDetector:
     @classmethod
@@ -79,21 +68,7 @@ class CharacterDetector:
             #mask_file = result_folder + "/res_" + filename + '_mask.jpg'
             #cv2.imwrite(mask_file, score_text)
 
-            print("## Character extraction")
-            textBlockList = character_extraction(image, bboxes)
-
-            print("## Clean image")
-            image_clean = textErase(image, textBlockList) # TODO: debug
-            print("## Insert text")
-            image_final = text_insert(textBlockList, image_clean)
-
-            ## DEBUG : add bouncing boxes
-            draw_bouncing_box(image_final, bboxes)
-
-            print("## Save result")
-            filename, _ = os.path.splitext(os.path.basename(image_path))
-            res_img_file = args.result_folder + "res_" + filename + '.jpg'
-            cv2.imwrite(res_img_file, image_final)
+            yield image, bboxes, image_path
         print("elapsed time : {}s".format(time.time() - t))
 
     @staticmethod
