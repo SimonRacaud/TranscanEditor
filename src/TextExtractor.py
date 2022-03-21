@@ -5,6 +5,7 @@ import cv2
 
 from src.model import TextBlock
 from src.utility.extract_image_area import extract_image_area
+from src.utility.show_debug import show_debug
 
 class TextExtractor:
     @classmethod
@@ -22,8 +23,8 @@ class TextExtractor:
             gray = cv2.cvtColor(area, cv2.COLOR_BGR2GRAY)
             text = pytesseract.image_to_string(gray, lang='eng', config='--psm 9') # or 6?
             text = cls.__filter_non_printable(text)
-
-            font_scale, text_height = cls.__get_optimal_font_scale(text, size[0])
+            
+            font_scale, text_height = cls.__get_optimal_font_scale(text, size[0], size[1])
             position = cls.__get_optimal_text_position(text_height, size, pivot)
             color = cls.__get_text_color(area, size)
             # Save data
@@ -31,17 +32,16 @@ class TextExtractor:
         return result
 
     @staticmethod
-    def __get_optimal_font_scale(text, width):
+    def __get_optimal_font_scale(text, width, height):
         """ Based on the bouncing box width """
-        height = 1
+        new_height = 1
         for scale in reversed(np.arange(0, 60, 0.5)):
             textSize = cv2.getTextSize(text, fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=scale/10, thickness=1)
-            if scale == 1:
-                height = textSize[0][1]
+            new_height = textSize[0][1]
             new_width = textSize[0][0]
-            if (new_width <= width):
-                return scale/10, textSize[0][1]
-        return 1, height
+            if (new_width <= width and new_height <= height):
+                return scale/10, new_height
+        return 1, new_height
 
     @staticmethod
     def __filter_non_printable(str):
