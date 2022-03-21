@@ -20,7 +20,7 @@ class TextExtractor:
                 continue
             # Extract text
             gray = cv2.cvtColor(area, cv2.COLOR_BGR2GRAY)
-            text = pytesseract.image_to_string(gray, lang='eng', config='--psm 6 --oem 1')
+            text = pytesseract.image_to_string(gray, lang='eng', config='--psm 9') # or 6?
             text = cls.__filter_non_printable(text)
 
             font_scale, text_height = cls.__get_optimal_font_scale(text, size[0])
