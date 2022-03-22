@@ -1,11 +1,15 @@
 import cv2
 
-def show_debug(img, title="title"):
+def show_debug(img, resize=True, title="title"):
     shape = img.shape
     height = 800
     width = round((800 / shape[0]) * shape[1])
     cv2.namedWindow(title, cv2.WINDOW_AUTOSIZE)
-    cv2.imshow(title, cv2.resize(img, (width, height)))
+    if resize:
+        toshow = cv2.resize(img, (width, height))
+    else:
+        toshow = img
+    cv2.imshow(title, toshow)
     keyCode = cv2.waitKey(0)
     cv2.destroyAllWindows()
     if (keyCode & 0xFF) == ord("q"):

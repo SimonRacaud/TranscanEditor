@@ -8,68 +8,84 @@ from torch.autograd import Variable
 import cv2
 import numpy as np
 
-import src.charaterRecognition.craft.craft_utils as craft_utils
-import src.charaterRecognition.craft.imgproc as imgproc
+import src.ocr.default.charaterRecognition.craft.craft_utils as craft_utils
+import src.ocr.default.charaterRecognition.craft.imgproc as imgproc
 
-from src.charaterRecognition.craft.craft import CRAFT
-from src.charaterRecognition.craft.refinenet import RefineNet
+from src.ocr.default.charaterRecognition.craft.craft import CRAFT
+from src.ocr.default.charaterRecognition.craft.refinenet import RefineNet
 
 from src.model import CraftConfig
 
 class CharacterDetector:
+
     @classmethod
-    def process(cls, args: CraftConfig, image_list: list):
-        """ Load test images in folder """
-        # load net
-        net = CRAFT()     # initialize
+    def setup(cls, args: CraftConfig):
+         # load net
+        cls.net = CRAFT()     # initialize
 
         print('Loading weights from checkpoint (' + args.trained_model + ')')
         if args.cuda:
-            net.load_state_dict(cls.__copyStateDict(torch.load(args.trained_model)))
+            cls.net.load_state_dict(cls.__copyStateDict(torch.load(args.trained_model)))
         else:
-            net.load_state_dict(cls.__copyStateDict(torch.load(args.trained_model, map_location='cpu')))
+            cls.net.load_state_dict(cls.__copyStateDict(torch.load(args.trained_model, map_location='cpu')))
 
         if args.cuda:
-            net = net.cuda()
-            net = torch.nn.DataParallel(net)
+            cls.net = cls.net.cuda()
+            cls.net = torch.nn.DataParallel(cls.net)
             cudnn.benchmark = False
 
-        net.eval() # Enable eval mode
+        cls.net.eval() # Enable eval mode
 
         # LinkRefiner : fusion between boxes
-        refine_net = None
+        cls.refine_net = None
         if args.refine:
-            refine_net = RefineNet()
+            cls.refine_net = RefineNet()
             print('Loading weights of refiner from checkpoint (' + args.refiner_model + ')')
             if args.cuda:
-                refine_net.load_state_dict(cls.__copyStateDict(torch.load(args.refiner_model)))
-                refine_net = refine_net.cuda()
-                refine_net = torch.nn.DataParallel(refine_net)
+                cls.refine_net.load_state_dict(cls.__copyStateDict(torch.load(args.refiner_model)))
+                cls.refine_net = cls.refine_net.cuda()
+                cls.refine_net = torch.nn.DataParallel(cls.refine_net)
             else:
-                refine_net.load_state_dict(cls.__copyStateDict(torch.load(args.refiner_model, map_location='cpu')))
+                cls.refine_net.load_state_dict(cls.__copyStateDict(torch.load(args.refiner_model, map_location='cpu')))
 
-            refine_net.eval()
+            cls.refine_net.eval()
             args.poly = True
+        return args
 
+
+    @classmethod
+    def process(cls, args: CraftConfig, image_list: list):
+        """ Load test images in folder """
         t = time.time()
-
         # load data : process result
         for k, image_path in enumerate(image_list):
-            print("Test image {:d}/{:d}: {:s}".format(k+1, len(image_list), image_path), end='\r')
-            image: ndarray = imgproc.loadImage(image_path)
-
-            bboxes, polys, score_text = cls.__eval_image(net, image, args, refine_net)
-
-            image = image[:,:,::-1]
-            image = np.array(image)
-
-            """ save score text """
-            #filename, file_ext = os.path.splitext(os.path.basename(image_path))
-            #mask_file = result_folder + "/res_" + filename + '_mask.jpg'
-            #cv2.imwrite(mask_file, score_text)
-
-            yield image, bboxes, image_path
+            print("Process image {:d}/{:d}: {:s}".format(k+1, len(image_list), image_path), end='\r')
+            yield cls.process_one(args, image_path)
         print("elapsed time : {}s".format(time.time() - t))
+    
+    @classmethod
+    def process_one(cls, args: CraftConfig, image_path: str):
+        image: ndarray = imgproc.loadImage(image_path)
+
+        bboxes, polys, score_text = cls.__eval_image(cls.net, image, args, cls.refine_net)
+
+        image = image[:,:,::-1]
+        image = np.array(image)
+
+        """ save score text """
+        #filename, file_ext = os.path.splitext(os.path.basename(image_path))
+        #mask_file = result_folder + "/res_" + filename + '_mask.jpg'
+        #cv2.imwrite(mask_file, score_text)
+        bboxes = cls.__convert_bboxes(bboxes)
+        return image, bboxes, image_path
+
+    @staticmethod
+    def __convert_bboxes(bboxes): 
+        result = []
+        for bbox in bboxes:
+            poly = np.array(bbox).astype(np.int32)
+            result.append(poly)
+        return result
 
     @staticmethod
     def __copyStateDict(state_dict):

@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import string
+from typing import Sequence
 import cv2
 
 @dataclass
@@ -17,20 +18,40 @@ class CraftConfig:
     refiner_model = './weights/craft_refiner_CTW1500.pth' # pretrained refiner model
 
 @dataclass
-class AppConfig:
-    input_folder: string
-    output_folder = './result/'
+class OCRConfig:
     craft_config: CraftConfig = CraftConfig()
 
 @dataclass
-class TextBlock:
-    str: string
-    position: any # (int, int)
-    font_scale: int
-    bbox: any # (int, int, int, int)
-    pivot: any # (int, int)
-    angle: float
-    size: any # (int, int)
-    color: any = (0, 0, 255)
-    font: int = cv2.FONT_HERSHEY_SIMPLEX
-    thickness: int = 2
+class AppConfig:
+    input_folder: string
+    output_folder = './result/'
+    default_font: string = 'Chilanka-Regular.otf'
+    ocr_config: OCRConfig = OCRConfig()
+
+@dataclass
+class Vector2I:
+    x: int
+    y: int
+
+    @classmethod
+    def fromarray(cls, array) -> None:
+        return cls(array[0], array[1])
+
+    def data(self):
+        return (self.x, self.y)
+
+@dataclass
+class OCRBlock:
+    """ Result of an OCR treatment """
+    box: any # Rectangle bouncing box
+    polygon: any # Polygon bouncing box
+    text: string
+    pivot: Vector2I # box top left coord
+    size: Vector2I # box size
+    angle: float = 0.0 # box rotation angle
+
+@dataclass
+class OCRPage:
+    blocks: Sequence[OCRBlock]
+    image_path: string # page file path
+    image: any

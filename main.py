@@ -3,11 +3,11 @@ import argparse
 from src.FileManager import FileManager
 from src.TextEditor import TextEditor
 from src.model import AppConfig, CraftConfig
-from src.charaterRecognition.CharacterDetector import CharacterDetector
 from src.ImageCleaner import ImageCleaner
-from src.TextExtractor import TextExtractor
+from src.ocr.default.OCRCraftTesseract import OCRCraftTesseract
 
 from src.utility.draw_bouncing_box import draw_bouncing_box
+from src.utility.show_debug import show_debug
 
 def str2bool(v):
     """ prompt reply to boolean """
@@ -24,25 +24,26 @@ if __name__ == '__main__':
     craftConfig.cuda = args.gpu
     config = AppConfig(args.input_folder)
     config.output_folder = args.ouput_folder
-    config.craft_config = craftConfig
+    config.ocr_config.craft_config = craftConfig
 
     FileManager.setup(config)    
+    OCRCraftTesseract.setup(config.ocr_config)
 
     image_path_list = FileManager.get_files(config.input_folder)
 
-    print("## Text detector")
-    for image, bboxes, image_path in CharacterDetector.process(config.craft_config, image_path_list):
-        print("## Character extraction")
-        textBlockList = TextExtractor.character_extraction(image, bboxes)
-
+    for file_path in image_path_list:
+        print("## OCR : process", file_path)
+        page = OCRCraftTesseract.process_img(file_path)
         print("## Clean image")
-        image_clean = ImageCleaner.process(image, textBlockList)
+        image_clean = ImageCleaner.process(page.image, page.blocks)
+
         print("## Insert text")
-        image_final = TextEditor.process(textBlockList, image_clean)
+        image_final = TextEditor.process_img(config, page.blocks, image_clean, page.image)
 
         ## DEBUG : add bouncing boxes
         # draw_bouncing_box(image_final, bboxes)
 
         print("## Save result")
-        FileManager.save_image(image_final, image_path, config)
+        FileManager.save_image(image_final, page.image_path, config)
 
+        # break # DEBUG
