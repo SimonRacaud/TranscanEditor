@@ -52,11 +52,7 @@ class OCRAmazonAWS(IOpticalCharacterRecognition):
                     print("Info: OCRAmazonAWS::process_img OCR result loaded from cache")
                 except FileNotFoundError:
                     response = self.client.detect_text(Image={'Bytes': img_bytes})
-                    try:
-                        OCRResultCacheManager.save_result(img_bytes, response, self.config.cache_path)
-                        print("Info: OCRAmazonAWS::process_img OCR result saved in cache")
-                    except RuntimeError:
-                        print("Warning: OCRAmazonAWS::process_img fail to save result in cache")
+                    OCRResultCacheManager.save_result(img_bytes, response, self.config.cache_path)
                 blocks = response['TextDetections']
                 ### Format data
                 return OCRAmazonAWS.__format_page(blocks, img_path, image) 

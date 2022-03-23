@@ -26,8 +26,9 @@ class OCRResultCacheManager:
             json_object = json.dumps(data, indent = 4)
             with open(dest_filepath, 'w') as file:
                 file.write(json_object)
-        except:
-            raise RuntimeError()
+            print("Info: OCR result saved in cache.")
+        except BaseException as err:
+            print("Warning: Fail to save ocr result in cache.", err)
 
     @staticmethod
     def __get_file_path(file_hash, cache_path):
