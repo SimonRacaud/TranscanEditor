@@ -30,7 +30,7 @@ if __name__ == '__main__':
     config.ocr_config.craft_config = craftConfig
 
     FileManager.setup(config)    
-    OCRCraftTesseract.setup(config.ocr_config)
+    #OCRCraftTesseract.setup(config.ocr_config)
     OCRAmazonAWS.setup(config.ocr_config)
 
     image_path_list = FileManager.get_files(config.input_folder)
@@ -38,8 +38,8 @@ if __name__ == '__main__':
     for file_path in image_path_list:
         print("## OCR : process", file_path)
         page = OCRAmazonAWS.process_img(file_path)
-        # page = OCRCraftTesseract.process_img(file_path)
-        
+        #page = OCRCraftTesseract.process_img(file_path)
+
         print("## Clean image")
         image_clean = ImageCleaner.process(page.image, page.blocks)
 

@@ -14,11 +14,11 @@ class TextEditor:
     @classmethod
     def process_img(cls, config: AppConfig, textBlockList: Sequence[OCRBlock], image: np.ndarray, raw_image: np.ndarray) -> np.ndarray:
         for block in textBlockList:
-            font = FontManager.get(config.default_font, block.text, block.size) # TODO get font path
+            color, box_size = cls.__get_auto_text_color(raw_image, block)
+            font = FontManager.get(config.default_font, block.text, box_size) # TODO get font path
             text_size = FontManager.get_font_size(font, block.text)
 
-            position: Vector2I = cls.__get_optimal_text_position(text_size[1], block.size, block.pivot)
-            color = cls.__get_auto_text_color(raw_image, block)
+            position: Vector2I = cls.__get_optimal_text_position(text_size[1], box_size, block.pivot)
             # Create text segment
             segment, background_color = cls.__create_text_segment(block.text, image, position,
                 color, font)
@@ -75,12 +75,15 @@ class TextEditor:
     @staticmethod
     def __get_auto_text_color(image, block: OCRBlock):
         """ Define text color based on the background border's color """
-        area, _, _, size = extract_image_area(block.polygon, image)
+        area, angle, _, _ = extract_image_area(block.polygon, image)
+        size = Vector2I(area.shape[1], area.shape[0])
 
+        if abs(angle) > 2 and len(block.text) > 1:
+            block.angle = angle
         max_y = size.y - 1
         max_x = size.x - 1
         color_buffer = []
-        
+
         # pick border colors
         for x in range(0, size.x, 1):
             color_buffer.append(area[0][x])
@@ -104,5 +107,5 @@ class TextEditor:
                 max = el
         color = max[1]
         # inverse color
-        return (int(255 - color[0]), int(255 -color[1]), int(255 - color[2]))
+        return (int(255 - color[0]), int(255 -color[1]), int(255 - color[2])), size
             

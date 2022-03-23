@@ -21,14 +21,14 @@ class OCRAmazonAWS(IOpticalCharacterRecognition):
             print("Error: missing env variable AWS_ACCESS_KEY_ID or/and AWS_SECRET_ACCESS_KEY. exit")
             exit(1)
         my_config = Config(
-            region_name='eu-west-3',
+            region_name='eu-west-1', # Irland
             signature_version='v4',
             retries = {
                 'max_attempts': 5,
                 'mode': 'standard'
             }
         )
-        cls.client = boto3.client('textract', config=my_config)
+        cls.client = boto3.client('rekognition', config=my_config)
 
     @classmethod
     def process_batch(cls, img_path_list: Sequence[str]) -> Sequence[OCRPage]:
@@ -50,16 +50,14 @@ class OCRAmazonAWS(IOpticalCharacterRecognition):
                     response = OCRResultCacheManager.load_result(img_bytes, cls.config.cache_path)
                     print("Info: OCRAmazonAWS::process_img OCR result loaded from cache")
                 except FileNotFoundError:
-                    response = cls.client.detect_document_text(Document={'Bytes': img_bytes})
+                    response = cls.client.detect_text(Image={'Bytes': img_bytes})
                     try:
                         OCRResultCacheManager.save_result(img_bytes, response, cls.config.cache_path)
                         print("Info: OCRAmazonAWS::process_img OCR result saved in cache")
                     except RuntimeError:
                         print("Warning: OCRAmazonAWS::process_img fail to save result in cache")
-                blocks = response['Blocks']
-                page_count = response['DocumentMetadata']['Pages']
+                blocks = response['TextDetections']
                 ### Format data
-                print("AWS request success. Page count", page_count)
                 return cls.__format_page(blocks, img_path, image) 
         except BaseException as err:
             print("Error: OCRAmazonAWS::process_img -", err)
@@ -71,12 +69,12 @@ class OCRAmazonAWS(IOpticalCharacterRecognition):
         width = image.shape[1]
         height = image.shape[0]
         for block in blocks:
-            if block['BlockType'] == 'LINE':
+            if block['Type'] == 'LINE':
                 polygon = OCRAmazonAWS.__format_polygon(block['Geometry']['Polygon'], width, height)
                 bounding_box = OCRAmazonAWS.__format_bounding_box(block['Geometry']['BoundingBox'], width, height)
-                text = block['Text']
-                pivot = Vector2I(bounding_box['left'], bounding_box['top'])
-                size = Vector2I(bounding_box['width'], bounding_box['height'])
+                text = block['DetectedText']
+                pivot = Vector2I(polygon[0][0], polygon[0][1])
+                size = Vector2I(polygon[1][0] - polygon[0][0], polygon[3][1] - polygon[0][1])
 
                 textBlockList.append(OCRBlock(bounding_box, polygon, text, pivot, size))
 
