@@ -1,7 +1,8 @@
+from typing import Sequence
 import cv2
-import numpy as np
+from src.model import OCRBlock
 
-def draw_bouncing_box(img, boxes, color=(0, 0, 255), thickness=1):
+def draw_bouncing_box(img, blocks: Sequence[OCRBlock], color=(0, 0, 255), thickness=1):
         """ save text detection result one by one
         Args:
             img (array): raw image context
@@ -10,9 +11,8 @@ def draw_bouncing_box(img, boxes, color=(0, 0, 255), thickness=1):
         Return:
             None
         """
-        for box in enumerate(boxes):
-            poly = np.array(box[1]).astype(np.int32).reshape((-1))
-            poly = poly.reshape(-1, 2)
+        for block in blocks:
+            poly = block.polygon
             cv2.polylines(img, [poly.reshape((-1, 1, 2))], True, color=color, thickness=thickness)
         # Save result image
         return img

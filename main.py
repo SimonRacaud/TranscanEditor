@@ -1,10 +1,12 @@
 import argparse
+from dotenv import load_dotenv
 
 from src.FileManager import FileManager
 from src.TextEditor import TextEditor
 from src.model import AppConfig, CraftConfig
 from src.ImageCleaner import ImageCleaner
 from src.ocr.default.OCRCraftTesseract import OCRCraftTesseract
+from src.ocr.OCRAmazonAWS import OCRAmazonAWS
 
 from src.utility.draw_bouncing_box import draw_bouncing_box
 from src.utility.show_debug import show_debug
@@ -20,6 +22,7 @@ parser.add_argument('-o', '--ouput_folder', default='./result/', type=str, help=
 args = parser.parse_args()
 
 if __name__ == '__main__':
+    load_dotenv() # Load env variables
     craftConfig = CraftConfig()
     craftConfig.cuda = args.gpu
     config = AppConfig(args.input_folder)
@@ -28,12 +31,15 @@ if __name__ == '__main__':
 
     FileManager.setup(config)    
     OCRCraftTesseract.setup(config.ocr_config)
+    OCRAmazonAWS.setup(config.ocr_config)
 
     image_path_list = FileManager.get_files(config.input_folder)
 
     for file_path in image_path_list:
         print("## OCR : process", file_path)
-        page = OCRCraftTesseract.process_img(file_path)
+        page = OCRAmazonAWS.process_img(file_path)
+        # page = OCRCraftTesseract.process_img(file_path)
+        
         print("## Clean image")
         image_clean = ImageCleaner.process(page.image, page.blocks)
 
@@ -41,9 +47,7 @@ if __name__ == '__main__':
         image_final = TextEditor.process_img(config, page.blocks, image_clean, page.image)
 
         ## DEBUG : add bouncing boxes
-        # draw_bouncing_box(image_final, bboxes)
+        # draw_bouncing_box(image_final, page.blocks)
 
         print("## Save result")
         FileManager.save_image(image_final, page.image_path, config)
-
-        # break # DEBUG

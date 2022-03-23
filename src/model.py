@@ -20,6 +20,7 @@ class CraftConfig:
 @dataclass
 class OCRConfig:
     craft_config: CraftConfig = CraftConfig()
+    cache_path = './cache'
 
 @dataclass
 class AppConfig:

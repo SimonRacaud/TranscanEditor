@@ -20,11 +20,11 @@ class IOpticalCharacterRecognition(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractclassmethod
-    def process_batch(cls, img_path_list: Sequence[str], config: OCRConfig) -> Sequence[OCRPage]:
+    def process_batch(cls, img_path_list: Sequence[str]) -> Sequence[OCRPage]:
         """ Process a batch of image and return a list of text and bouncing boxes """
         raise NotImplementedError
 
     @abc.abstractclassmethod
-    def process_img(cls, img_path: str, config: OCRConfig) -> OCRPage:
+    def process_img(cls, img_path: str) -> OCRPage:
         """ Process an image and return a list of text and bouncing boxes """
         raise NotImplementedError

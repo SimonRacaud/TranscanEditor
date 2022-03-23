@@ -1,5 +1,5 @@
 import string
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw
 from typing import Sequence, Tuple
 import cv2
 
@@ -80,7 +80,7 @@ class TextEditor:
         max_y = size.y - 1
         max_x = size.x - 1
         color_buffer = []
-
+        
         # pick border colors
         for x in range(0, size.x, 1):
             color_buffer.append(area[0][x])
