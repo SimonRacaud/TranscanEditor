@@ -12,7 +12,7 @@ class OCRResultCacheManager:
             src_filepath = OCRResultCacheManager.__get_file_path(file_hash, cache_path)
             with open(src_filepath, 'r') as file:
                 data = json.load(file)
-                return data, file_hash
+                return data
         except:
             raise FileNotFoundError()
 

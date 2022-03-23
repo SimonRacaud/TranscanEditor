@@ -1,7 +1,15 @@
 from dataclasses import dataclass
+from enum import Enum
 import string
 from typing import Sequence
-import cv2
+
+class OCRService(Enum):
+    LOCAL_CRAFTTESSERACT = 'LOCAL_CRAFT_TESSERACT'
+    AWS_REKOGNITION = 'AWS_REKOGNITION'
+
+    def __str__(self) -> str:
+        return self.value
+
 
 @dataclass
 class CraftConfig:
@@ -27,6 +35,7 @@ class AppConfig:
     input_folder: string
     output_folder = './result/'
     default_font: string = 'Chilanka-Regular.otf'
+    ocr_service: OCRService = OCRService.LOCAL_CRAFTTESSERACT
     ocr_config: OCRConfig = OCRConfig()
 
 @dataclass
