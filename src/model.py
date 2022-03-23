@@ -3,6 +3,8 @@ from enum import Enum
 import string
 from typing import Sequence
 
+import numpy as np
+
 class OCRService(Enum):
     LOCAL_CRAFTTESSERACT = 'LOCAL_CRAFT_TESSERACT'
     AWS_REKOGNITION = 'AWS_REKOGNITION'
@@ -37,6 +39,8 @@ class AppConfig:
     default_font: string = 'Chilanka-Regular.otf'
     ocr_service: OCRService = OCRService.LOCAL_CRAFTTESSERACT
     ocr_config: OCRConfig = OCRConfig()
+    box_cluster_search_range = 30
+    box_cluster_search_step = 5
 
 @dataclass
 class Vector2I:
@@ -60,8 +64,18 @@ class OCRBlock:
     size: Vector2I # box size
     angle: float = 0.0 # box rotation angle
 
+    def __eq__(self, __o: object) -> bool:
+        return np.array_equal(self.polygon, __o.polygon) and self.text == __o.text
+
+@dataclass
+class BlockCluster:
+    blocks: Sequence[OCRBlock]
+    polygon: Sequence[Vector2I] # 4 points
+    sentence: str
+
 @dataclass
 class OCRPage:
     blocks: Sequence[OCRBlock]
     image_path: string # page file path
     image: any
+    clusters: Sequence[BlockCluster] = None

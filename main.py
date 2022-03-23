@@ -6,8 +6,9 @@ from src.FileManager import FileManager
 from src.TextEditor import TextEditor
 from src.model import AppConfig, CraftConfig, OCRService
 from src.ImageCleaner import ImageCleaner
+from src.utility.create_block_cluster import create_block_cluster
 
-from src.utility.draw_bouncing_box import draw_bouncing_box
+from src.utility.draw_bouncing_box import draw_bouncing_box, draw_cluster_box
 from src.utility.show_debug import show_debug
 
 def str2bool(v):
@@ -39,6 +40,8 @@ if __name__ == '__main__':
             print("## OCR : process", file_path)
             page = ocrManager.process_img(file_path)
 
+            page = create_block_cluster(page, config)
+
             print("## Clean image")
             image_clean = ImageCleaner.process(page.image, page.blocks)
 
@@ -47,8 +50,9 @@ if __name__ == '__main__':
 
             ## DEBUG : add bouncing boxes
             # draw_bouncing_box(image_final, page.blocks)
+            # draw_cluster_box(image_final, page.clusters)
 
             print("## Save result")
             FileManager.save_image(image_final, page.image_path, config)
-        except:
-            print("Error: Fail to process image", file_path)
+        except BaseException as err:
+            print("Error: Fail to process image", file_path, err)
