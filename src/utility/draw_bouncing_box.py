@@ -19,9 +19,6 @@ def draw_bouncing_box(img, blocks: Sequence[OCRBlock], color=(0, 0, 255), thickn
 
 def draw_cluster_box(img, blocks: Sequence[BlockCluster], color=(0, 255, 0), thickness=1):
     for block in blocks:
-        poly = []
-        for point in block.polygon:
-            poly.append(np.array([point.x, point.y]))
-        poly = np.array(poly)
+        poly = np.array(block.polygon)
         cv2.polylines(img, [poly.reshape((-1, 1, 2))], True, color=color, thickness=thickness)
     return img

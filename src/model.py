@@ -41,6 +41,7 @@ class AppConfig:
     ocr_config: OCRConfig = OCRConfig()
     box_cluster_search_range = 20
     box_cluster_search_step = 5
+    text_padding_y = 8
 
 @dataclass
 class Vector2I:

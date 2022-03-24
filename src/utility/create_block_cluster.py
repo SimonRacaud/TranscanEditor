@@ -103,8 +103,7 @@ def __get_cluster_rect(block_list: Sequence[OCRBlock]) -> Sequence[Vector2I]:
         pack_points[i] = rotate_point(pack_points[i], center_coord, -avg_angle)
     global_rect = __get_global_rect(pack_points)
     for i in range(0, len(global_rect), 1):
-        global_rect[i] = Vector2I.fromarray(rotate_point(global_rect[i].data(), center_coord, avg_angle))
-        global_rect[i].round()
+        global_rect[i] = np.array(rotate_point(global_rect[i], center_coord, avg_angle))
     return global_rect
 
 def __get_global_rect(point_list) -> Sequence[Vector2I]:
@@ -117,12 +116,12 @@ def __get_global_rect(point_list) -> Sequence[Vector2I]:
     min_y = min(list_y)
     max_x = max(list_x)
     max_y = max(list_y)
-    return [
-        Vector2I(min_x, max_y), # top left
-        Vector2I(max_x, max_y), # top right
-        Vector2I(max_x, min_y), # bottom right
-        Vector2I(min_x, min_y), # bottom left
-    ]
+    return np.array([
+        [int(min_x), int(max_y)], # top left
+        [int(max_x), int(max_y)], # top right
+        [int(max_x), int(min_y)], # bottom right
+        [int(min_x), int(min_y)], # bottom left
+    ])
 
 def __make_sentence(block_list: Sequence[OCRBlock]) -> str:
     buffer = ""

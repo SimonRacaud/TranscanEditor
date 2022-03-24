@@ -46,7 +46,7 @@ if __name__ == '__main__':
             image_clean = ImageCleaner.process(page.image, page.blocks)
 
             print("## Insert text")
-            image_final = TextEditor.process_img(config, page.blocks, image_clean, page.image)
+            image_final = TextEditor.process_img(config, page.clusters, image_clean, page.image)
 
             ## DEBUG : add bouncing boxes
             # draw_bouncing_box(image_final, page.blocks)

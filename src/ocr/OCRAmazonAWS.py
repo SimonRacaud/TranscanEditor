@@ -73,7 +73,7 @@ class OCRAmazonAWS(IOpticalCharacterRecognition):
                 text = block['DetectedText']
                 #pivot = Vector2I(polygon[0][0], polygon[0][1])
                 #size = Vector2I(polygon[1][0] - polygon[0][0], polygon[3][1] - polygon[0][1])
-                area, angle, pivot, size = extract_image_area(polygon, image, text)
+                area, angle, pivot, size = extract_image_area(polygon, image)
                 textBlockList.append(OCRBlock(bounding_box, polygon, text, pivot, size, angle, area))
 
         return OCRPage(textBlockList, img_path, image)
