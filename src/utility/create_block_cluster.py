@@ -1,8 +1,9 @@
 from typing import Sequence
-
+from statistics import mean
 import numpy as np
 
 from src.model import AppConfig, OCRPage, BlockCluster, OCRBlock, Vector2I
+from src.utility.math import middle_point, rotate_point
 
 def create_block_cluster(page: OCRPage, config: AppConfig) -> OCRPage:
     """ Create cluster of bounding boxes close from each others on the y axis """
@@ -86,21 +87,41 @@ def __pack_boxes(block_list: Sequence[OCRBlock]) -> BlockCluster:
     return BlockCluster(block_list, polygon, sentence)
 
 def __get_cluster_rect(block_list: Sequence[OCRBlock]) -> Sequence[Vector2I]:
+    pack_points = []
+    pack_angle_list = []
+
+    for block in block_list:
+        pack_angle_list.append(block.angle)
+        for point in block.polygon:
+            pack_points.append(point)
+    global_rect = __get_global_rect(pack_points)
+    avg_angle = mean(pack_angle_list)
+    if abs(avg_angle) < 5:
+        return global_rect # The polys are horizontal~
+    center_coord = middle_point(pack_points)
+    for i in range(0, len(pack_points), 1):
+        pack_points[i] = rotate_point(pack_points[i], center_coord, -avg_angle)
+    global_rect = __get_global_rect(pack_points)
+    for i in range(0, len(global_rect), 1):
+        global_rect[i] = Vector2I.fromarray(rotate_point(global_rect[i].data(), center_coord, avg_angle))
+        global_rect[i].round()
+    return global_rect
+
+def __get_global_rect(point_list) -> Sequence[Vector2I]:
     list_x = []
     list_y = []
-    for block in block_list:
-        for poly in block.polygon:
-            list_x.append(poly[0])
-            list_y.append(poly[1])
+    for point in point_list:
+        list_x.append(point[0])
+        list_y.append(point[1])
     min_x = min(list_x)
     min_y = min(list_y)
     max_x = max(list_x)
     max_y = max(list_y)
     return [
-        Vector2I(min_x, max_y),
-        Vector2I(max_x, max_y),
-        Vector2I(max_x, min_y),
-        Vector2I(min_x, min_y),
+        Vector2I(min_x, max_y), # top left
+        Vector2I(max_x, max_y), # top right
+        Vector2I(max_x, min_y), # bottom right
+        Vector2I(min_x, min_y), # bottom left
     ]
 
 def __make_sentence(block_list: Sequence[OCRBlock]) -> str:

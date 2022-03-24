@@ -39,7 +39,7 @@ class AppConfig:
     default_font: string = 'Chilanka-Regular.otf'
     ocr_service: OCRService = OCRService.LOCAL_CRAFTTESSERACT
     ocr_config: OCRConfig = OCRConfig()
-    box_cluster_search_range = 30
+    box_cluster_search_range = 20
     box_cluster_search_step = 5
 
 @dataclass
@@ -53,6 +53,10 @@ class Vector2I:
 
     def data(self):
         return (self.x, self.y)
+    
+    def round(self):
+        self.x = round(self.x)
+        self.y = round(self.y)
 
 @dataclass
 class OCRBlock:
@@ -63,6 +67,7 @@ class OCRBlock:
     pivot: Vector2I # box top left coord
     size: Vector2I # box size
     angle: float = 0.0 # box rotation angle
+    area: any = None # matrix of pixel
 
     def __eq__(self, __o: object) -> bool:
         return np.array_equal(self.polygon, __o.polygon) and self.text == __o.text

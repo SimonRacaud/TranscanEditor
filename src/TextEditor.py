@@ -75,7 +75,11 @@ class TextEditor:
     @staticmethod
     def __get_auto_text_color(image, block: OCRBlock):
         """ Define text color based on the background border's color """
-        area, angle, _, _ = extract_image_area(block.polygon, image)
+        if isinstance(block.area, np.ndarray):
+            area = block.area
+            angle = block.angle
+        else:
+            area, angle, _, _ = extract_image_area(block.polygon, image)
         size = Vector2I(area.shape[1], area.shape[0])
 
         if abs(angle) > 2 and len(block.text) > 1:
