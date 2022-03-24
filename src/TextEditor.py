@@ -19,7 +19,7 @@ class TextEditor:
                 continue
             color = cls.__get_auto_text_color(area)
             text_padding = config.text_padding_y
-            font, lines, text_height = TextManager.compute(config.default_font, block.sentence, size, text_padding)
+            font, lines, text_height = TextManager.compute(config.default_font, block.translation, size, text_padding)
             if len(lines) == 0:
                 continue
             position: Vector2I = cls.__align_text_vertical(text_height, size, pivot)

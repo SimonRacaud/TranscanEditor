@@ -12,6 +12,20 @@ class OCRService(Enum):
     def __str__(self) -> str:
         return self.value
 
+class TranslatorService(Enum):
+    GOOGLE = "GOOGLE"
+    MICROSOFT = "MICROSOFT"
+    DEEPL = 'DEEPL'
+    LINGUEE = 'LINGUEE'
+    AMAZON = 'AWS'
+    PONS = 'PONS'
+    MYMEMORY = 'MYMEMORY'
+    YANDEX = 'YANDEX'
+    PAPAGO = 'PAPAGO'
+    LIBRE = 'LIBRE'
+
+    def __str__(self) -> str:
+        return self.value
 
 @dataclass
 class CraftConfig:
@@ -35,6 +49,7 @@ class OCRConfig:
 @dataclass
 class AppConfig:
     input_folder: string
+    translation_service: TranslatorService
     output_folder = './result/'
     default_font: string = 'Chilanka-Regular.otf'
     ocr_service: OCRService = OCRService.LOCAL_CRAFTTESSERACT
@@ -78,6 +93,7 @@ class BlockCluster:
     blocks: Sequence[OCRBlock]
     polygon: Sequence[Vector2I] # 4 points
     sentence: str
+    translation: str = None
 
 @dataclass
 class OCRPage:
