@@ -10,6 +10,7 @@ from src.utility.OCRResultCacheManager import OCRResultCacheManager
 from src.utility.extract_image_area import extract_image_area
 from .IOpticalCharacterRecognition import IOpticalCharacterRecognition
 from src.model import OCRBlock, OCRConfig, OCRPage
+from src.utility.cyrillic_to_latin import cyrillic_to_latin
 
 import boto3
 from botocore.config import Config
@@ -73,6 +74,7 @@ class OCRAmazonAWS(IOpticalCharacterRecognition):
                 polygon = OCRAmazonAWS.__format_polygon(block['Geometry']['Polygon'], width, height)
                 bounding_box = OCRAmazonAWS.__format_bounding_box(block['Geometry']['BoundingBox'], width, height)
                 text = block['DetectedText']
+                text = cyrillic_to_latin(text)
                 #pivot = Vector2I(polygon[0][0], polygon[0][1])
                 #size = Vector2I(polygon[1][0] - polygon[0][0], polygon[3][1] - polygon[0][1])
                 area, angle, pivot, size = extract_image_area(polygon, image)
