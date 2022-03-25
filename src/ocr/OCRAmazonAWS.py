@@ -1,6 +1,7 @@
 import io
 from typing import Sequence
 import os
+import cv2
 import numpy as np
 from PIL import Image
 import os
@@ -47,6 +48,7 @@ class OCRAmazonAWS(IOpticalCharacterRecognition):
                 ## Format and convert to numpy array
                 img = Image.open(io.BytesIO(img_bytes))
                 image = np.asarray(img)
+                image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
                 ## AWS network call
                 try:
                     response = OCRResultCacheManager.load_result(img_bytes, self.config.cache_path)
