@@ -13,6 +13,7 @@ class OCRService(Enum):
         return self.value
 
 class TranslatorService(Enum):
+    DISABLE = "DISABLE"
     GOOGLE = "GOOGLE"
     MICROSOFT = "MICROSOFT"
     DEEPL = 'DEEPL'
@@ -82,8 +83,7 @@ class OCRBlock:
     text: string
     pivot: Vector2I # box top left coord
     size: Vector2I # box size
-    angle: float = 0.0 # box rotation angle
-    area: any = None # matrix of pixel
+    angle: float # box rotation angle
 
     def __eq__(self, __o: object) -> bool:
         return np.array_equal(self.polygon, __o.polygon) and self.text == __o.text

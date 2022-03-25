@@ -24,7 +24,7 @@ class TextExtractor:
             text = text.encode('latin1', "replace").decode('latin1')
             
             # Save data
-            result.append(OCRBlock(None, poly, text, pivot, size, angle, area))
+            result.append(OCRBlock(None, poly, text, pivot, size, angle))
         return result
 
     @staticmethod

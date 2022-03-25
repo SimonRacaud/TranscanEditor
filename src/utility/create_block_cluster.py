@@ -3,7 +3,7 @@ from statistics import mean
 import numpy as np
 
 from src.model import AppConfig, OCRPage, BlockCluster, OCRBlock, Vector2I
-from src.utility.math import middle_point, rotate_point
+from src.utility.mymath import middle_point, rotate_point
 
 def create_block_cluster(page: OCRPage, config: AppConfig) -> OCRPage:
     """ Create cluster of bounding boxes close from each others on the y axis """

@@ -24,7 +24,7 @@ class TranslatorManager:
             TranslatorService.MYMEMORY: self.__init_mymemory,
             TranslatorService.PONS: self.__init_pons,
             TranslatorService.YANDEX: self.__init_yandex,
-            TranslatorService.PAPAGO: self.__init_papago
+            TranslatorService.PAPAGO: self.__init_papago,
         }
         self.setup(service)
     
@@ -33,7 +33,10 @@ class TranslatorManager:
         self.src_lang = src_lang
         self.dest_lang = dest_lang
         
-        self.translator = self.trad_class_init[service]()
+        if service == TranslatorService.DISABLE:
+            self.translate_func = lambda text : text
+        else:
+            self.translator = self.trad_class_init[service]()
     
     def get_supported_langages(self):
         return self.translator.get_supported_languages(as_dict=True)
