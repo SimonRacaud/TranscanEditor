@@ -6,11 +6,11 @@ from src.utility.show_debug import show_debug
 
 def get_angle(poly):
     # Coordinate analyzis
-    point_left = Vector2I(-1, 0) # point to the extreme left
+    point_left = Vector2I(-1, 0) # point to top left corner
     point_top = Vector2I(0, -1) # point on the top
     point_bot = Vector2I(0, -1) # point on the bottom
     for coord in poly:
-        if point_left.x == -1 or coord[0] < point_left.x:
+        if point_left.x == -1 or (coord[0] < point_left.x and coord[1] < point_left.y):
             point_left = Vector2I.fromarray(coord)
         if point_top.y == -1 or coord[1] < point_top.y:
             point_top = Vector2I.fromarray(coord)
