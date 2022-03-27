@@ -13,7 +13,7 @@ class TextEditor:
     @classmethod
     def process_img(cls, config: AppConfig, blockList: Sequence[BlockCluster], image: np.ndarray, raw_image: np.ndarray) -> np.ndarray:
         for block in blockList:
-            area, angle, pivot, size = extract_image_area(block.polygon, raw_image)
+            area, angle, pivot, size = extract_image_area(block.polygon, raw_image, False)
             if not area.size:
                 continue
             color = cls.__get_auto_text_color(area)
@@ -49,7 +49,7 @@ class TextEditor:
     
     @staticmethod
     def __rotate_segment(pivot, angle, segment):
-        return segment.rotate(-angle, expand=1, center=pivot.data()) #, fillcolor=backgroundColor
+        return segment.rotate(angle, center=pivot.data())
     
     @staticmethod
     def __apply_segment_on_image(segment, image):

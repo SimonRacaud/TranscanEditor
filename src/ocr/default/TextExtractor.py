@@ -14,7 +14,7 @@ class TextExtractor:
 
         for poly in bboxes:
             # Extract text area
-            area, angle, pivot, size = extract_image_area(poly, image)
+            area, angle, pivot, size = extract_image_area(poly, image, True)
             if not area.size:
                 continue
             # Extract text
