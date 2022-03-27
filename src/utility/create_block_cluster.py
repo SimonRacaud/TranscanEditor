@@ -15,13 +15,11 @@ def create_block_cluster(page: OCRPage, config: AppConfig) -> OCRPage:
     while len(block_buffer) > 0:
         block = block_buffer[0]
         pack = []
-        point_maxy, point_miny = __get_init_point(block.polygon)
+        point_target = __get_init_point(block.polygon)
         pack.append(block)
         block_buffer.remove(block)
         # Process lower boxes
-        pack, block_buffer = __find_neightbour_points(point_maxy, block_buffer, block, pack, search_range, search_step)
-        # Process upper boxes
-        pack, block_buffer = __find_neightbour_points(point_miny, block_buffer, block, pack, -search_range, search_step)
+        pack, block_buffer = __find_neightbour_points(point_target, block_buffer, block, pack, search_range, search_step)
         page.clusters.append(__pack_boxes(pack))
     return page
 
@@ -36,11 +34,7 @@ def __find_neightbour_points(target_point, block_buffer, block, pack, search_ran
             for bck in list(block_buffer):
                 if bck != block and __check_collide(bck.polygon, pt):
                     pack.append(bck)
-                    point_maxy, point_miny = __get_init_point(bck.polygon)
-                    if search_range > 0:
-                        target_point = point_maxy
-                    else:
-                        target_point = point_miny
+                    target_point = __get_init_point(bck.polygon)
                     block_buffer.remove(bck)
                     break
             # A block has been found
@@ -52,10 +46,15 @@ def __find_neightbour_points(target_point, block_buffer, block, pack, search_ran
 def __get_init_point(poly: np.array) -> Vector2I:
     if len(poly) != 4:
         print("__get_init_point: warning wrong polygon size")
-    data = sorted(poly.tolist(), key=lambda point: point[1], reverse=True)
-    max_y = Vector2I(int((data[0][0] + data[1][0]) / 2), int((data[0][1] + data[1][1]) / 2))
-    min_y = Vector2I(int((data[2][0] + data[3][0]) / 2), int((data[2][1] + data[3][1]) / 2))
-    return max_y, min_y
+    data = sorted(poly.tolist(), key=lambda point: point[0], reverse=True)
+    right = [data[0], data[1]]
+    left = [data[2], data[3]]
+    right = sorted(right, key=lambda point: point[1], reverse=True)
+    left = sorted(left, key=lambda point: point[1], reverse=True)
+    point1 = right[0]
+    point2 = left[0]
+    max_y = Vector2I(int((point1[0] + point2[0]) / 2), int((point1[1] + point2[1]) / 2))
+    return max_y
 
 def __browse_line(point: Vector2I, delta_y, end_y) -> Vector2I:
     if end_y < 0: # go upper
@@ -97,13 +96,13 @@ def __get_cluster_rect(block_list: Sequence[OCRBlock]) -> Sequence[Vector2I]:
     global_rect = __get_global_rect(pack_points)
     avg_angle = mean(pack_angle_list)
     if abs(avg_angle) < 5:
-        return global_rect # The polys are horizontal~
+        return global_rect # The polygon is ~~horizontal
     center_coord = middle_point(pack_points)
     for i in range(0, len(pack_points), 1):
-        pack_points[i] = rotate_point(pack_points[i], center_coord, -avg_angle)
+        pack_points[i] = rotate_point(pack_points[i], origin=center_coord, degrees=-avg_angle)
     global_rect = __get_global_rect(pack_points)
     for i in range(0, len(global_rect), 1):
-        global_rect[i] = np.array(rotate_point(global_rect[i], center_coord, avg_angle))
+        global_rect[i] = np.array(rotate_point(global_rect[i], origin=center_coord, degrees=avg_angle))
     return global_rect
 
 def __get_global_rect(point_list) -> Sequence[Vector2I]:
