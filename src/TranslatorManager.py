@@ -13,7 +13,7 @@ from deep_translator import (GoogleTranslator,
 from src.model import OCRPage, TranslatorService
 
 class TranslatorManager:
-    def __init__(self, service: TranslatorService) -> None:
+    def __init__(self, service: TranslatorService, src_lang: str = 'en', dest_lang: str = 'fr') -> None:
         self.service = service
         self.trad_class_init = {
             TranslatorService.GOOGLE: self.__init_google, 
@@ -26,7 +26,7 @@ class TranslatorManager:
             TranslatorService.YANDEX: self.__init_yandex,
             TranslatorService.PAPAGO: self.__init_papago,
         }
-        self.setup(service)
+        self.setup(service, src_lang, dest_lang)
     
     def setup(self, service: TranslatorService, src_lang: str = 'en', dest_lang: str = 'fr'):
         self.translate_func = lambda text : self.translator.translate(text)

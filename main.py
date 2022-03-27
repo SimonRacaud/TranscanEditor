@@ -36,7 +36,7 @@ if __name__ == '__main__':
     try:
         FileManager.setup(config)    
         ocrManager = OCRManager(config)
-        translator = TranslatorManager(config.translation_service)
+        translator = TranslatorManager(config.translation_service, src_lang='en', dest_lang='fr')
     except BaseException as err:
         print("Program setup failure.", err)
         exit(1)
@@ -59,7 +59,7 @@ if __name__ == '__main__':
             image_final = TextEditor.process_img(config, page.clusters, image_clean, page.image)
 
             ## DEBUG : add bouncing boxes
-            draw_bouncing_box(image_final, page.blocks)
+            # draw_bouncing_box(image_final, page.blocks)
             # draw_cluster_box(image_final, page.clusters)
 
             print("## Save result")
