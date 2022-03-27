@@ -3,7 +3,7 @@ from typing import Sequence, Tuple
 import cv2
 import numpy as np
 
-from src.utility.TextManager import TextManager
+from src.TextManager import TextManager
 from src.model import AppConfig, BlockCluster, Vector2I
 from src.utility.extract_image_area import extract_image_area
 
