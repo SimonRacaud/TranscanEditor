@@ -21,10 +21,9 @@ class TextEditor:
             font, lines, text_height = TextManager.compute(config.default_font, block.translation, size, text_padding)
             if len(lines) == 0:
                 continue
-            position: Vector2I = cls.__align_text_vertical(text_height, size, pivot)
             # Create text segment
-            segment = cls.__create_text_segment(lines, image, position,
-                color, font, size.x, text_padding, config.text_stroke_width)
+            segment = cls.__create_text_segment(lines, image, pivot,
+                color, font, size, text_padding, config.text_stroke_width, text_height)
             # Rotate segment
             if abs(angle) > 2:
                 segment = cls.__rotate_segment(pivot, angle, segment)
@@ -34,16 +33,19 @@ class TextEditor:
 
     @staticmethod
     def __create_text_segment(lines: Sequence[str], image, position: Vector2I, color: Tuple[int, int, int], 
-            font, area_width: int, text_padding: int, text_stroke_width: int):
+            font, area_size: Vector2I, text_padding, text_stroke_width: int, text_height: int):
+        padding_y = round((area_size.y - text_height) / len(lines) * 0.8)
         stroke_color = TextEditor.__reverse_color(color)
         segment = Image.new('RGBA', (image.shape[1], image.shape[0]), (0, 0, 0, 0))
         seg_draw = ImageDraw.Draw(segment)
         # Draw text with Pillow
+        position_y = position.y
         for line in lines:
+            position_y += padding_y
             w, h = seg_draw.textsize(line, font=font)
-            pos = (position.x + ((area_width - w) / 2), position.y)
+            pos = (position.x + ((area_size.x - w) / 2), position_y)
             seg_draw.text(pos, line, font=font, fill=color, stroke_width=text_stroke_width, stroke_fill=stroke_color)
-            position.y += h + text_padding
+            position_y += h + text_padding
         #
         return segment
     
