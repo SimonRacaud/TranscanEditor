@@ -55,9 +55,10 @@ class AppConfig:
     default_font: string = 'Chilanka-Regular.otf'
     ocr_service: OCRService = OCRService.LOCAL_CRAFTTESSERACT
     ocr_config: OCRConfig = OCRConfig()
-    box_cluster_search_range = 20
-    box_cluster_search_step = 5
-    text_padding_y = 8
+    box_cluster_search_range = 20   # Max distance width the text dialogue bubble
+    box_cluster_search_step = 5     # Shifts to research the next bubble
+    text_padding_y = 8              # Default text padding (y axis)
+    text_stroke_width = 3           # Text stroke border width
 
 @dataclass
 class Vector2I:

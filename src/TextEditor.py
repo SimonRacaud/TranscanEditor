@@ -1,9 +1,8 @@
-import string
 from PIL import Image, ImageDraw
 from typing import Sequence, Tuple
 import cv2
-
 import numpy as np
+
 from src.utility.TextManager import TextManager
 from src.model import AppConfig, BlockCluster, Vector2I
 from src.utility.extract_image_area import extract_image_area
@@ -24,54 +23,40 @@ class TextEditor:
                 continue
             position: Vector2I = cls.__align_text_vertical(text_height, size, pivot)
             # Create text segment
-            segment, background_color = cls.__create_text_segment(lines, image, position,
-                color, font, size.x, text_padding)
+            segment = cls.__create_text_segment(lines, image, position,
+                color, font, size.x, text_padding, config.text_stroke_width)
             # Rotate segment
             if abs(angle) > 2:
-                segment = cls.__rotate_segment(pivot, angle, segment, background_color)
+                segment = cls.__rotate_segment(pivot, angle, segment)
             # Apply segment on image
-            image = cls.__apply_segment_on_image(segment, image, background_color)
+            image = cls.__apply_segment_on_image(segment, image)
         return image
 
     @staticmethod
     def __create_text_segment(lines: Sequence[str], image, position: Vector2I, color: Tuple[int, int, int], 
-            font, area_width: int, text_padding: int):
-        background = (0, 0, 0)
-        segment = np.zeros(image.shape, dtype="uint8")
-        if color == (0, 0, 0):
-            background = (255, 255, 255)
-            segment = cv2.bitwise_not(segment)
+            font, area_width: int, text_padding: int, text_stroke_width: int):
+        stroke_color = TextEditor.__reverse_color(color)
+        segment = Image.new('RGBA', (image.shape[1], image.shape[0]), (0, 0, 0, 0))
+        seg_draw = ImageDraw.Draw(segment)
         # Draw text with Pillow
-        segment = cv2.cvtColor(segment, cv2.COLOR_BGR2RGB)
-        pil_img = Image.fromarray(segment)
-        draw = ImageDraw.Draw(pil_img)
         for line in lines:
-            w, h = draw.textsize(line, font=font)
+            w, h = seg_draw.textsize(line, font=font)
             pos = (position.x + ((area_width - w) / 2), position.y)
-            draw.text(pos, line, font=font, fill=color, stroke_width=0, stroke_fill=(0, 0, 0))
+            seg_draw.text(pos, line, font=font, fill=color, stroke_width=text_stroke_width, stroke_fill=stroke_color)
             position.y += h + text_padding
-        segment = cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
         #
-        return segment, background
+        return segment
     
     @staticmethod
-    def __rotate_segment(pivot, angle, segment, backgroundColor):
-        rotate_matrix = cv2.getRotationMatrix2D(center=pivot.data(), angle=-angle, scale=1)
-        shape = segment.shape[:2]
-        return cv2.warpAffine(src=segment, M=rotate_matrix, dsize=(shape[1], shape[0]), borderValue=backgroundColor)
+    def __rotate_segment(pivot, angle, segment):
+        return segment.rotate(-angle, expand=1, center=pivot.data()) #, fillcolor=backgroundColor
     
     @staticmethod
-    def __apply_segment_on_image(segment, image, background_color):
-        # Create mask
-        mask = cv2.inRange(segment, background_color, background_color)
-        mask = cv2.bitwise_not(mask)
-        # Apply mask
-        pil_segment = Image.fromarray(cv2.cvtColor(segment, cv2.COLOR_BGR2RGB))
-        pil_mask = Image.fromarray(mask)
+    def __apply_segment_on_image(segment, image):
         pil_img = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-        res = Image.composite(pil_segment, pil_img, pil_mask)
-        image = cv2.cvtColor(np.array(res), cv2.COLOR_RGB2BGR)
-        return image
+        sx, sy = segment.size
+        pil_img.paste(segment, (0, 0, sx, sy), segment)
+        return cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
     
     @staticmethod
     def __align_text_vertical(text_height: int, bbox_size: Vector2I, pivot: Vector2I) -> Vector2I:
@@ -84,9 +69,6 @@ class TextEditor:
     def __get_auto_text_color(area):
         """ Define text color based on the background border's color """
         size = Vector2I(area.shape[1], area.shape[0])
-
-        # if abs(angle) > 2 and len(block.sentence) > 1:
-        #     block.angle = angle
         max_y = size.y - 1
         max_x = size.x - 1
         color_buffer = []
@@ -114,5 +96,9 @@ class TextEditor:
                 max = el
         color = max[1]
         # inverse color
+        return TextEditor.__reverse_color(color)
+    
+    @staticmethod
+    def __reverse_color(color):
         return (int(255 - color[0]), int(255 -color[1]), int(255 - color[2]))
             
