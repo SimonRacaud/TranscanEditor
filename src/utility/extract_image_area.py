@@ -78,6 +78,8 @@ def extract_image_area(poly, image, is_rectangle=True):
     # calcul angle
     if is_rectangle:
         (angle, pivot, width, height) = __get_angle_rectangle_horizontal(poly)
+        if abs(angle) > 85 and abs(angle) < 95:
+            angle = 0 # The rectangle is already horizontal
     else:
         (angle, pivot, width, height) = __get_angle_upper_points(poly)
     # rotate image
