@@ -4,9 +4,14 @@ opencv-python>=3.4.2.17
 scikit-image>=0.14.2
 scipy>=1.1.0
 python-dotenv>=0.19.2
+numpy
+pytesseract
 
 # Amazon OCR
 boto3>=1.15.0
 
 # Translation
-googletrans
+deep_translator
+
+# sudo apt-get install libbz2-dev
+# sudo cp /usr/lib/python3.7/lib-dynload/_bz2.cpython-37m-x86_64-linux-gnu.so /usr/local/lib/python3.7
