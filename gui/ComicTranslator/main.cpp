@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "viewerwindow.h"
 
 #include <QApplication>
 #include <QLocale>
@@ -26,6 +27,8 @@ int main(int argc, char *argv[])
         }
     }
     MainWindow w;
-    w.show();
+    ViewerWindow viewer;
+    //w.show();
+    viewer.show();
     return app.exec();
 }
