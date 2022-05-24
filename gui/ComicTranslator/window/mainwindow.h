@@ -2,10 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QStackedWidget>
 
-QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
-QT_END_NAMESPACE
+#include "../page/home/homepage.h"
+#include "./viewerwindow.h"
 
 class MainWindow : public QMainWindow
 {
@@ -15,10 +15,11 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-private slots:
-    void on_chapterViewerOpenButton_clicked();
+    void showViewer(QString const &dirPath);
 
 private:
-    Ui::MainWindow *ui;
+    QStackedWidget *_stack;
+    HomePage *_homePage;
+    ViewerWindow *_viewer;
 };
 #endif // MAINWINDOW_H

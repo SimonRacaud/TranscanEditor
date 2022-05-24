@@ -1,5 +1,5 @@
-#include "mainwindow.h"
-#include "viewerwindow.h"
+#include "window/mainwindow.h"
+#include "window/viewerwindow.h"
 
 #include <QApplication>
 #include <QLocale>
@@ -7,9 +7,14 @@
 
 #include <QFile>
 
+using namespace std;
+
+MainWindow *mainWindow = nullptr;
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    int status;
 
     // Setup app stylesheet
     /*QFile stylesheetFile("/media/work/personnal-projects/scanTranslator/gui/ComicTranslator/Devsion.qss");
@@ -19,16 +24,18 @@ int main(int argc, char *argv[])
 
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
-    for (const QString &locale : uiLanguages) {
+    for (const QString &locale : uiLanguages)
+    {
         const QString baseName = "ComicTranslator_" + QLocale(locale).name();
-        if (translator.load(":/i18n/" + baseName)) {
+        if (translator.load(":/i18n/" + baseName))
+        {
             app.installTranslator(&translator);
             break;
         }
     }
-    MainWindow w;
-    ViewerWindow viewer;
-    //w.show();
-    viewer.show();
-    return app.exec();
+    mainWindow = new MainWindow();
+    mainWindow->show();
+    status = app.exec();
+    delete mainWindow;
+    return status;
 }

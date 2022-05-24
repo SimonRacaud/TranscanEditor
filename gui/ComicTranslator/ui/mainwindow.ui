@@ -95,7 +95,7 @@
              <item>
               <widget class="QLabel" name="label">
                <property name="text">
-                <string>Source directory:</string>
+                <string>Source:</string>
                </property>
               </widget>
              </item>
