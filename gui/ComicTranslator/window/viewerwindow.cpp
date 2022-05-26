@@ -1,4 +1,5 @@
 #include "viewerwindow.h"
+ #include <QSizePolicy>
 
 const QList<QString> ViewerWindow::SUPPORTED_EXTENSION = {
     "*.png",
@@ -18,6 +19,9 @@ ViewerWindow::ViewerWindow(QWidget *parent): QWidget{parent}
     this->_openFolderButton = new QPushButton("Open folder");
     headerLayout->addWidget(this->_backButton, 0, Qt::AlignLeft);
     headerLayout->addWidget(this->_title, 0, Qt::AlignCenter);
+    this->_title->setAlignment(Qt::AlignRight);
+    this->_title->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    this->_title->setMaximumWidth(TITLE_MAX_SIZE);
     headerLayout->addWidget(this->_openFolderButton, 0, Qt::AlignRight);
     connect(this->_openFolderButton, &QPushButton::released, this, &ViewerWindow::openFolderSlot);
     connect(this->_backButton, &QPushButton::released, this, &ViewerWindow::goBackSlot);
@@ -61,9 +65,6 @@ void ViewerWindow::loadDirectory(QString const &dirPath)
     this->clearImageList();
     // Set viewer Title
     QString title = dirPath;
-    if (title.length() > TITLE_MAX_SIZE) {
-        title = "..." + title.mid(title.length() - TITLE_MAX_SIZE);
-    }
     this->_title->setText(title);
     // Filter image files
     for (size_t i = 0; i < ViewerWindow::SUPPORTED_EXTENSION.size(); i++) {

@@ -21,7 +21,7 @@
 // TEMP CONFIG
 #define WIN_INIT_WIDTH 600 // px
 #define WIN_INIT_HEIGHT 800 // px
-#define TITLE_MAX_SIZE 30 // character
+#define TITLE_MAX_SIZE 500 // character
 #define TIME_REFRESH_RESIZE 5 // ms
 
 #define GUI_WIDTH_SHIFT 40 // px
