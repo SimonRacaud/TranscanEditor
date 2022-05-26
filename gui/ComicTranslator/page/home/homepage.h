@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QStringListModel>
 
+#include "include/environment.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class HomePage; }
 QT_END_NAMESPACE
@@ -18,11 +20,18 @@ public:
 private:
     void openViewer(const QString &path);
     void addItemPreviousProjectList(const QString &path);
+    void loadNewProjectFormContent();
 
 private slots:
     void on_chapterViewerOpenButton_clicked();
 
     void on_projectListView_doubleClicked(const QModelIndex &index);
+
+    void on_srcSelectButton_clicked();
+
+    void on_destButton_clicked();
+
+    void on_submitButton_clicked();
 
 signals:
 
@@ -31,6 +40,10 @@ private:
 
     QStringListModel *previousProjectListModel = nullptr;
     QStringList previousProjectList;
+
+    // Create Project Form
+    QString sourceDirectory;
+    QString destDirectory;
 
     static const size_t PREV_PROJECT_LIST_SIZE_LIMIT = 11;
 };

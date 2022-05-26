@@ -14,6 +14,8 @@ HomePage::HomePage(QWidget *parent)
     this->previousProjectListModel = new QStringListModel(this);
     this->previousProjectListModel->setStringList(this->previousProjectList);
     ui->projectListView->setModel(this->previousProjectListModel);
+    // Create project form
+    this->loadNewProjectFormContent();
 }
 
 HomePage::~HomePage()
@@ -40,6 +42,16 @@ void HomePage::addItemPreviousProjectList(const QString &path)
     this->previousProjectListModel->setStringList(this->previousProjectList);
 }
 
+void HomePage::loadNewProjectFormContent()
+{
+    this->ui->sourceSelectLabel->setVisible(false);
+    this->ui->destSelectLabel->setVisible(false);
+    this->ui->ocrComboBox->addItems(OCR_SERVICE_LIST);
+    this->ui->ocrWarningLabel->setVisible(false);
+    this->ui->transComboBox->addItems(TRANS_SERVICE_LIST);
+    this->ui->transWarningLabel->setVisible(false);
+}
+
 /** SLOTS **/
 
 // Open specific directory in viewer
@@ -59,5 +71,35 @@ void HomePage::on_projectListView_doubleClicked(const QModelIndex &index)
     const QString &path = this->previousProjectList.at(index.row());
 
     this->openViewer(path);
+}
+
+// Project create form : Choose source directory
+void HomePage::on_srcSelectButton_clicked()
+{
+    const QString folderPath = QFileDialog::getExistingDirectory(this, tr("Source image folder"));
+
+    if (!folderPath.isEmpty()) {
+        this->sourceDirectory = folderPath;
+        this->ui->sourceSelectLabel->setText(folderPath);
+        this->ui->sourceSelectLabel->setVisible(true);
+    }
+}
+
+// Project create form : Choose destination directory
+void HomePage::on_destButton_clicked()
+{
+    const QString folderPath = QFileDialog::getExistingDirectory(this, tr("Destination image folder"));
+
+    if (!folderPath.isEmpty()) {
+        this->destDirectory = folderPath;
+        this->ui->destSelectLabel->setText(folderPath);
+        this->ui->destSelectLabel->setVisible(true);
+    }
+}
+
+// Project create form : Apply project creation
+void HomePage::on_submitButton_clicked()
+{
+
 }
 
