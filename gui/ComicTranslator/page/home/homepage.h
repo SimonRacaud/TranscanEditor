@@ -33,6 +33,10 @@ private slots:
 
     void on_submitButton_clicked();
 
+    void on_ocrComboBox_currentIndexChanged(int index);
+
+    void on_transComboBox_currentIndexChanged(int index);
+
 signals:
 
 private:

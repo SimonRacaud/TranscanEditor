@@ -46,9 +46,13 @@ void HomePage::loadNewProjectFormContent()
 {
     this->ui->sourceSelectLabel->setVisible(false);
     this->ui->destSelectLabel->setVisible(false);
-    this->ui->ocrComboBox->addItems(OCR_SERVICE_LIST);
+    for (auto &service : OCR_SERVICE_LIST) {
+        this->ui->ocrComboBox->addItem(service.name);
+    }
     this->ui->ocrWarningLabel->setVisible(false);
-    this->ui->transComboBox->addItems(TRANS_SERVICE_LIST);
+    for (auto &service : TRANS_SERVICE_LIST) {
+        this->ui->transComboBox->addItem(service.name);
+    }
     this->ui->transWarningLabel->setVisible(false);
 }
 
@@ -101,5 +105,39 @@ void HomePage::on_destButton_clicked()
 void HomePage::on_submitButton_clicked()
 {
 
+}
+
+// Change selection OCR Service
+void HomePage::on_ocrComboBox_currentIndexChanged(int index)
+{
+    // Show or hide configuration requirement message
+    if (index < sizeof(OCR_SERVICE_LIST) && index >= 0
+            && OCR_SERVICE_LIST[index].needConfig) {
+        this->ui->ocrWarningLabel->setVisible(true);
+        if (OCR_SERVICE_LIST[index].helpMessage.isEmpty() == false) {
+            this->ui->ocrWarningLabel->setText(OCR_SERVICE_LIST[index].helpMessage);
+        } else {
+            this->ui->ocrWarningLabel->setText(SERVICE_DEFAULT_HELP);
+        }
+    } else {
+        this->ui->ocrWarningLabel->setVisible(false);
+    }
+}
+
+// Change selection Translation Service
+void HomePage::on_transComboBox_currentIndexChanged(int index)
+{
+    // Show or hide configuration requirement message
+    if (index < sizeof(TRANS_SERVICE_LIST) && index >= 0
+            && TRANS_SERVICE_LIST[index].needConfig) {
+        this->ui->transWarningLabel->setVisible(true);
+        if (TRANS_SERVICE_LIST[index].helpMessage.isEmpty() == false) {
+            this->ui->transWarningLabel->setText(TRANS_SERVICE_LIST[index].helpMessage);
+        } else {
+            this->ui->transWarningLabel->setText(SERVICE_DEFAULT_HELP);
+        }
+    } else {
+        this->ui->transWarningLabel->setVisible(false);
+    }
 }
 

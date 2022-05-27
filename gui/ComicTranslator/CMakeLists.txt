@@ -26,6 +26,7 @@ set(PROJECT_SOURCES
         page/home/homepage.h
         ui/home_page.ui
         include/environment.h
+        include/models.h
         ${TS_FILES}
 )
 
