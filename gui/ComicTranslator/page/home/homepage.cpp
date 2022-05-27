@@ -128,16 +128,29 @@ void HomePage::on_ocrComboBox_currentIndexChanged(int index)
 void HomePage::on_transComboBox_currentIndexChanged(int index)
 {
     // Show or hide configuration requirement message
-    if (index < sizeof(TRANS_SERVICE_LIST) && index >= 0
-            && TRANS_SERVICE_LIST[index].needConfig) {
-        this->ui->transWarningLabel->setVisible(true);
-        if (TRANS_SERVICE_LIST[index].helpMessage.isEmpty() == false) {
-            this->ui->transWarningLabel->setText(TRANS_SERVICE_LIST[index].helpMessage);
+    if (index < sizeof(TRANS_SERVICE_LIST) && index >= 0) {
+        if (TRANS_SERVICE_LIST[index].needConfig) {
+            this->ui->transWarningLabel->setVisible(true);
+            if (TRANS_SERVICE_LIST[index].helpMessage.isEmpty() == false) {
+                this->ui->transWarningLabel->setText(TRANS_SERVICE_LIST[index].helpMessage);
+            } else {
+                this->ui->transWarningLabel->setText(SERVICE_DEFAULT_HELP);
+            }
         } else {
-            this->ui->transWarningLabel->setText(SERVICE_DEFAULT_HELP);
+            this->ui->transWarningLabel->setVisible(false);
         }
-    } else {
-        this->ui->transWarningLabel->setVisible(false);
+        // Enable disable language selection
+        if (this->ui->transComboBox->itemText(index) == TRANSLATE_DISABLED) {
+            this->ui->transDestComboBox->setEnabled(false);
+            this->ui->transSrcComboBox->setEnabled(false);
+        } else {
+            this->ui->transDestComboBox->setEnabled(true);
+            this->ui->transSrcComboBox->setEnabled(true);
+            this->ui->transDestComboBox->clear();
+            this->ui->transSrcComboBox->clear();
+            this->ui->transDestComboBox->addItems(TRANS_SERVICE_LIST[index].destLang);
+            this->ui->transSrcComboBox->addItems(TRANS_SERVICE_LIST[index].srcLang);
+        }
     }
 }
 

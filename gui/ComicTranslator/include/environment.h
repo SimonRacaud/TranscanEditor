@@ -11,18 +11,19 @@ const ServiceItem OCR_SERVICE_LIST[] = {
 };
 const QString SERVICE_DEFAULT_HELP = "The service require configuration variables";
 
-const ServiceItem TRANS_SERVICE_LIST[] = {
-    ServiceItem("Disable", false),
-    ServiceItem("Google", false),
-    ServiceItem("Microsoft", true, "TRAD_KEY_MICROSOFT required"),
-    ServiceItem("Deepl", true, "TRAD_KEY_DEEPL is required, change TRAD_DEEPL_USE_FREE to use premium services"),
-    ServiceItem("Linguee", false),
-    ServiceItem("AWS", true, "AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are required"),
-    ServiceItem("Pons", false),
-    ServiceItem("MyMemory", false),
-    ServiceItem("Yandex", true, "TRAD_KEY_YANDEX required"),
-    ServiceItem("Papago", true, "TRAD_KEY_PAPAGO and TRAD_CLIENT_ID_PAPAGO required"),
-    ServiceItem("Libre", true, "TRAD_KEY_LIBRE and TRAD_LIBRE_BASE_URL variables are required")
+#define TRANSLATE_DISABLED "Disable"
+const TranslationServiceItem TRANS_SERVICE_LIST[] = {
+    TranslationServiceItem(TRANSLATE_DISABLED, false),
+    TranslationServiceItem("Google", false),
+    TranslationServiceItem("Microsoft", true, "TRAD_KEY_MICROSOFT required"),
+    TranslationServiceItem("Deepl", true, "TRAD_KEY_DEEPL is required, change TRAD_DEEPL_USE_FREE to use premium services"),
+    TranslationServiceItem("Linguee", false),
+    TranslationServiceItem("AWS", true, "AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are required"),
+    TranslationServiceItem("Pons", false),
+    TranslationServiceItem("MyMemory", false),
+    TranslationServiceItem("Yandex", true, "TRAD_KEY_YANDEX required"),
+    TranslationServiceItem("Papago", true, "TRAD_KEY_PAPAGO and TRAD_CLIENT_ID_PAPAGO required"),
+    TranslationServiceItem("Libre", true, "TRAD_KEY_LIBRE and TRAD_LIBRE_BASE_URL variables are required")
 };
 
 
