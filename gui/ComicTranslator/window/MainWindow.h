@@ -4,8 +4,9 @@
 #include <QMainWindow>
 #include <QStackedWidget>
 
-#include "../page/home/homepage.h"
-#include "./viewerwindow.h"
+#include "../page/home/HomePage.h"
+#include "../page/editor/EditorPage.h"
+#include "./ViewerWindow.h"
 
 class MainWindow : public QMainWindow
 {
@@ -20,6 +21,7 @@ public:
 private:
     QStackedWidget *_stack;
     HomePage *_homePage;
+    EditorPage *_editor;
     ViewerWindow *_viewer;
 };
 #endif // MAINWINDOW_H

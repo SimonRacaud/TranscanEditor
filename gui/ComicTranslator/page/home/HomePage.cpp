@@ -1,7 +1,7 @@
-#include "homepage.h"
+#include "HomePage.h"
 #include "../../ui/ui_home_page.h"
 #include <QFileDialog>
-#include "../../window/mainwindow.h"
+#include "../../window/MainWindow.h"
 #include <memory.h>
 
 extern MainWindow *mainWindow;

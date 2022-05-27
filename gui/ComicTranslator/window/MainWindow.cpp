@@ -1,11 +1,13 @@
-#include "mainwindow.h"
+#include "MainWindow.h"
 #include <QGridLayout>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _stack(nullptr), _homePage(nullptr), _viewer(nullptr)
 {
     this->_stack = new QStackedWidget;
     this->_homePage = new HomePage;
+    this->_editor = new EditorPage;
     this->_stack->addWidget(this->_homePage);
+    this->_stack->addWidget(this->_editor);
 
     setCentralWidget(this->_stack);
 }

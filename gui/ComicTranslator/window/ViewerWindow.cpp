@@ -1,4 +1,4 @@
-#include "viewerwindow.h"
+#include "ViewerWindow.h"
  #include <QSizePolicy>
 
 const QList<QString> ViewerWindow::SUPPORTED_EXTENSION = {

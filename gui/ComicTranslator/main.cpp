@@ -1,5 +1,5 @@
-#include "window/mainwindow.h"
-#include "window/viewerwindow.h"
+#include "window/MainWindow.h"
+#include "window/ViewerWindow.h"
 
 #include <QApplication>
 #include <QLocale>

@@ -18,15 +18,16 @@ set(TS_FILES ComicTranslator_fr_FR.ts)
 
 set(PROJECT_SOURCES
         main.cpp
-        window/mainwindow.cpp
-        window/mainwindow.h
-        window/viewerwindow.h
-        window/viewerwindow.cpp
-        page/home/homepage.cpp
-        page/home/homepage.h
+        window/MainWindow.cpp
+        window/MainWindow.h
+        window/ViewerWindow.h
+        window/ViewerWindow.cpp
+        page/home/HomePage.cpp
+        page/home/HomePage.h
         ui/home_page.ui
         include/environment.h
         include/models.h
+        page/editor/EditorPage.h page/editor/EditorPage.cpp
         ${TS_FILES}
 )
 
