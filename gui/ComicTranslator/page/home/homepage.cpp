@@ -104,7 +104,15 @@ void HomePage::on_destButton_clicked()
 // Project create form : Apply project creation
 void HomePage::on_submitButton_clicked()
 {
+    const QString &srcDirectory = this->sourceDirectory;
+    const QString &destDirectory = this->destDirectory;
+    const int OCRServiceIndex = this->ui->ocrComboBox->currentIndex();
+    const int TranslationServiceIndex = this->ui->transComboBox->currentIndex();
+    const QString &srcLang = (TranslationServiceIndex) ? this->ui->transSrcComboBox->currentText() : nullptr;
+    const QString &destLang = (TranslationServiceIndex) ? this->ui->transDestComboBox->currentText() : nullptr;
+    const QFont &font = this->ui->fontComboBox->currentFont();
 
+     // TODO: submit form !
 }
 
 // Change selection OCR Service
