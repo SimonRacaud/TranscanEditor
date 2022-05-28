@@ -27,7 +27,8 @@ set(PROJECT_SOURCES
         ui/home_page.ui
         include/environment.h
         include/models.h
-        page/editor/EditorPage.h page/editor/EditorPage.cpp
+        page/editor/EditorView.h page/editor/EditorView.cpp
+        page/editor/EditorController.h page/editor/EditorController.cpp
         ${TS_FILES}
 )
 

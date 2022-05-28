@@ -112,7 +112,8 @@ void HomePage::on_submitButton_clicked()
     const QString &destLang = (TranslationServiceIndex) ? this->ui->transDestComboBox->currentText() : nullptr;
     const QFont &font = this->ui->fontComboBox->currentFont();
 
-     // TODO: submit form !
+    // TODO: submit form !
+    mainWindow->setPage(Page::EDITOR);
 }
 
 // Change selection OCR Service
