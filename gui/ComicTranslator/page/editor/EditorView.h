@@ -5,6 +5,10 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
+#include "widget/editor/AEditArea.h"
+#include "widget/editor/APropertyTab.h"
+#include "include/environment.h"
+
 class EditorView : public QWidget
 {
     Q_OBJECT
@@ -23,6 +27,12 @@ protected:
     QPushButton *_editButton;
     QPushButton *_saveButton;
     QPushButton *_exitButton;
+    QLabel *_separator1;
+    QLabel *_separator2;
+    QLabel *_separator3;
+
+    AEditArea *_editArea;
+    APropertyTab *_propertyTab;
 };
 
 #endif // EDITORVIEW_H

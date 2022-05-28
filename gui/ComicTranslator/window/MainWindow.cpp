@@ -5,11 +5,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _stack(nullptr), 
 {
     this->_stack = new QStackedWidget;
     this->_homePage = new HomePage;
-    this->_editor = new EditorPage;
+    this->_editor = new EditorController;
     this->_stack->addWidget(this->_homePage);
     this->_stack->addWidget(this->_editor);
+    this->setCentralWidget(this->_stack);
+    this->centralWidget()->layout()->setContentsMargins(0, 0, 0, 0);
 
-    setCentralWidget(this->_stack);
+    this->setPage(Page::EDITOR); // DEBUG temp
+
+    // Set background color
+    QPalette pal = QPalette(QColor(0xFF0000));
+    this->setAutoFillBackground(true);
+    this->setPalette(pal);
 }
 
 MainWindow::~MainWindow()
@@ -25,4 +32,18 @@ void MainWindow::showViewer(QString const &dirPath)
     }
     this->_viewer->show();
     this->_viewer->loadDirectory(dirPath);
+}
+
+void MainWindow::setPage(Page page)
+{
+    switch (page) {
+        case Page::HOME:
+            this->_stack->setCurrentIndex(0);
+        break;
+        case Page::EDITOR:
+            this->_stack->setCurrentIndex(1);
+        break;
+    default:
+        throw std::runtime_error("MainWindow::setPage page unsupported");
+    }
 }

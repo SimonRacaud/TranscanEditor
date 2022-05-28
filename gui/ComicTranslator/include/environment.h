@@ -26,5 +26,15 @@ const TranslationServiceItem TRANS_SERVICE_LIST[] = {
     TranslationServiceItem("Libre", true, "TRAD_KEY_LIBRE and TRAD_LIBRE_BASE_URL variables are required")
 };
 
+// Style
+
+#define EDITOR_EDITA_BG 0xBED8D4
+#define EDITOR_PROPTAB_BG 0xFFFFFF
+#define EDITOR_BG 0xF2F2F2
+#define EDITOR_PROPTAB_MIN_WIDTH 300
+#define EDITOR_DEF_SIZE 1280, 720
+#define EDITOR_HEAD_MARGIN 5
+#define EDITOR_PROP_MIN_HEIGHT 300
+#define EDITOR_HEAD_MIDDLE_SPACING 8
 
 #endif // ENVIRONMENT_H

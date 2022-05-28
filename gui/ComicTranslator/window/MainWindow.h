@@ -5,8 +5,13 @@
 #include <QStackedWidget>
 
 #include "../page/home/HomePage.h"
-#include "../page/editor/EditorPage.h"
+#include "../page/editor/EditorController.h"
 #include "./ViewerWindow.h"
+
+enum class Page {
+    HOME,
+    EDITOR
+};
 
 class MainWindow : public QMainWindow
 {
@@ -18,10 +23,12 @@ public:
 
     void showViewer(QString const &dirPath);
 
+    void setPage(Page page);
+
 private:
     QStackedWidget *_stack;
     HomePage *_homePage;
-    EditorPage *_editor;
+    EditorController *_editor;
     ViewerWindow *_viewer;
 };
 #endif // MAINWINDOW_H

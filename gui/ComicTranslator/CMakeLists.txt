@@ -22,13 +22,17 @@ set(PROJECT_SOURCES
         window/MainWindow.h
         window/ViewerWindow.h
         window/ViewerWindow.cpp
-        page/home/HomePage.cpp
-        page/home/HomePage.h
         ui/home_page.ui
         include/environment.h
         include/models.h
+        include/model/OCRPage.h
+        include/model/Utils.h
         page/editor/EditorView.h page/editor/EditorView.cpp
         page/editor/EditorController.h page/editor/EditorController.cpp
+        page/home/HomePage.cpp
+        page/home/HomePage.h
+        widget/editor/AEditArea.h widget/editor/AEditArea.cpp
+        widget/editor/APropertyTab.h widget/editor/APropertyTab.cpp
         ${TS_FILES}
 )
 
