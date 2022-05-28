@@ -12,11 +12,11 @@ EditorView::EditorView(QWidget *parent)
     this->setupHeader();
     //
     this->_editArea = new AEditArea; // DEBUG temp
-    this->_propertyTab = new APropertyTab; // DEBUG temp
+    //this->_propertyTab = new APropertyTab; // DEBUG temp
     QHBoxLayout *bodyLayout = new QHBoxLayout;
 
     bodyLayout->addWidget(_editArea);
-    bodyLayout->addWidget(_propertyTab);
+    //bodyLayout->addWidget(_propertyTab);
     this->_rootLayout->addLayout(bodyLayout);
     // Style
     this->_rootLayout->setContentsMargins(0, 0, 0, 0);

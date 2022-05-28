@@ -1,5 +1,4 @@
 #include "APropertyTab.h"
-#include <QVBoxLayout>
 
 APropertyTab::APropertyTab(QWidget *parent)
     : QWidget{parent}
@@ -8,12 +7,15 @@ APropertyTab::APropertyTab(QWidget *parent)
     QVBoxLayout *upperLayout = new QVBoxLayout;
     QVBoxLayout *lowerLayout = new QVBoxLayout;
 
+    // Upper section (properties)
     this->_title = new QLabel();
     this->_title->setText("Properties:");
     this->_title->setAlignment(Qt::AlignmentFlag::AlignHCenter);
     upperLayout->addWidget(_title);
     upperLayout->setAlignment(Qt::AlignmentFlag::AlignTop);
-    //
+    this->_propertiesLayout = new QVBoxLayout;
+    upperLayout->addLayout(_propertiesLayout);
+    // Lower section (help)
     this->_helpTitle = new QLabel();
     this->_helpTitle->setText("Help:");
     this->_helpTitle->setAlignment(Qt::AlignmentFlag::AlignHCenter);
