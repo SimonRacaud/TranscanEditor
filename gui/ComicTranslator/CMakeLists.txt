@@ -36,6 +36,7 @@ set(PROJECT_SOURCES
         widget/editor/property/ExtractionPropertyTab.h widget/editor/property/ExtractionPropertyTab.cpp
         widget/editor/property/CleanPropertyTab.h widget/editor/property/CleanPropertyTab.cpp
         widget/editor/property/EditPropertyTab.h widget/editor/property/EditPropertyTab.cpp
+        widget/editor/property/SavePropertyTab.h widget/editor/property/SavePropertyTab.cpp
         ${TS_FILES}
 )
 
