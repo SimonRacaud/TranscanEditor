@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QScrollArea>
 
 #include "include/environment.h"
 
@@ -14,7 +15,7 @@ class APropertyTab : public QWidget
 public:
     explicit APropertyTab(QWidget *parent = nullptr);
 
-private:
+protected:
     virtual void fillHelp() = 0;
     virtual void initProperties() = 0;
 
@@ -24,6 +25,7 @@ private:
     QLabel *_title;
     QLabel *_helpTitle;
     QPushButton *_nextButton;
+    QScrollArea *_propScollArea;
 
 protected:
     QLabel *_help;

@@ -33,6 +33,8 @@ set(PROJECT_SOURCES
         page/home/HomePage.h
         widget/editor/AEditArea.h widget/editor/AEditArea.cpp
         widget/editor/APropertyTab.h widget/editor/APropertyTab.cpp
+        widget/editor/property/ExtractionPropertyTab.h widget/editor/property/ExtractionPropertyTab.cpp
+        widget/editor/property/CleanPropertyTab.h widget/editor/property/CleanPropertyTab.cpp
         ${TS_FILES}
 )
 
