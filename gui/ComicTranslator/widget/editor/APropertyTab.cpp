@@ -32,7 +32,7 @@ APropertyTab::APropertyTab(QWidget *parent)
     lowerLayout->addWidget(_helpTitle);
     lowerLayout->setAlignment(Qt::AlignmentFlag::AlignBottom);
     this->_help = new QLabel();
-    this->_help->setMinimumHeight(EDITOR_PROP_MIN_HEIGHT);
+    this->_help->setMinimumHeight(EDITOR_PROP_HELP_MIN_HEIGHT);
     this->_help->setAlignment(Qt::AlignmentFlag::AlignTop);
     this->_help->setWordWrap(true);
     lowerLayout->addWidget(_help);
