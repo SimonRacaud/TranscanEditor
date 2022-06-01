@@ -29,6 +29,7 @@ const TranslationServiceItem TRANS_SERVICE_LIST[] = {
 // Style
 
 #define EDITOR_BG 0xF2F2F2
+#define EDITOR_MIN_SIZE 800, 600
 #define EDITOR_DEF_SIZE 1280, 720
 
 #define EDITOR_EDITA_BG 0xBED8D4
@@ -44,5 +45,6 @@ const TranslationServiceItem TRANS_SERVICE_LIST[] = {
 #define EDITOR_PROP_MAX_FONT_SIZE 100
 #define EDITOR_PROP_FORM_WIDTH 170
 #define EDITOR_PROP_DEF_LINE_HEIGHT 5
+#define EDITOR_TIME_REFRESH_RESIZE 5 // ms
 
 #endif // ENVIRONMENT_H

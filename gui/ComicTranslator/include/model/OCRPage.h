@@ -8,17 +8,7 @@
 
 #include "Utils.h"
 
-struct BlockCluster {
-    std::vector<uint32_t> blocks;
-    int polygon[4][2];
-    QString sentence;
-    QString translation;
-    QFont font;
-    QColor color;
-};
-
 struct OCRBlock {
-    int id;
     bool cleanBlock;
     Rectangle box;
     int polygon[4][2];
@@ -28,9 +18,20 @@ struct OCRBlock {
     float angle;
 };
 
+struct BlockCluster {
+    std::vector<OCRBlock *> blocks;
+    int polygon[4][2];
+    QString sentence;
+    QString translation;
+    QFont font;
+    QColor color;
+};
+
 struct OCRPage {
-    std::vector<OCRBlock> blocks;
     QString imagePath;
+    QString cleanImagePath;
+    QString resultImagePath;
+    std::vector<OCRBlock> blocks;
     std::vector<BlockCluster> clusters;
 };
 

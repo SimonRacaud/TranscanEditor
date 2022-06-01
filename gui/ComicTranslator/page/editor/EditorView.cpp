@@ -1,4 +1,8 @@
 #include "EditorView.h"
+#include "widget/editor/property/ExtractionPropertyTab.h"
+#include "widget/editor/property/CleanPropertyTab.h"
+#include "widget/editor/property/EditPropertyTab.h"
+#include "widget/editor/property/SavePropertyTab.h"
 
 #include <QHBoxLayout>
 
@@ -12,15 +16,16 @@ EditorView::EditorView(QWidget *parent)
     this->setupHeader();
     //
     this->_editArea = new AEditArea; // DEBUG temp
-    //this->_propertyTab = new APropertyTab; // DEBUG temp
+    this->_propertyTab = new SavePropertyTab; // DEBUG temp
     QHBoxLayout *bodyLayout = new QHBoxLayout;
 
     bodyLayout->addWidget(_editArea);
-    //bodyLayout->addWidget(_propertyTab);
+    bodyLayout->addWidget(_propertyTab);
     this->_rootLayout->addLayout(bodyLayout);
     // Style
     this->_rootLayout->setContentsMargins(0, 0, 0, 0);
-    this->setMinimumSize(EDITOR_DEF_SIZE);
+    this->setMinimumSize(EDITOR_MIN_SIZE);
+    this->resize(EDITOR_DEF_SIZE);
 }
 
 void EditorView::setupHeader()

@@ -14,6 +14,7 @@
 #include <QFileDialog>
 #include <QListWidget>
 #include <QListWidgetItem>
+#include <QScrollBar>
 #include <QEvent>
 
 #include <QDebug>
@@ -23,22 +24,25 @@
 #define WIN_INIT_HEIGHT 800 // px
 #define TITLE_MAX_SIZE 500 // character
 #define TIME_REFRESH_RESIZE 5 // ms
-
-#define GUI_WIDTH_SHIFT 40 // px
 //
 
 class ViewerWindow : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ViewerWindow(QWidget *parent = nullptr);
+    explicit ViewerWindow(QWidget *parent = nullptr, bool integratedMode = false);
     virtual ~ViewerWindow() = default;
 
     void loadDirectory(QString const &dirPath);
 
+    QScrollBar *getVerticalScroll() const;
+
 private slots:
     void openFolderSlot();
     void goBackSlot();
+
+public slots:
+    void setVerticalScrollPosition(int value);
 
 protected:
     virtual void resizeEvent(QResizeEvent *event) override;
@@ -51,15 +55,17 @@ public:
     static const QList<QString> SUPPORTED_EXTENSION;
 
 private:
-    QPushButton *_backButton;
-    QPushButton *_openFolderButton;
-    QLabel *_title;
+    QPushButton *_backButton{nullptr};
+    QPushButton *_openFolderButton{nullptr};
+    QLabel *_title{nullptr};
+
     QScrollArea *_scrollArea;
     QVBoxLayout *_imageList;
     QList<QImage *> _listImage;
     QList<QLabel *> _listImgLabel;
 
     int _timePreviousResize = 0;
+    bool _integratedMode;
 signals:
 
 };

@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _stack(nullptr), 
     this->setPage(Page::EDITOR); // DEBUG temp
 
     // Set background color
-    QPalette pal = QPalette(QColor(0xFF0000));
+    QPalette pal = QPalette(QColor(0xFFFFFF));
     this->setAutoFillBackground(true);
     this->setPalette(pal);
 }

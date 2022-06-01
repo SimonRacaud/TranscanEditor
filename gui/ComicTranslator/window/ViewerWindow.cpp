@@ -7,36 +7,55 @@ const QList<QString> ViewerWindow::SUPPORTED_EXTENSION = {
     "*.jpeg"
 };
 
-ViewerWindow::ViewerWindow(QWidget *parent): QWidget{parent}
+ViewerWindow::ViewerWindow(QWidget *parent, bool integratedMode): QWidget{parent}
 {
+    this->_integratedMode = integratedMode;
     QVBoxLayout *mainlayout = new QVBoxLayout(this);
+    QHBoxLayout *headerLayout = nullptr;
 
     // HEADER
-    QHBoxLayout *headerLayout = new QHBoxLayout();
-
-    this->_backButton = new QPushButton("Go Back");
-    this->_title = new QLabel("Chapter viewer");
-    this->_openFolderButton = new QPushButton("Open folder");
-    headerLayout->addWidget(this->_backButton, 0, Qt::AlignLeft);
-    headerLayout->addWidget(this->_title, 0, Qt::AlignCenter);
-    this->_title->setAlignment(Qt::AlignRight);
-    this->_title->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    this->_title->setMaximumWidth(TITLE_MAX_SIZE);
-    headerLayout->addWidget(this->_openFolderButton, 0, Qt::AlignRight);
-    connect(this->_openFolderButton, &QPushButton::released, this, &ViewerWindow::openFolderSlot);
-    connect(this->_backButton, &QPushButton::released, this, &ViewerWindow::goBackSlot);
+    if (!integratedMode) {
+        headerLayout = new QHBoxLayout();
+        this->_backButton = new QPushButton("Go Back");
+        this->_title = new QLabel("Chapter viewer");
+        this->_openFolderButton = new QPushButton("Open folder");
+        headerLayout->addWidget(this->_backButton, 0, Qt::AlignLeft);
+        headerLayout->addWidget(this->_title, 0, Qt::AlignCenter);
+        this->_title->setAlignment(Qt::AlignRight);
+        this->_title->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        this->_title->setMaximumWidth(TITLE_MAX_SIZE);
+        headerLayout->addWidget(this->_openFolderButton, 0, Qt::AlignRight);
+        connect(this->_openFolderButton, &QPushButton::released, this, &ViewerWindow::openFolderSlot);
+        connect(this->_backButton, &QPushButton::released, this, &ViewerWindow::goBackSlot);
+    }
     // CONTENT
     QWidget *imageListContainer = new QWidget;
     this->_scrollArea = new QScrollArea();
     this->_scrollArea->setWidgetResizable(true);
     this->_scrollArea->setWidget(imageListContainer);
+//    if (integratedMode) { // Disable vertical scroll bar
+//        this->_scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+//        this->_scrollArea->verticalScrollBar()->resize(0, 0);
+//        this->_scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+//    }
+    this->_scrollArea->setStyleSheet("border: none");
     this->_imageList = new QVBoxLayout(imageListContainer);
     this->_imageList->setAlignment(Qt::AlignHCenter);
+    this->_imageList->setSpacing(0);
+    this->_imageList->setContentsMargins(0, 0, 0, 0);
     //
-    mainlayout->addLayout(headerLayout);
+    if (!integratedMode) {
+        mainlayout->addLayout(headerLayout);
+    }
     mainlayout->addWidget(this->_scrollArea);
-    this->resize(WIN_INIT_WIDTH, WIN_INIT_HEIGHT);
+    mainlayout->setSpacing(0);
+    mainlayout->setContentsMargins(0, 0, 0, 0);
+    if (!integratedMode) {
+        this->resize(WIN_INIT_WIDTH, WIN_INIT_HEIGHT);
+    }
 }
+
+/** Slots **/
 
 void ViewerWindow::openFolderSlot()
 {
@@ -55,6 +74,18 @@ void ViewerWindow::goBackSlot()
     }
 }
 
+void ViewerWindow::setVerticalScrollPosition(int value)
+{
+    this->_scrollArea->verticalScrollBar()->setValue(value);
+}
+
+/** Public methods **/
+
+QScrollBar *ViewerWindow::getVerticalScroll() const
+{
+    return this->_scrollArea->verticalScrollBar();
+}
+
 void ViewerWindow::loadDirectory(QString const &dirPath)
 {
     QDir dir(dirPath);
@@ -64,8 +95,10 @@ void ViewerWindow::loadDirectory(QString const &dirPath)
     // Remove previous images
     this->clearImageList();
     // Set viewer Title
-    QString title = dirPath;
-    this->_title->setText(title);
+    if (_title) {
+        QString title = dirPath;
+        this->_title->setText(title);
+    }
     // Filter image files
     for (size_t i = 0; i < ViewerWindow::SUPPORTED_EXTENSION.size(); i++) {
         filter << ViewerWindow::SUPPORTED_EXTENSION.at(i);
@@ -108,7 +141,7 @@ void ViewerWindow::resizeImages(const int width)
     for (size_t i = 0; i < this->_listImgLabel.size(); i++) {
         QLabel *label = this->_listImgLabel.at(i);
         QImage *img = this->_listImage.at(i);
-        QPixmap pixmap = QPixmap::fromImage(*img).scaledToWidth(width - GUI_WIDTH_SHIFT);
+        QPixmap pixmap = QPixmap::fromImage(*img).scaledToWidth(width - this->_scrollArea->verticalScrollBar()->width());
 
         label->setPixmap(pixmap);
     }
