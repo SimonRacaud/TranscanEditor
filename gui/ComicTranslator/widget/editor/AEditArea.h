@@ -29,7 +29,8 @@ public:
     void setLoadingState(bool enable);
     void setSourceDirectory(QString const &path);
     void showSourceView(bool enable);
-    void setPages(vector<OCRPage> const &pages);
+
+    virtual void setPages(vector<OCRPage> const &pages);
 
 private:
     void clearImageList();

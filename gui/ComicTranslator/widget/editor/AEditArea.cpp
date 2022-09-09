@@ -50,7 +50,7 @@ AEditArea::AEditArea(
     };
     this->setSourceDirectory("/media/work/personnal-projects/scanTranslator/data/dataset/debug");
     //this->showSourceView(true);
-    this->setPages(debug);
+    //this->setPages(debug); // ? Debug
 
 }
 
@@ -124,7 +124,8 @@ void AEditArea::resizeEvent(QResizeEvent *event)
 
 void AEditArea::clearImageList()
 {
-    _scene->clear();
+    // TODO: redraw edit area rect after clearing the scene
+    //_scene->clear();
 }
 
 /** SLOTS **/

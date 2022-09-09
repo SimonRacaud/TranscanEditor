@@ -38,6 +38,8 @@ set(PROJECT_SOURCES
         widget/editor/property/EditPropertyTab.h widget/editor/property/EditPropertyTab.cpp
         widget/editor/property/SavePropertyTab.h widget/editor/property/SavePropertyTab.cpp
         widget/editor/QPageViewer.h widget/editor/QPageViewer.cpp
+        widget/editor/pageEditor/ExtractionEditArea.h widget/editor/pageEditor/ExtractionEditArea.cpp
+        widget/editor/editArea/EditAreaRect.h widget/editor/editArea/EditAreaRect.cpp
         ${TS_FILES}
 )
 

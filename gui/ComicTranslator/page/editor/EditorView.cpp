@@ -3,6 +3,7 @@
 #include "widget/editor/property/CleanPropertyTab.h"
 #include "widget/editor/property/EditPropertyTab.h"
 #include "widget/editor/property/SavePropertyTab.h"
+#include "widget/editor/pageEditor/ExtractionEditArea.h"
 
 #include <QHBoxLayout>
 
@@ -15,8 +16,8 @@ EditorView::EditorView(QWidget *parent)
     this->_rootLayout->setSpacing(0);
     this->setupHeader();
     //
-    this->_editArea = new AEditArea; // DEBUG temp
-    this->_propertyTab = new SavePropertyTab; // DEBUG temp
+    this->_editArea = new ExtractionEditArea; // DEBUG temp
+    this->_propertyTab = new ExtractionPropertyTab; // DEBUG temp
     QHBoxLayout *bodyLayout = new QHBoxLayout;
 
     bodyLayout->addWidget(_editArea);
