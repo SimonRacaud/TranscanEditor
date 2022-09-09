@@ -7,7 +7,7 @@ def downloadImage(url, destination, file_name):
     res = requests.get(url, headers={'referer': "https://readmanganato.com/", 'accept': "image/avif,image/webp,*/*"})
     if res.status_code == 200:
         if not os.path.isdir(destination):
-            os.mkdir(destination)
+            os.makedirs(destination, exist_ok=True)
         with open(destination + file_name, 'wb') as f:
             f.write(res.content)
         print('Image sucessfully Downloaded: ', file_name)
@@ -36,11 +36,16 @@ def dumpChapter(url, destination):
 def dumpManga(url, destination):
     page = requests.get(url)
     soup = BeautifulSoup(page.content, "html.parser")
-    linkList = soup.find_all("a", class_="chapter-name")
+    linkList = soup.find_all("a", class_="chapter-name")[::-1]
     for link in linkList:
         chapterUrl = link["href"]
         chapterName = link.text
         chapterName = chapterName.replace(" ", "_")
         dumpChapter(chapterUrl, destination+chapterName+"/")
 
-dumpManga("https://readmanganato.com/manga-fh982716", "./data/")
+chapterUrl = input("Chapter URL: ")
+destination = input("Destination (./data/): ")
+
+if len(chapterUrl) > 1 and len(destination) > 1:
+    print("Downloading chapter " + chapterUrl + " into " + destination)
+    dumpManga(chapterUrl, destination)
