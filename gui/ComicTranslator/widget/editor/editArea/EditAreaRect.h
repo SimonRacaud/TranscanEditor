@@ -29,11 +29,10 @@ public:
 
     void setFont(QFont &font);
     void setTextColor(QColor color);
-    /**
-     * @brief setLineHeight
-     * @param size (percentage)
-     */
-    void setLineHeight(int size);
+
+    // Text line height
+    void setLineHeight(int percentage);
+    void setLineHeightAbs(int pixels);
 
 signals:
     void focusChanged(bool state, EditAreaRect &rect);
@@ -45,6 +44,8 @@ private:
      */
     void resize(QPointF diff);
 
+    void centerText();
+
 protected:
     virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
     virtual void focusOutEvent(QFocusEvent *event) override;
@@ -52,6 +53,8 @@ protected:
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+
+    virtual void keyPressEvent(QKeyEvent *event) override;
 
 private:
     RectMode _mode;

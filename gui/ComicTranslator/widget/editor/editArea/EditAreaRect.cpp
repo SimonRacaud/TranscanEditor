@@ -27,6 +27,7 @@ EditAreaRect::EditAreaRect(BlockCluster const &data, RectMode mode)
     this->_textEdit->setReadOnly(true);
     this->_textEdit->setFixedWidth(this->boundingRect().width());
     setWidget(_textEdit);
+    this->centerText();
 }
 
 QRectF EditAreaRect::boundingRect() const
@@ -77,18 +78,31 @@ void EditAreaRect::setTextColor(QColor color)
     _textEdit->setTextColor(color);
 }
 
-void EditAreaRect::setLineHeight(int size)
+void EditAreaRect::setLineHeight(int percentage)
 {
     QTextCursor textCursor = _textEdit->textCursor();
     QTextBlockFormat *newFormat = new QTextBlockFormat();
 
     textCursor.clearSelection();
     textCursor.select(QTextCursor::Document);
-    newFormat->setLineHeight(size,
+    newFormat->setLineHeight(percentage,
                             QTextBlockFormat::ProportionalHeight);
     newFormat->setAlignment(Qt::AlignCenter);
     textCursor.setBlockFormat(*newFormat);
-    _data.line_height = size;
+    _data.line_height = percentage;
+}
+
+void EditAreaRect::setLineHeightAbs(int pixels)
+{
+    QTextCursor textCursor = _textEdit->textCursor();
+    QTextBlockFormat *newFormat = new QTextBlockFormat();
+
+    textCursor.clearSelection();
+    textCursor.select(QTextCursor::Document);
+    newFormat->setLineHeight(pixels,
+                            QTextBlockFormat::MinimumHeight);
+    newFormat->setAlignment(Qt::AlignCenter);
+    textCursor.setBlockFormat(*newFormat);
 }
 
 /** Private **/
@@ -100,7 +114,17 @@ void EditAreaRect::resize(QPointF diff)
     if (preview.width() >= MIN_RECT_SIZE && preview.height() >= MIN_RECT_SIZE) {
         _data.box.adjust(0, 0, diff.x(), diff.y());
         this->_textEdit->setFixedWidth(this->boundingRect().width());
+        this->centerText();
     }
+}
+
+void EditAreaRect::centerText()
+{
+    int nbLine = _textEdit->document()->lineCount();
+    int height = _data.box.height();
+    int lineHeight = (float)height / (float)(nbLine + 1);
+
+    this->setLineHeightAbs(lineHeight);
 }
 
 /** Protected **/
@@ -185,4 +209,10 @@ void EditAreaRect::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     } else {
         QGraphicsProxyWidget::mouseReleaseEvent(event);
     }
+}
+
+void EditAreaRect::keyPressEvent(QKeyEvent *event)
+{
+    QGraphicsProxyWidget::keyPressEvent(event);
+    this->centerText();
 }
