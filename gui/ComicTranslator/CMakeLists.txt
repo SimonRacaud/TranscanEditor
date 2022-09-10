@@ -40,6 +40,7 @@ set(PROJECT_SOURCES
         widget/editor/QPageViewer.h widget/editor/QPageViewer.cpp
         widget/editor/pageEditor/ExtractionEditArea.h widget/editor/pageEditor/ExtractionEditArea.cpp
         widget/editor/editArea/EditAreaRect.h widget/editor/editArea/EditAreaRect.cpp
+        widget/editor/editArea/SelectAreaRect.h widget/editor/editArea/SelectAreaRect.cpp
         ${TS_FILES}
 )
 
