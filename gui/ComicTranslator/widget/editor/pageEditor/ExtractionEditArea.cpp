@@ -7,10 +7,11 @@ ExtractionEditArea::ExtractionEditArea() : AEditArea()
     BlockCluster testData = { // DEBUG
         .blocks = {},
         .polygon = {{0, 0}, {200, 0}, {200, 100}, {0, 100}},
+        .line_height = 100,
         .sentence = "Hello World",
         .translation = "LorenIpsum",
         .font = QFont(),
-        .color = Qt::blue
+        .color = Qt::blue,
     };
     this->_rect = new EditAreaRect(testData);
 
@@ -28,5 +29,4 @@ void ExtractionEditArea::setPages(vector<OCRPage> const &pages)
 
     this->_rect->setPos(100,100);
     this->_scene->addItem(_rect);
-    std::cerr << "TEST\n";
 }

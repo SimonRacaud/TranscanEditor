@@ -1,31 +1,26 @@
 #include "EditAreaRect.h"
+#include "qwidget.h"
 #include <QPainter>
 #include <algorithm>
+#include <QKeyEvent>
+#include <QGraphicsLayout>
 
 using namespace std;
 
-/**
- * @brief The EditAreaRect class
- *
- * - Text area, dotted line border, (plain background)
- *      - can be resized
- *      - can be removed
- *      - can be selected
- *      - style: set text color, font family, font size, line height
- *
- * - Selection area, dotted line border, (50% plain background or none)
- *      - can be enabled/disabled (hide the text or not)
- *
- */
-
-EditAreaRect::EditAreaRect(BlockCluster const &data) : _data(data)
+EditAreaRect::EditAreaRect(BlockCluster const &data) : _data(data), _text(_data.sentence)
 {
-    // this->setFlag(ItemIsMovable);
-    // https://doc.qt.io/qt-5/qgraphicsitem.html
-    // https://doc.qt.io/qt-5/qgraphicswidget.html
+    this->setFlag(ItemIsMovable, true);
+    this->setFlag(ItemIsFocusable, true);
 
-    // https://forum.qt.io/topic/85649/qgraphicsitem-border-style/4
-    // https://www.bogotobogo.com/Qt/Qt5_QGraphicsView_QGraphicsScene_QGraphicsItems.php
+    _textEdit = new QTextEdit(_text);
+    _textEdit->setAlignment(Qt::AlignCenter);
+    _textEdit->setFont(_data.font);
+    _textEdit->setTextColor(_data.color);
+    this->setLineHeight(_data.line_height);
+    _textEdit->setWordWrapMode(QTextOption::WordWrap);
+    this->_textEdit->setReadOnly(true);
+    this->_textEdit->setFixedWidth(this->boundingRect().width());
+    setWidget(_textEdit);
 }
 
 QRectF EditAreaRect::boundingRect() const
@@ -41,21 +36,97 @@ QRectF EditAreaRect::boundingRect() const
     return QRectF(minX, minY, maxX - minX, maxY - minY);
 }
 
-QPolygon &EditAreaRect::boundingPoly()
-{
-    for (int i = 0; i < 4; i++) {
-        _polygon << QPoint(_data.polygon[i][0], _data.polygon[i][1]);
-    }
-    return _polygon;
-}
-
 void EditAreaRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     QRectF rect = this->boundingRect();
-    QPolygon &poly = this->boundingPoly();
-    QPen pen(Qt::black, 2 /* Line width */, Qt::DashDotLine);
+    QColor borderColor = (_focus) ? Qt::red : Qt::black;
+    QPen pen(borderColor, 2 /* Line width */, Qt::DashDotLine);
 
+    // Rectangle
     painter->setPen(pen);
-    painter->drawPolygon(poly);
-    painter->drawText(rect, _data.sentence, QTextOption(Qt::AlignCenter));
+    painter->setBrush(Qt::white); // background color
+    painter->drawRect(rect);
+
+    QGraphicsProxyWidget::paint(painter,option,widget);
+}
+
+void EditAreaRect::setFont(QFont &font)
+{
+    _data.font = font;
+    _textEdit->setFont(_data.font);
+}
+
+void EditAreaRect::setTextColor(QColor color)
+{
+    _data.color = color;
+    _textEdit->setTextColor(color);
+}
+
+void EditAreaRect::setLineHeight(int size)
+{
+    QTextCursor textCursor = _textEdit->textCursor();
+    QTextBlockFormat *newFormat = new QTextBlockFormat();
+
+    textCursor.clearSelection();
+    textCursor.select(QTextCursor::Document);
+    newFormat->setLineHeight(size,
+                            QTextBlockFormat::ProportionalHeight);
+    newFormat->setAlignment(Qt::AlignCenter);
+    textCursor.setBlockFormat(*newFormat);
+    _data.line_height = size;
+}
+
+/** Protected **/
+
+/**
+ * @brief Start editing
+ * @param event
+ */
+void EditAreaRect::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsObject::mouseDoubleClickEvent(event);
+    this->setFlag(ItemIsMovable, false);
+    this->_focus = true;
+    this->_textEdit->setReadOnly(false);
+    emit focusChanged(_focus, *this);
+}
+
+/**
+ * @brief Stop editing
+ * @param event
+ */
+void EditAreaRect::focusOutEvent(QFocusEvent *event)
+{
+    QGraphicsProxyWidget::focusOutEvent(event);
+    this->setFlag(ItemIsMovable, true);
+    this->_textEdit->setReadOnly(true);
+    this->_focus = false;
+    emit focusChanged(_focus, *this);
+}
+
+void EditAreaRect::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (!_focus) {
+        QGraphicsItem::mouseMoveEvent(event);
+    } else {
+        QGraphicsProxyWidget::mouseMoveEvent(event);
+    }
+}
+
+void EditAreaRect::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+   if (!_focus) {
+        QGraphicsItem::mousePressEvent(event);
+   } else {
+       QGraphicsProxyWidget::mousePressEvent(event);
+   }
+}
+
+void EditAreaRect::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (!_focus) {
+        QGraphicsItem::mouseReleaseEvent(event);
+    } else {
+        QGraphicsProxyWidget::mouseReleaseEvent(event);
+    }
 }

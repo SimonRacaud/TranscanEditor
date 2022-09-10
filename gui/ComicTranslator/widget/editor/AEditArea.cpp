@@ -15,6 +15,7 @@ AEditArea::AEditArea(
     this->_view = new QPageViewer();
     this->_scene = new QGraphicsScene();
     this->_view->setScene(_scene);
+    this->_view->setRenderHint(QPainter::Antialiasing); // To test
     connect(_view, &QPageViewer::resizedSignal, this, &AEditArea::refreshImageListSlot);
 
     this->_viewer = new ViewerWindow(nullptr, true);
@@ -121,6 +122,14 @@ void AEditArea::resizeEvent(QResizeEvent *event)
         this->_timePreviousResize = now;
     }
 }
+
+void AEditArea::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Delete) {
+        // TODO : remove currently selected EditAreaRect
+    }
+}
+
 
 void AEditArea::clearImageList()
 {

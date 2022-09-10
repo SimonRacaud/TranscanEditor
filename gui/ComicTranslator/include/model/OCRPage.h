@@ -21,6 +21,7 @@ struct OCRBlock {
 struct BlockCluster {
     std::vector<OCRBlock *> blocks;
     int polygon[4][2];
+    float line_height;
     QString sentence;
     QString translation;
     QFont font;
