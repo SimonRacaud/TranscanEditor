@@ -7,13 +7,14 @@ ExtractionEditArea::ExtractionEditArea() : AEditArea()
     BlockCluster testData = { // DEBUG
         .blocks = {},
         .polygon = {{0, 0}, {200, 0}, {200, 100}, {0, 100}},
+        .box = QRect(0, 0, 200, 100),
         .line_height = 100,
         .sentence = "Hello World",
         .translation = "LorenIpsum",
         .font = QFont(),
         .color = Qt::blue,
     };
-    this->_rect = new EditAreaRect(testData);
+    this->_rect = new EditAreaRect(testData, RectMode::EDIT_SENT);
 
     vector<OCRPage> debug = { // TODO: debug
         { .imagePath = "/media/work/personnal-projects/scanTranslator/data/dataset/debug/10-o.jpg" },

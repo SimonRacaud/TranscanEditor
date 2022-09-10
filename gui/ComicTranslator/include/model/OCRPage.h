@@ -5,6 +5,7 @@
 #include <vector>
 #include <QFont>
 #include <QColor>
+#include <QRect>
 
 #include "Utils.h"
 
@@ -21,6 +22,7 @@ struct OCRBlock {
 struct BlockCluster {
     std::vector<OCRBlock *> blocks;
     int polygon[4][2];
+    QRect box;
     float line_height;
     QString sentence;
     QString translation;

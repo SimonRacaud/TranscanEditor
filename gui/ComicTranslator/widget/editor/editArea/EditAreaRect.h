@@ -6,11 +6,19 @@
 #include <iostream>
 #include "include/model/OCRPage.h"
 
+#define MIN_RECT_SIZE 40
+#define RESIZE_CURSOR_SIZE 15
+
+enum class RectMode {
+    EDIT_SENT, // edit sentence
+    EDIT_TRAN, // edit translation
+};
+
 class EditAreaRect : public QGraphicsProxyWidget
 {
     Q_OBJECT
 public:
-    EditAreaRect(BlockCluster const &data);
+    EditAreaRect(BlockCluster const &data, RectMode mode);
 
     QRectF boundingRect() const override;
 
@@ -30,8 +38,12 @@ public:
 signals:
     void focusChanged(bool state, EditAreaRect &rect);
 
-private slots:
-
+private:
+    /**
+     * @brief resize
+     * @param diff (size incremented by diff)
+     */
+    void resize(QPointF diff);
 
 protected:
     virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
@@ -42,12 +54,15 @@ protected:
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
 private:
+    RectMode _mode;
     BlockCluster _data;
     QString &_text;
 
     QGraphicsProxyWidget *_proxy{nullptr};
     QTextEdit *_textEdit{nullptr};
+    bool _focusEdit{false};
     bool _focus{false};
+    bool _isResizing{false};
 };
 
 #endif // RECTAREAITEM_H

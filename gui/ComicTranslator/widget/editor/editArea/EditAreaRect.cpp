@@ -4,20 +4,26 @@
 #include <algorithm>
 #include <QKeyEvent>
 #include <QGraphicsLayout>
+#include <QGraphicsSceneMouseEvent>
 
 using namespace std;
 
-EditAreaRect::EditAreaRect(BlockCluster const &data) : _data(data), _text(_data.sentence)
+EditAreaRect::EditAreaRect(BlockCluster const &data, RectMode mode)
+    : _mode(mode), _data(data), _text(_data.sentence)
 {
     this->setFlag(ItemIsMovable, true);
     this->setFlag(ItemIsFocusable, true);
 
+    if (mode == RectMode::EDIT_TRAN) {
+        this->_text = _data.translation;
+    }
     _textEdit = new QTextEdit(_text);
     _textEdit->setAlignment(Qt::AlignCenter);
     _textEdit->setFont(_data.font);
     _textEdit->setTextColor(_data.color);
     this->setLineHeight(_data.line_height);
     _textEdit->setWordWrapMode(QTextOption::WordWrap);
+    _textEdit->setStyleSheet("background-color: transparent; border: none");
     this->_textEdit->setReadOnly(true);
     this->_textEdit->setFixedWidth(this->boundingRect().width());
     setWidget(_textEdit);
@@ -25,27 +31,36 @@ EditAreaRect::EditAreaRect(BlockCluster const &data) : _data(data), _text(_data.
 
 QRectF EditAreaRect::boundingRect() const
 {
-    int minX = INT_MAX, maxX = 0, minY = INT_MAX, maxY = 0;
-
-    for (int i = 0; i < 4; i++) {
-        minX = min(minX, _data.polygon[i][0]);
-        maxX = max(maxX, _data.polygon[i][0]);
-        minY = min(minY, _data.polygon[i][1]);
-        maxY = max(maxY, _data.polygon[i][1]);
-    }
-    return QRectF(minX, minY, maxX - minX, maxY - minY);
+    return QRectF(_data.box.x(), _data.box.y(),
+                  _data.box.width(), _data.box.height());
 }
 
 void EditAreaRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     QRectF rect = this->boundingRect();
-    QColor borderColor = (_focus) ? Qt::red : Qt::black;
+    QColor borderColor = (_focusEdit) ? Qt::red
+                                      : (hasFocus()
+                                            ? QColor(200, 0, 0)
+                                            : Qt::black);
     QPen pen(borderColor, 2 /* Line width */, Qt::DashDotLine);
 
     // Rectangle
     painter->setPen(pen);
-    painter->setBrush(Qt::white); // background color
+    if (_mode == RectMode::EDIT_SENT) {
+        painter->setBrush(QColor(255, 255, 255, 180)); // background color
+    } else {
+        painter->setBrush(Qt::transparent); // background color
+    }
     painter->drawRect(rect);
+
+    // Resize Triangle
+    QPainterPath path;
+    path.moveTo (rect.width() - RESIZE_CURSOR_SIZE, rect.height());
+    path.lineTo (rect.width(), rect.height() - RESIZE_CURSOR_SIZE);
+    path.lineTo (rect.width(),   rect.height());
+    path.lineTo (rect.width() - RESIZE_CURSOR_SIZE, rect.height());
+    painter->setBrush(Qt::black); // background color
+    painter->drawPath(path);
 
     QGraphicsProxyWidget::paint(painter,option,widget);
 }
@@ -76,6 +91,18 @@ void EditAreaRect::setLineHeight(int size)
     _data.line_height = size;
 }
 
+/** Private **/
+
+void EditAreaRect::resize(QPointF diff)
+{
+    QRect preview = _data.box.adjusted(0, 0, diff.x(), diff.y());
+
+    if (preview.width() >= MIN_RECT_SIZE && preview.height() >= MIN_RECT_SIZE) {
+        _data.box.adjust(0, 0, diff.x(), diff.y());
+        this->_textEdit->setFixedWidth(this->boundingRect().width());
+    }
+}
+
 /** Protected **/
 
 /**
@@ -86,9 +113,9 @@ void EditAreaRect::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsObject::mouseDoubleClickEvent(event);
     this->setFlag(ItemIsMovable, false);
-    this->_focus = true;
+    this->_focusEdit = true;
     this->_textEdit->setReadOnly(false);
-    emit focusChanged(_focus, *this);
+    emit focusChanged(_focusEdit, *this);
 }
 
 /**
@@ -98,24 +125,49 @@ void EditAreaRect::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 void EditAreaRect::focusOutEvent(QFocusEvent *event)
 {
     QGraphicsProxyWidget::focusOutEvent(event);
+
     this->setFlag(ItemIsMovable, true);
     this->_textEdit->setReadOnly(true);
-    this->_focus = false;
-    emit focusChanged(_focus, *this);
+    this->_focusEdit = false;
+    emit focusChanged(_focusEdit, *this);
+    update(); // refresh element
 }
 
 void EditAreaRect::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (!_focus) {
+    if (_isResizing) {
+        const QPointF pos = event->scenePos();
+        const QPointF prevPos = event->lastScenePos();
+        const QPointF shift = pos - prevPos;
+        this->resize(shift);
+    } else if (!_focusEdit) {
         QGraphicsItem::mouseMoveEvent(event);
     } else {
         QGraphicsProxyWidget::mouseMoveEvent(event);
     }
+    // Mouse hover Resize (change cursor)
+//    const QPointF pos = event->pos();
+//    std::cerr << _data.box.width() - pos.x() << " " << _data.box.height() - pos.y() << "\n";
+//    if (!_isResizing
+//            && (_data.box.width() - pos.x()) < RESIZE_CURSOR_SIZE
+//            && (_data.box.height() - pos.y()) < RESIZE_CURSOR_SIZE) {
+//        this->setCursor(Qt::OpenHandCursor);
+//        std::cerr << "set Cursor \n";
+//    } else {
+//        this->setCursor(Qt::ArrowCursor);
+//    }
 }
 
 void EditAreaRect::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-   if (!_focus) {
+    const QPointF pos = event->pos();
+
+    if ((_data.box.width() - pos.x()) < RESIZE_CURSOR_SIZE
+            && (_data.box.height() - pos.y()) < RESIZE_CURSOR_SIZE) {
+        // Resize
+        this->_isResizing = true;
+        this->setCursor(Qt::ClosedHandCursor);
+    } else if (!_focusEdit) {
         QGraphicsItem::mousePressEvent(event);
    } else {
        QGraphicsProxyWidget::mousePressEvent(event);
@@ -124,7 +176,11 @@ void EditAreaRect::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void EditAreaRect::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (!_focus) {
+    if (_isResizing) {
+        _isResizing = false;
+        this->setCursor(Qt::ArrowCursor);
+    }
+    if (!_focusEdit) {
         QGraphicsItem::mouseReleaseEvent(event);
     } else {
         QGraphicsProxyWidget::mouseReleaseEvent(event);
