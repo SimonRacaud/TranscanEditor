@@ -1,0 +1,86 @@
+@startuml gui
+
+/' WINDOWS '/
+
+class MainWindow {
+    HomePage *_homepage
+    EditorController *_editor
+    ViewerWindow *_viewer
+}
+MainWindow "1" -- "1" HomePage
+MainWindow "1" -- "1" EditorController
+MainWindow "1" -- "1" ViewerWindow
+
+class ViewerWindow {
+}
+note bottom: "Basic image viewer"
+
+/' PAGES '/
+
+class HomePage {}
+note bottom: "Configure project"
+
+class EditorController {
+}
+ EditorView <|-- EditorController
+note bottom: "Project edition"\n Load images, \nCall Core to run the OCR,\n give result to the EditArea
+
+class EditorView {
+    AEditArea *_editArea
+    APropertyTab *_propertyTab
+}
+EditorView "1" -- "1" AEditArea
+EditorView "1" -- "1" APropertyTab
+
+/' WIDGETS '/
+
+' EDITOR
+
+class AEditArea {
+    ViewerWindow *_viewer
+}
+
+class ExtractionEditArea {
+    EditAreaRect _rects
+}
+AEditArea <|-- ExtractionEditArea
+ExtractionEditArea "1" -- "*" EditAreaRect
+
+class CleanEditArea {
+    SelectAreaRect _rects
+}
+AEditArea <|-- CleanEditArea
+SelectEditArea "*" -- "1" CleanEditArea
+
+class EditionEditArea {
+    EditAreaRect _rects
+}
+AEditArea <|-- EditionEditArea
+EditionEditArea "1" -- "*" EditAreaRect
+
+class SaveEditArea {
+}
+AEditArea <|-- SaveEditArea
+
+' PROPERTY
+
+class APropertyTab {
+}
+
+class ExtractionPropertyTab {
+}
+APropertyTab <|-- ExtractionPropertyTab
+
+class CleanPropertyTab {
+}
+APropertyTab <|-- CleanPropertyTab
+
+class EditPropertyTab {
+}
+APropertyTab <|-- EditPropertyTab
+
+class SavePropertyTab {
+}
+APropertyTab <|-- SavePropertyTab
+
+@enduml
