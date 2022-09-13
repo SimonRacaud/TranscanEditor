@@ -6,13 +6,14 @@
 #include <QFont>
 #include <QColor>
 #include <QRect>
+#include <QPoint>
 
 #include "Utils.h"
 
 struct OCRBlock {
     bool cleanBlock;
     Rectangle box;
-    int polygon[4][2];
+    QPoint polygon[4];
     QString text;
     Vector2i pivot;
     Vector2i size;
@@ -21,13 +22,18 @@ struct OCRBlock {
 
 struct BlockCluster {
     std::vector<OCRBlock *> blocks;
-    int polygon[4][2];
-    QRect box;
-    float line_height;
+    // Extraction (modified)
     QString sentence;
+    // Extraction & Edition (modified)
+    // Clean (used)
+    QRect box;
+    // Clean (used)
+    QPoint polygon[4];
+    // Edition
     QString translation;
     QFont font;
     QColor color;
+    float line_height;
 };
 
 struct OCRPage {

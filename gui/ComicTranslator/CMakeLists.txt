@@ -41,6 +41,7 @@ set(PROJECT_SOURCES
         widget/editor/pageEditor/ExtractionEditArea.h widget/editor/pageEditor/ExtractionEditArea.cpp
         widget/editor/editArea/EditAreaRect.h widget/editor/editArea/EditAreaRect.cpp
         widget/editor/editArea/SelectAreaRect.h widget/editor/editArea/SelectAreaRect.cpp
+        include/IEditorArea.h
         ${TS_FILES}
 )
 

@@ -36,23 +36,12 @@ AEditArea::AEditArea(
     // Loading page
     this->_loadingWidget = new QLabel(this);
     this->_loadingImg = new QMovie();
-    _loadingImg->setFileName("/media/work/personnal-projects/scanTranslator/asset/img/loading.gif"); // TODO : init properly
+    // TODO : init properly
+    _loadingImg->setFileName("/media/work/personnal-projects/scanTranslator/asset/img/loading.gif");
     this->_loadingWidget->setMovie(_loadingImg);
     size_t size = 80;
     _loadingImg->setScaledSize(QSize(size, size));
     _loadingWidget->resize(size, size);
-
-    // DEBUG (TODO):
-    //this->setLoadingState(true);
-    vector<OCRPage> debug = { // TODO: debug
-        { .imagePath = "/media/work/personnal-projects/scanTranslator/data/dataset/debug/10-o.jpg" },
-        { .imagePath = "/media/work/personnal-projects/scanTranslator/data/dataset/debug/14-o.jpg" },
-        { .imagePath = "/media/work/personnal-projects/scanTranslator/data/dataset/debug/9-o.jpg" },
-    };
-    this->setSourceDirectory("/media/work/personnal-projects/scanTranslator/data/dataset/debug");
-    //this->showSourceView(true);
-    //this->setPages(debug); // ? Debug
-
 }
 
 AEditArea::~AEditArea()
@@ -122,14 +111,6 @@ void AEditArea::resizeEvent(QResizeEvent *event)
         this->_timePreviousResize = now;
     }
 }
-
-void AEditArea::keyPressEvent(QKeyEvent *event)
-{
-    if (event->key() == Qt::Key_Delete) {
-        // TODO : remove currently selected EditAreaRect
-    }
-}
-
 
 void AEditArea::clearImageList()
 {

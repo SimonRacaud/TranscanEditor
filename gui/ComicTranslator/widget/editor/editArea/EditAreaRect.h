@@ -4,6 +4,7 @@
 #include <QGraphicsProxyWidget>
 #include <QTextEdit>
 #include <iostream>
+
 #include "include/model/OCRPage.h"
 
 #define MIN_RECT_SIZE 40
@@ -34,6 +35,8 @@ public:
     void setLineHeight(int percentage);
     void setLineHeightAbs(int pixels);
 
+    BlockCluster const &getData();
+
 signals:
     void focusChanged(bool state, EditAreaRect &rect);
 
@@ -49,6 +52,7 @@ private:
 protected:
     virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
     virtual void focusOutEvent(QFocusEvent *event) override;
+    virtual void focusInEvent(QFocusEvent *event) override;
 
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

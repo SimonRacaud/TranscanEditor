@@ -5,7 +5,7 @@
 SelectAreaRect::SelectAreaRect(BlockCluster const &cluster)
     : _data(cluster)
 {
-
+    this->setZValue(8);
 }
 
 /** Public **/

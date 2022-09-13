@@ -47,4 +47,9 @@ const TranslationServiceItem TRANS_SERVICE_LIST[] = {
 #define EDITOR_PROP_DEF_LINE_HEIGHT 5
 #define EDITOR_TIME_REFRESH_RESIZE 5 // ms
 
+// Config
+
+#define DEF_LINE_HEIGHT 100 // Editor -> Text
+#define DEF_EDITAREA_SIZE 100, 50 // Editor
+
 #endif // ENVIRONMENT_H
