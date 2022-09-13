@@ -24,6 +24,19 @@ class EditorView : public QWidget
 public:
     explicit EditorView(QWidget *parent = nullptr);
 
+    enum class EditorTab {
+        EXTRACT = 0,
+        CLEAN = 1,
+        EDIT = 2,
+        SAVE = 3
+    };
+
+protected:
+    /**
+     * @brief Disable current tab button
+     */
+    void setSelectionTabHeader();
+
 private:
     void setupHeader();
 

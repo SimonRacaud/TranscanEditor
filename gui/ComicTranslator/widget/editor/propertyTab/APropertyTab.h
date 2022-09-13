@@ -8,6 +8,7 @@
 #include <QScrollArea>
 
 #include "include/environment.h"
+#include "../editTab/AEditArea.h"
 
 class APropertyTab : public QWidget
 {
@@ -20,14 +21,15 @@ protected:
     virtual void initProperties() = 0;
 
 signals:
+    void nextStep();
 
 private:
     QLabel *_title;
     QLabel *_helpTitle;
-    QPushButton *_nextButton;
     QScrollArea *_propScollArea;
 
 protected:
+    QPushButton *_nextButton;
     QLabel *_help;
     QVBoxLayout *_propertiesLayout;
 };

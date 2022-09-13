@@ -25,8 +25,19 @@ void EditorController::setupEvents()
 
 void EditorController::setTab(EditorTab tab)
 {
+    auto *prop = dynamic_cast<APropertyTab *>(_stackProp->currentWidget());
+    disconnect(prop, &APropertyTab::nextStep, nullptr, nullptr);
+
     this->_stackEdit->setCurrentIndex((int)tab);
     this->_stackProp->setCurrentIndex((int)tab);
+
+    prop = dynamic_cast<APropertyTab *>(_stackProp->currentWidget());
+    connect(prop, &APropertyTab::nextStep, [this, tab]() {
+        EditorTab next = ((int)tab + 1) > (int)EditorTab::SAVE
+            ? EditorTab::EXTRACT : (EditorTab)((int)tab + 1);
+        this->setTab(next);
+    });
+    this->setSelectionTabHeader();
 }
 
 /** SLOTS **/

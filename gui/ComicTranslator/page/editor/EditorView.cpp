@@ -94,3 +94,12 @@ void EditorView::setupHeader()
     rootHeaderLay->setContentsMargins(EDITOR_HEAD_MARGIN, EDITOR_HEAD_MARGIN, EDITOR_HEAD_MARGIN, EDITOR_HEAD_MARGIN);
 }
 
+void EditorView::setSelectionTabHeader()
+{
+    EditorTab currentTab = (EditorTab)this->_stackEdit->currentIndex();
+
+    _extractButton->setEnabled(!(currentTab == EditorTab::EXTRACT));
+    _cleanButton->setEnabled(!(currentTab == EditorTab::CLEAN));
+    _editButton->setEnabled(!(currentTab == EditorTab::EDIT));
+    _saveButton->setEnabled(!(currentTab == EditorTab::SAVE));
+}

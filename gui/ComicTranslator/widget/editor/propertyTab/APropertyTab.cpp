@@ -47,4 +47,6 @@ APropertyTab::APropertyTab(QWidget *parent)
     this->setAutoFillBackground(true);
     this->setPalette(pal);
     this->setFixedWidth(EDITOR_PROPTAB_WIDTH);
+    // EVENT
+    connect(_nextButton, &QPushButton::clicked, [this]() { emit this->nextStep(); });
 }

@@ -1,10 +1,12 @@
 #include "SavePropertyTab.h"
 #include <QVBoxLayout>
 
-SavePropertyTab::SavePropertyTab(QWidget *parent) : APropertyTab(parent)
+SavePropertyTab::SavePropertyTab(QWidget *parent)
+    : APropertyTab(parent)
 {
     this->fillHelp();
     this->initProperties();
+    this->_nextButton->setText("Home Page");
 }
 
 void SavePropertyTab::fillHelp()
