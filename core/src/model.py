@@ -79,7 +79,7 @@ class Vector2I:
 @dataclass
 class OCRBlock:
     """ Result of an OCR treatment """
-    box: any # Rectangle bouncing box
+    #box: any # Rectangle bouncing box
     polygon: any # Polygon bouncing box
     text: string
     pivot: Vector2I # box top left coord

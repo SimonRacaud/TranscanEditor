@@ -46,7 +46,6 @@ if __name__ == '__main__':
         try:
             print("## OCR : process", file_path)
             page = ocrManager.process_img(file_path)
-
             page = create_block_cluster(page, config)
 
             print("## Clean image")
