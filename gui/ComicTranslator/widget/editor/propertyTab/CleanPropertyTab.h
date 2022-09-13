@@ -1,7 +1,7 @@
 #ifndef CLEANPROPERTYTAB_H
 #define CLEANPROPERTYTAB_H
 
-#include "widget/editor/APropertyTab.h"
+#include "widget/editor/propertyTab/APropertyTab.h"
 #include <QPushButton>
 #include <QLabel>
 #include <QPixmap>

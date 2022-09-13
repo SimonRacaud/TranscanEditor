@@ -5,8 +5,8 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-#include "widget/editor/AEditArea.h"
-#include "widget/editor/APropertyTab.h"
+#include "widget/editor/editTab/AEditArea.h"
+#include "widget/editor/propertyTab/APropertyTab.h"
 #include "include/environment.h"
 
 class EditorView : public QWidget

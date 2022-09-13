@@ -1,7 +1,7 @@
 #ifndef EXTRACTIONPROPERTYTAB_H
 #define EXTRACTIONPROPERTYTAB_H
 
-#include "widget/editor/APropertyTab.h"
+#include "widget/editor/propertyTab/APropertyTab.h"
 
 class ExtractionPropertyTab : public APropertyTab
 {

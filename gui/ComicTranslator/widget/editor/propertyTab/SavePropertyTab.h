@@ -1,7 +1,7 @@
 #ifndef SAVEPROPERTYTAB_H
 #define SAVEPROPERTYTAB_H
 
-#include "widget/editor/APropertyTab.h"
+#include "widget/editor/propertyTab/APropertyTab.h"
 #include "include/environment.h"
 
 #include <QLabel>

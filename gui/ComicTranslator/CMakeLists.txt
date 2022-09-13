@@ -31,14 +31,14 @@ set(PROJECT_SOURCES
         page/editor/EditorController.h page/editor/EditorController.cpp
         page/home/HomePage.cpp
         page/home/HomePage.h
-        widget/editor/AEditArea.h widget/editor/AEditArea.cpp
-        widget/editor/APropertyTab.h widget/editor/APropertyTab.cpp
-        widget/editor/property/ExtractionPropertyTab.h widget/editor/property/ExtractionPropertyTab.cpp
-        widget/editor/property/CleanPropertyTab.h widget/editor/property/CleanPropertyTab.cpp
-        widget/editor/property/EditPropertyTab.h widget/editor/property/EditPropertyTab.cpp
-        widget/editor/property/SavePropertyTab.h widget/editor/property/SavePropertyTab.cpp
-        widget/editor/QPageViewer.h widget/editor/QPageViewer.cpp
-        widget/editor/pageEditor/ExtractionEditArea.h widget/editor/pageEditor/ExtractionEditArea.cpp
+        widget/editor/editTab/AEditArea.h widget/editor/editTab/AEditArea.cpp
+        widget/editor/propertyTab/APropertyTab.h widget/editor/propertyTab/APropertyTab.cpp
+        widget/editor/propertyTab/ExtractionPropertyTab.h widget/editor/propertyTab/ExtractionPropertyTab.cpp
+        widget/editor/propertyTab/CleanPropertyTab.h widget/editor/propertyTab/CleanPropertyTab.cpp
+        widget/editor/propertyTab/EditPropertyTab.h widget/editor/propertyTab/EditPropertyTab.cpp
+        widget/editor/propertyTab/SavePropertyTab.h widget/editor/propertyTab/SavePropertyTab.cpp
+        widget/editor/editTab/QPageViewer.h widget/editor/editTab/QPageViewer.cpp
+        widget/editor/editTab/ExtractionEditArea.h widget/editor/editTab/ExtractionEditArea.cpp
         widget/editor/editArea/EditAreaRect.h widget/editor/editArea/EditAreaRect.cpp
         widget/editor/editArea/SelectAreaRect.h widget/editor/editArea/SelectAreaRect.cpp
         include/IEditorArea.h

@@ -1,9 +1,9 @@
 #include "EditorView.h"
-#include "widget/editor/property/ExtractionPropertyTab.h"
-#include "widget/editor/property/CleanPropertyTab.h"
-#include "widget/editor/property/EditPropertyTab.h"
-#include "widget/editor/property/SavePropertyTab.h"
-#include "widget/editor/pageEditor/ExtractionEditArea.h"
+#include "widget/editor/propertyTab/ExtractionPropertyTab.h"
+#include "widget/editor/propertyTab/CleanPropertyTab.h"
+#include "widget/editor/propertyTab/EditPropertyTab.h"
+#include "widget/editor/propertyTab/SavePropertyTab.h"
+#include "widget/editor/editTab/ExtractionEditArea.h"
 
 #include <QHBoxLayout>
 

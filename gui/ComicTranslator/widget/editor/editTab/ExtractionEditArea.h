@@ -1,7 +1,7 @@
 #ifndef EXTRACTIONEDITAREA_H
 #define EXTRACTIONEDITAREA_H
 
-#include "../AEditArea.h"
+#include "AEditArea.h"
 #include "../editArea/EditAreaRect.h"
 #include "include/IEditorArea.h"
 #include "include/environment.h"

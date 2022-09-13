@@ -1,7 +1,7 @@
 #ifndef EDITPROPERTYTAB_H
 #define EDITPROPERTYTAB_H
 
-#include "widget/editor/APropertyTab.h"
+#include "widget/editor/propertyTab/APropertyTab.h"
 #include "include/environment.h"
 
 #include <QFontComboBox>
