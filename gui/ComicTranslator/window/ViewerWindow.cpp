@@ -33,11 +33,12 @@ ViewerWindow::ViewerWindow(QWidget *parent, bool integratedMode): QWidget{parent
     this->_scrollArea = new QScrollArea();
     this->_scrollArea->setWidgetResizable(true);
     this->_scrollArea->setWidget(imageListContainer);
-//    if (integratedMode) { // Disable vertical scroll bar
-//        this->_scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//        this->_scrollArea->verticalScrollBar()->resize(0, 0);
-//        this->_scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//    }
+    if (integratedMode) { // Disable vertical scroll bar
+        //this->_scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        //this->_scrollArea->verticalScrollBar()->resize(0, 0);
+        this->_scrollArea->verticalScrollBar()->setFixedWidth(15);
+        this->_scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    }
     this->_scrollArea->setStyleSheet("border: none");
     this->_imageList = new QVBoxLayout(imageListContainer);
     this->_imageList->setAlignment(Qt::AlignHCenter);

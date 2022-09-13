@@ -5,7 +5,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _stack(nullptr), 
 {
     this->_stack = new QStackedWidget;
     this->_homePage = new HomePage;
-    this->_editor = new EditorController;
+    this->_editor = new EditorController(this);
     this->_stack->addWidget(this->_homePage);
     this->_stack->addWidget(this->_editor);
     this->setCentralWidget(this->_stack);

@@ -30,7 +30,7 @@ const TranslationServiceItem TRANS_SERVICE_LIST[] = {
 
 #define EDITOR_BG 0xF2F2F2
 #define EDITOR_MIN_SIZE 800, 600
-#define EDITOR_DEF_SIZE 1280, 720
+#define EDITOR_DEF_SIZE 1200, 720
 
 #define EDITOR_EDITA_BG 0xBED8D4
 

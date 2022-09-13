@@ -46,7 +46,7 @@ EditorView::EditorView(QWidget *parent)
     // Style
     this->_rootLayout->setContentsMargins(0, 0, 0, 0);
     this->setMinimumSize(EDITOR_MIN_SIZE);
-    this->resize(EDITOR_DEF_SIZE);
+    parent->resize(EDITOR_DEF_SIZE);
 }
 
 void EditorView::setupHeader()
@@ -59,6 +59,7 @@ void EditorView::setupHeader()
     // Left layout
     leftHeaderLay->setAlignment(Qt::AlignmentFlag::AlignLeft);
     _showSourceButton->setText("Show source");
+    _showSourceButton->setCheckable(true);
     leftHeaderLay->addWidget(_showSourceButton);
     // Middle layout
     this->_separator1 = new QLabel(">");

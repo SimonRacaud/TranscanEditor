@@ -13,7 +13,7 @@ EditorController::EditorController(QWidget *parent) : EditorView(parent)
 
 void EditorController::setupEvents()
 {
-    QObject::connect(_showSourceButton, &QPushButton::clicked, this, &EditorController::showSourceButtonClickedSlot);
+    QObject::connect(_showSourceButton, &QPushButton::toggled, this, &EditorController::showSourceButtonClickedSlot);
     QObject::connect(_extractButton, &QPushButton::clicked, this, &EditorController::extractButtonClickedSlot);
     QObject::connect(_cleanButton, &QPushButton::clicked, this, &EditorController::cleanButtonClickedSlot);
     QObject::connect(_editButton, &QPushButton::clicked, this, &EditorController::editButtonClickedSlot);
@@ -33,7 +33,9 @@ void EditorController::setTab(EditorTab tab)
 
 void EditorController::showSourceButtonClickedSlot(bool checked)
 {
-    // TODO : show/hide source tab
+    // show/hide source document tab
+    AEditArea *widget = dynamic_cast<AEditArea *>(_stackEdit->currentWidget());
+    widget->showSourceView(checked);
 }
 void EditorController::extractButtonClickedSlot(bool checked)
 {
