@@ -36,6 +36,11 @@ bool SelectAreaRect::isSelected() const
     return _selected;
 }
 
+BlockCluster const &SelectAreaRect::getData() const
+{
+    return _data;
+}
+
 /** Protected **/
 
 void SelectAreaRect::mousePressEvent(QGraphicsSceneMouseEvent *event)

@@ -21,6 +21,8 @@ public:
 
     bool isSelected() const;
 
+    BlockCluster const &getData() const;
+
 protected:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 

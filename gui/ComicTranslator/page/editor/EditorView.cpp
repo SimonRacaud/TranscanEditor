@@ -22,9 +22,15 @@ EditorView::EditorView(QWidget *parent)
     this->_savePropTab = new SavePropertyTab;
 
     this->_extractEditTab = new ExtractionEditArea;
+    this->_cleanEditTab = new CleanEditArea;
+    this->_editEditTab = new EditorEditArea;
+    this->_saveEditTab = new SaveEditArea;
 
     this->_stackEdit = new QStackedWidget;
     this->_stackEdit->addWidget(_extractEditTab);
+    this->_stackEdit->addWidget(_cleanEditTab);
+    this->_stackEdit->addWidget(_editEditTab);
+    this->_stackEdit->addWidget(_saveEditTab);
     this->_stackProp = new QStackedWidget;
     this->_stackProp->setFixedWidth(EDITOR_PROPTAB_WIDTH);
     this->_stackProp->addWidget(_extractPropTab);

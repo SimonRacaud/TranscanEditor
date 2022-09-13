@@ -42,6 +42,9 @@ set(PROJECT_SOURCES
         widget/editor/editArea/EditAreaRect.h widget/editor/editArea/EditAreaRect.cpp
         widget/editor/editArea/SelectAreaRect.h widget/editor/editArea/SelectAreaRect.cpp
         widget/editor/editTab/ATextEditArea.h widget/editor/editTab/ATextEditArea.cpp
+        widget/editor/editTab/EditorEditArea.h widget/editor/editTab/EditorEditArea.cpp
+        widget/editor/editTab/CleanEditArea.h widget/editor/editTab/CleanEditArea.cpp
+        widget/editor/editTab/SaveEditArea.h widget/editor/editTab/SaveEditArea.cpp
         include/IEditorArea.h
         ${TS_FILES}
 )

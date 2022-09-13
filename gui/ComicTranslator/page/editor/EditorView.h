@@ -12,6 +12,9 @@
 #include "widget/editor/propertyTab/SavePropertyTab.h"
 
 #include "widget/editor/editTab/ExtractionEditArea.h"
+#include "widget/editor/editTab/CleanEditArea.h"
+#include "widget/editor/editTab/EditorEditArea.h"
+#include "widget/editor/editTab/SaveEditArea.h"
 
 #include "include/environment.h"
 
@@ -43,6 +46,9 @@ protected:
     SavePropertyTab *_savePropTab;
 
     ExtractionEditArea *_extractEditTab;
+    CleanEditArea *_cleanEditTab;
+    EditorEditArea *_editEditTab;
+    SaveEditArea *_saveEditTab;
 
     QStackedWidget *_stackEdit;
     QStackedWidget *_stackProp;
