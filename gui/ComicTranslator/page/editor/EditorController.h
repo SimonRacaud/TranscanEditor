@@ -10,6 +10,14 @@ class EditorController : public EditorView
 public:
     EditorController(QWidget *parent = nullptr);
 
+    enum class EditorTab {
+        EXTRACT = 0,
+        CLEAN = 1,
+        EDIT = 2,
+        SAVE = 3
+    };
+
+    void setTab(EditorTab tab);
 private:
     void setupEvents();
 

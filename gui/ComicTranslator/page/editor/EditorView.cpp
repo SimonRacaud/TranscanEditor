@@ -16,12 +16,26 @@ EditorView::EditorView(QWidget *parent)
     this->_rootLayout->setSpacing(0);
     this->setupHeader();
     //
-    this->_editArea = new ExtractionEditArea; // DEBUG temp
-    this->_propertyTab = new ExtractionPropertyTab; // DEBUG temp
+    this->_cleanPropTab = new CleanPropertyTab;
+    this->_editPropTab = new EditPropertyTab;
+    this->_extractPropTab = new ExtractionPropertyTab;
+    this->_savePropTab = new SavePropertyTab;
+
+    this->_extractEditTab = new ExtractionEditArea;
+
+    this->_stackEdit = new QStackedWidget;
+    this->_stackEdit->addWidget(_extractEditTab);
+    this->_stackProp = new QStackedWidget;
+    this->_stackProp->setFixedWidth(EDITOR_PROPTAB_WIDTH);
+    this->_stackProp->addWidget(_extractPropTab);
+    this->_stackProp->addWidget(_cleanPropTab);
+    this->_stackProp->addWidget(_editPropTab);
+    this->_stackProp->addWidget(_savePropTab);
+    //
     QHBoxLayout *bodyLayout = new QHBoxLayout;
 
-    bodyLayout->addWidget(_editArea);
-    bodyLayout->addWidget(_propertyTab);
+    bodyLayout->addWidget(_stackEdit);
+    bodyLayout->addWidget(_stackProp);
     this->_rootLayout->addLayout(bodyLayout);
     // Style
     this->_rootLayout->setContentsMargins(0, 0, 0, 0);

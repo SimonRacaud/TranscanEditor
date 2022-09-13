@@ -4,9 +4,15 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QStackedWidget>
 
-#include "widget/editor/editTab/AEditArea.h"
-#include "widget/editor/propertyTab/APropertyTab.h"
+#include "widget/editor/propertyTab/CleanPropertyTab.h"
+#include "widget/editor/propertyTab/EditPropertyTab.h"
+#include "widget/editor/propertyTab/ExtractionPropertyTab.h"
+#include "widget/editor/propertyTab/SavePropertyTab.h"
+
+#include "widget/editor/editTab/ExtractionEditArea.h"
+
 #include "include/environment.h"
 
 class EditorView : public QWidget
@@ -31,8 +37,15 @@ protected:
     QLabel *_separator2;
     QLabel *_separator3;
 
-    AEditArea *_editArea;
-    APropertyTab *_propertyTab;
+    CleanPropertyTab *_cleanPropTab;
+    EditPropertyTab *_editPropTab;
+    ExtractionPropertyTab *_extractPropTab;
+    SavePropertyTab *_savePropTab;
+
+    ExtractionEditArea *_extractEditTab;
+
+    QStackedWidget *_stackEdit;
+    QStackedWidget *_stackProp;
 };
 
 #endif // EDITORVIEW_H

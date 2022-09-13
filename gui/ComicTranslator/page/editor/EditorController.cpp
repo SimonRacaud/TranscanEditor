@@ -1,8 +1,12 @@
 #include "EditorController.h"
+#include "../../window/MainWindow.h"
+
+extern MainWindow *mainWindow;
 
 EditorController::EditorController(QWidget *parent) : EditorView(parent)
 {
     this->setupEvents();
+    this->setTab(EditorTab::EXTRACT);
 }
 
 /** INTERNAL FUNCTIONS **/
@@ -17,29 +21,38 @@ void EditorController::setupEvents()
     QObject::connect(_exitButton, &QPushButton::clicked, this, &EditorController::exitButtonClickedSlot);
 }
 
+/** Public **/
+
+void EditorController::setTab(EditorTab tab)
+{
+    this->_stackEdit->setCurrentIndex((int)tab);
+    this->_stackProp->setCurrentIndex((int)tab);
+}
+
 /** SLOTS **/
 
 void EditorController::showSourceButtonClickedSlot(bool checked)
 {
-    // TODO
+    // TODO : show/hide source tab
 }
 void EditorController::extractButtonClickedSlot(bool checked)
 {
-    // TODO
+    this->setTab(EditorTab::EXTRACT);
 }
 void EditorController::cleanButtonClickedSlot(bool checked)
 {
-    // TODO
+    this->setTab(EditorTab::CLEAN);
 }
 void EditorController::editButtonClickedSlot(bool checked)
 {
-    // TODO
+    this->setTab(EditorTab::EDIT);
 }
 void EditorController::saveButtonClickedSlot(bool checked)
 {
-    // TODO
+    this->setTab(EditorTab::SAVE);
 }
 void EditorController::exitButtonClickedSlot(bool checked)
 {
-    // TODO
+    // Go back to home page
+    mainWindow->setPage(Page::HOME);
 }
