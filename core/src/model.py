@@ -70,7 +70,7 @@ class Vector2I:
         return cls(array[0], array[1])
 
     def data(self):
-        return (self.x, self.y)
+        return (int(self.x), int(self.y))
     
     def round(self):
         self.x = round(self.x)

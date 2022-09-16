@@ -1,4 +1,3 @@
-from lib2to3.pytree import Base
 import os
 from deep_translator import (GoogleTranslator,
                              MicrosoftTranslator,
@@ -42,11 +41,11 @@ class TranslatorManager:
         return self.translator.get_supported_languages(as_dict=True)
 
     def translate_page(self, page: OCRPage):
-        try:
-            for block in page.clusters:
-                block.translation = self.translate_sentence(block.sentence) or block.sentence
-        except BaseException as err:
-            raise RuntimeError('TranslatorManager: an error occured.', err)
+        for block in page.clusters:
+            try:
+                block.translation = self.translate_sentence(block.sentence) or block.sentence            
+            except:
+                block.translation = block.sentence
         return page
 
     def translate_sentence(self, text: str):
