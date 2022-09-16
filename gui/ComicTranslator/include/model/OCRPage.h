@@ -27,6 +27,7 @@ struct BlockCluster {
     // Extraction & Edition (modified)
     // Clean (used)
     QRect box;
+    bool cleanBox;
     // Clean (used)
     QPoint polygon[4];
     // Edition

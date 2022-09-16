@@ -1,16 +1,16 @@
 #ifndef CLEANEDITAREA_H
 #define CLEANEDITAREA_H
 
-#include "AEditArea.h"
-#include "../editArea/SelectAreaRect.h"
+#include "widget/imageViewer/ImageViewer.h"
+#include "widget/editor/editArea/SelectAreaRect.h"
 
-class CleanEditArea : public AEditArea
+class CleanEditArea : public ImageViewer
 {
     Q_OBJECT
 public:
     CleanEditArea();
 
-    virtual void setPages(vector<OCRPage> const &pages);
+    virtual void setPages(std::vector<OCRPage> const &pages) override;
 
     /**
      * @brief getClusters : return the selected areas

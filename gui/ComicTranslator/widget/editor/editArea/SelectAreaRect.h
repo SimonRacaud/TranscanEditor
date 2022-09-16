@@ -28,7 +28,7 @@ protected:
 
 private:
     BlockCluster _data;
-    bool _selected{false};
+    bool &_selected;
 };
 
 #endif // SELECTAREARECT_H

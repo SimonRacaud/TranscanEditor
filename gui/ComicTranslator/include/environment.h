@@ -47,9 +47,18 @@ const TranslationServiceItem TRANS_SERVICE_LIST[] = {
 #define EDITOR_PROP_DEF_LINE_HEIGHT 5
 #define EDITOR_TIME_REFRESH_RESIZE 5 // ms
 
+#define LOADING_ICON_SIZE 80 // Page viewer
+
+// Asset
+
+#define IMG_LOADING ":/asset/img/loading.gif"
+
 // Config
 
 #define DEF_LINE_HEIGHT 100 // Editor -> Text
 #define DEF_EDITAREA_SIZE 100, 50 // Editor
+
+// Editor page zoom key shortcut
+#define ZOOM_SHIFT 0.05 // scale shift
 
 #endif // ENVIRONMENT_H

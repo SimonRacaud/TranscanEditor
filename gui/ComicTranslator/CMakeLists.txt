@@ -18,6 +18,7 @@ set(TS_FILES ComicTranslator_fr_FR.ts)
 
 set(PROJECT_SOURCES
         main.cpp
+        asset.qrc
         window/MainWindow.cpp
         window/MainWindow.h
         window/ViewerWindow.h
@@ -31,13 +32,11 @@ set(PROJECT_SOURCES
         page/editor/EditorController.h page/editor/EditorController.cpp
         page/home/HomePage.cpp
         page/home/HomePage.h
-        widget/editor/editTab/AEditArea.h widget/editor/editTab/AEditArea.cpp
         widget/editor/propertyTab/APropertyTab.h widget/editor/propertyTab/APropertyTab.cpp
         widget/editor/propertyTab/ExtractionPropertyTab.h widget/editor/propertyTab/ExtractionPropertyTab.cpp
         widget/editor/propertyTab/CleanPropertyTab.h widget/editor/propertyTab/CleanPropertyTab.cpp
         widget/editor/propertyTab/EditPropertyTab.h widget/editor/propertyTab/EditPropertyTab.cpp
         widget/editor/propertyTab/SavePropertyTab.h widget/editor/propertyTab/SavePropertyTab.cpp
-        widget/editor/editTab/QPageViewer.h widget/editor/editTab/QPageViewer.cpp
         widget/editor/editTab/ExtractionEditArea.h widget/editor/editTab/ExtractionEditArea.cpp
         widget/editor/editArea/EditAreaRect.h widget/editor/editArea/EditAreaRect.cpp
         widget/editor/editArea/SelectAreaRect.h widget/editor/editArea/SelectAreaRect.cpp
@@ -45,7 +44,9 @@ set(PROJECT_SOURCES
         widget/editor/editTab/EditorEditArea.h widget/editor/editTab/EditorEditArea.cpp
         widget/editor/editTab/CleanEditArea.h widget/editor/editTab/CleanEditArea.cpp
         widget/editor/editTab/SaveEditArea.h widget/editor/editTab/SaveEditArea.cpp
-        include/IEditorArea.h
+        include/ITextEditArea.h
+        widget/imageViewer/ImageViewer.h widget/imageViewer/ImageViewer.cpp
+        widget/imageViewer/PageGraphicsView.h widget/imageViewer/PageGraphicsView.cpp
         ${TS_FILES}
 )
 

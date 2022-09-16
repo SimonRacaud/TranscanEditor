@@ -1,18 +1,18 @@
 #ifndef ATEXTEDITAREA_H
 #define ATEXTEDITAREA_H
 
-#include "AEditArea.h"
-#include "../editArea/EditAreaRect.h"
-#include "include/IEditorArea.h"
+#include "include/ITextEditArea.h"
 #include "include/environment.h"
+#include "widget/editor/editArea/EditAreaRect.h"
+#include "widget/imageViewer/ImageViewer.h"
 
-class ATextEditArea : public AEditArea, public IEditorArea
+class ATextEditArea : public ImageViewer, public ITextEditArea
 {
     Q_OBJECT
 public:
     ATextEditArea(RectMode mode);
 
-    virtual void setPages(vector<OCRPage> const &pages);
+    virtual void setPages(std::vector<OCRPage> const &pages);
 
     void createAreaRectAtCoord(QPoint const &coord);
 
@@ -21,10 +21,12 @@ public:
     std::vector<BlockCluster> getClusters() const;
 
 protected:
-    void keyPressEvent(QKeyEvent *event);
+    virtual void keyPressEvent(QKeyEvent *event);
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
 
     void createAreaRect(BlockCluster const& data);
+
+    void setPagesEditAreas(std::vector<OCRPage> const &pages);
 
 protected slots:
     void changeFocus(bool focused, EditAreaRect &rect);

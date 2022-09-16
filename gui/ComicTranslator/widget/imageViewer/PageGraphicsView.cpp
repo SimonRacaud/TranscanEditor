@@ -1,16 +1,18 @@
-#include "QPageViewer.h"
+#include "PageGraphicsView.h"
+#include <QScrollBar>
 
-QPageViewer::QPageViewer()
+PageGraphicsView::PageGraphicsView()
 {
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    this->verticalScrollBar()->setFixedWidth(15);
     this->setStyleSheet("background: transparent");
     this->show();
 }
 
 /** Internal methods **/
 
-void QPageViewer::resizeEvent(QResizeEvent *event)
+void PageGraphicsView::resizeEvent(QResizeEvent *event)
 {
     emit this->resizedSignal();
 }

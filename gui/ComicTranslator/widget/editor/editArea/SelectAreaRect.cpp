@@ -3,7 +3,7 @@
 #include <QPainter>
 
 SelectAreaRect::SelectAreaRect(BlockCluster const &cluster)
-    : _data(cluster)
+    : _data(cluster), _selected(_data.cleanBox)
 {
     this->setZValue(8);
 }

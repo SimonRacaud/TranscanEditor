@@ -1,6 +1,10 @@
 #include "ATextEditArea.h"
 
-ATextEditArea::ATextEditArea(RectMode mode) : AEditArea(), _mode(mode)
+#include <QScrollBar>
+
+using namespace std;
+
+ATextEditArea::ATextEditArea(RectMode mode) : _mode(mode)
 {
 }
 
@@ -8,12 +12,8 @@ ATextEditArea::ATextEditArea(RectMode mode) : AEditArea(), _mode(mode)
 
 void ATextEditArea::setPages(vector<OCRPage> const &pages)
 {
-    AEditArea::setPages(pages); // Display page images
-    for (OCRPage const &page : pages) {
-        for (BlockCluster const &cluster : page.clusters) {
-            this->createAreaRect(cluster);
-        }
-    }
+    ImageViewer::setPages(pages); // Display page images
+    this->setPagesEditAreas(pages);
 }
 
 void ATextEditArea::createAreaRectAtCoord(QPoint const &coord)
@@ -63,7 +63,7 @@ vector<BlockCluster> ATextEditArea::getClusters() const
 
 void ATextEditArea::keyPressEvent(QKeyEvent *event)
 {
-    QWidget::keyPressEvent(event);
+    ImageViewer::keyPressEvent(event);
     if (event->key() == Qt::Key_Delete) {
         // remove currently selected EditAreaRect
         this->removeRect();
@@ -73,10 +73,12 @@ void ATextEditArea::keyPressEvent(QKeyEvent *event)
 void ATextEditArea::mouseDoubleClickEvent(QMouseEvent *event)
 {
     QWidget::mouseDoubleClickEvent(event);
-    const QPointF &position = event->position(); // Position on the screen
+    const QPointF position = event->position(); // Position on the screen
     int sliderPosY = this->_view->verticalScrollBar()->sliderPosition(); // scroll bar shift
+    int sliderPosX = this->_view->horizontalScrollBar()->sliderPosition(); // scroll bar shift
+    int width = position.x() + sliderPosX;
 
-    this->createAreaRectAtCoord(QPoint(position.x(), position.y() + sliderPosY));
+    this->createAreaRectAtCoord(QPoint(width, position.y() + sliderPosY));
 }
 
 void ATextEditArea::createAreaRect(BlockCluster const &data)
@@ -86,6 +88,15 @@ void ATextEditArea::createAreaRect(BlockCluster const &data)
     this->_scene->addItem(rect);
     this->_rects.append(rect);
     connect(rect, &EditAreaRect::focusChanged, this, &ATextEditArea::changeFocus);
+}
+
+void ATextEditArea::setPagesEditAreas(vector<OCRPage> const &pages)
+{
+    for (OCRPage const &page : pages) {
+        for (BlockCluster const &cluster : page.clusters) {
+            this->createAreaRect(cluster);
+        }
+    }
 }
 
 /** SLOTS **/

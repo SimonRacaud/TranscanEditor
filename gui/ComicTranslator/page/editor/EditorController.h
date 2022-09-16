@@ -11,8 +11,14 @@ public:
     EditorController(QWidget *parent = nullptr);
 
     void setTab(EditorTab tab);
+
+    void showSourcePageTab(bool enable);
+
 private:
     void setupEvents();
+
+protected:
+    virtual void keyPressEvent(QKeyEvent *event) override;
 
 private slots:
     void showSourceButtonClickedSlot(bool checked);

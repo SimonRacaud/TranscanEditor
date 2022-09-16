@@ -17,6 +17,8 @@
 #include <QScrollBar>
 #include <QEvent>
 
+#include "include/environment.h"
+
 #include <QDebug>
 
 // TEMP CONFIG
@@ -36,6 +38,9 @@ public:
     void loadDirectory(QString const &dirPath);
 
     QScrollBar *getVerticalScroll() const;
+    QScrollBar *getHorizontalScroll() const;
+
+    void scale(float scale);
 
 private slots:
     void openFolderSlot();
@@ -43,9 +48,11 @@ private slots:
 
 public slots:
     void setVerticalScrollPosition(int value);
+    void setHorizontalScrollPosition(int value);
 
 protected:
     virtual void resizeEvent(QResizeEvent *event) override;
+    virtual void keyPressEvent(QKeyEvent *event) override;
 
 private:
     void clearImageList();
@@ -66,6 +73,7 @@ private:
 
     int _timePreviousResize = 0;
     bool _integratedMode;
+    unsigned short _zoom{100}; // Percentage
 signals:
 
 };

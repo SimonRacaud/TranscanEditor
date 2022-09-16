@@ -1,12 +1,22 @@
 #include "EditorController.h"
 #include "../../window/MainWindow.h"
 
+using namespace std;
+
 extern MainWindow *mainWindow;
 
 EditorController::EditorController(QWidget *parent) : EditorView(parent)
 {
     this->setupEvents();
     this->setTab(EditorTab::EXTRACT);
+    this->showSourcePageTab(false);
+
+    vector<OCRPage> debug = { // TODO: debug
+        { .imagePath = "/media/work/personnal-projects/scanTranslator/scrapper/data_overlord/Chapter_1/5-o.jpg" },
+        { .imagePath = "/media/work/personnal-projects/scanTranslator/scrapper/data_overlord/Chapter_1/5-o.jpg" },
+        { .imagePath = "/media/work/personnal-projects/scanTranslator/scrapper/data_overlord/Chapter_1/5-o.jpg" },
+    };
+    this->_sourcePages->setPages(debug); // DEBUG
 }
 
 /** INTERNAL FUNCTIONS **/
@@ -21,23 +31,57 @@ void EditorController::setupEvents()
     QObject::connect(_exitButton, &QPushButton::clicked, this, &EditorController::exitButtonClickedSlot);
 }
 
+void EditorController::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key::Key_Plus || event->key() == Qt::Key::Key_ZoomIn) {
+        auto *editor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
+
+        editor->scale(1.0 + ZOOM_SHIFT);
+        _sourcePages->scale(1.0 + ZOOM_SHIFT);
+    } else if (event->key() == Qt::Key::Key_Minus || event->key() == Qt::Key::Key_ZoomOut) {
+        auto *editor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
+
+        editor->scale(1.0 - ZOOM_SHIFT);
+        _sourcePages->scale(1.0 - ZOOM_SHIFT);
+    } else {
+        EditorView::keyPressEvent(event);
+    }
+}
+
 /** Public **/
 
 void EditorController::setTab(EditorTab tab)
 {
     auto *prop = dynamic_cast<APropertyTab *>(_stackProp->currentWidget());
+    auto *editor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
+
     disconnect(prop, &APropertyTab::nextStep, nullptr, nullptr);
+    disconnect(editor, &ImageViewer::horizontalScrollValueChanged, nullptr, nullptr);
+    disconnect(editor, &ImageViewer::verticalScrollValueChanged, nullptr, nullptr);
+    disconnect(_sourcePages, &ImageViewer::horizontalScrollValueChanged, nullptr, nullptr);
+    disconnect(_sourcePages, &ImageViewer::verticalScrollValueChanged, nullptr, nullptr);
 
     this->_stackEdit->setCurrentIndex((int)tab);
     this->_stackProp->setCurrentIndex((int)tab);
 
     prop = dynamic_cast<APropertyTab *>(_stackProp->currentWidget());
+    editor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
     connect(prop, &APropertyTab::nextStep, [this, tab]() {
         EditorTab next = ((int)tab + 1) > (int)EditorTab::SAVE
             ? EditorTab::EXTRACT : (EditorTab)((int)tab + 1);
         this->setTab(next);
     });
     this->setSelectionTabHeader();
+    connect(editor, &ImageViewer::horizontalScrollValueChanged, _sourcePages, &ImageViewer::setHorizontalScrollPosition);
+    connect(editor, &ImageViewer::verticalScrollValueChanged, _sourcePages, &ImageViewer::setVerticalScrollPosition);
+    connect(_sourcePages, &ImageViewer::horizontalScrollValueChanged, editor, &ImageViewer::setHorizontalScrollPosition);
+    connect(_sourcePages, &ImageViewer::verticalScrollValueChanged, editor, &ImageViewer::setVerticalScrollPosition);
+}
+
+void EditorController::showSourcePageTab(bool enable)
+{
+    this->_sourcePages->setHidden(!enable);
+    this->_showSourceButton->setChecked(enable);
 }
 
 /** SLOTS **/
@@ -45,8 +89,7 @@ void EditorController::setTab(EditorTab tab)
 void EditorController::showSourceButtonClickedSlot(bool checked)
 {
     // show/hide source document tab
-    AEditArea *widget = dynamic_cast<AEditArea *>(_stackEdit->currentWidget());
-    widget->showSourceView(checked);
+    this->showSourcePageTab(checked);
 }
 void EditorController::extractButtonClickedSlot(bool checked)
 {

@@ -8,7 +8,6 @@
 #include <QScrollArea>
 
 #include "include/environment.h"
-#include "../editTab/AEditArea.h"
 
 class APropertyTab : public QWidget
 {

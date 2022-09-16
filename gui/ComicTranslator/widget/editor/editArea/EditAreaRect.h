@@ -47,7 +47,7 @@ private:
      */
     void resize(QPointF diff);
 
-    void centerText();
+    void centerText();    
 
 protected:
     virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;

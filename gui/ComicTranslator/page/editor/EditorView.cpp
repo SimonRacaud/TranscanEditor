@@ -15,7 +15,7 @@ EditorView::EditorView(QWidget *parent)
     this->_rootLayout = new QVBoxLayout(this);
     this->_rootLayout->setSpacing(0);
     this->setupHeader();
-    //
+    // BODY
     this->_cleanPropTab = new CleanPropertyTab;
     this->_editPropTab = new EditPropertyTab;
     this->_extractPropTab = new ExtractionPropertyTab;
@@ -37,9 +37,12 @@ EditorView::EditorView(QWidget *parent)
     this->_stackProp->addWidget(_cleanPropTab);
     this->_stackProp->addWidget(_editPropTab);
     this->_stackProp->addWidget(_savePropTab);
+
+    this->_sourcePages = new ImageViewer;
     //
     QHBoxLayout *bodyLayout = new QHBoxLayout;
 
+    bodyLayout->addWidget(_sourcePages);
     bodyLayout->addWidget(_stackEdit);
     bodyLayout->addWidget(_stackProp);
     this->_rootLayout->addLayout(bodyLayout);

@@ -3,11 +3,11 @@
 
 #include <QGraphicsView>
 
-class QPageViewer : public QGraphicsView
+class PageGraphicsView : public QGraphicsView
 {
     Q_OBJECT
 public:
-    QPageViewer();
+    PageGraphicsView();
 
 signals:
     void resizedSignal();

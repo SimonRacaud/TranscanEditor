@@ -1,5 +1,7 @@
 #include "EditorEditArea.h"
 
+using namespace std;
+
 EditorEditArea::EditorEditArea(): ATextEditArea(RectMode::EDIT_TRAN)
 {
     // -----------------------
@@ -20,5 +22,5 @@ EditorEditArea::EditorEditArea(): ATextEditArea(RectMode::EDIT_TRAN)
         },
     }};
     this->setPages(debug); // DEBUG
-    this->setSourceDirectory("/media/work/personnal-projects/scanTranslator/data/dataset/debug");
+    //this->setSourceDirectory("/media/work/personnal-projects/scanTranslator/data/dataset/debug");
 }

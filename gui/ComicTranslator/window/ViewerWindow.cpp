@@ -1,5 +1,7 @@
 #include "ViewerWindow.h"
- #include <QSizePolicy>
+
+#include <QSizePolicy>
+#include <QKeyEvent>
 
 const QList<QString> ViewerWindow::SUPPORTED_EXTENSION = {
     "*.png",
@@ -80,11 +82,27 @@ void ViewerWindow::setVerticalScrollPosition(int value)
     this->_scrollArea->verticalScrollBar()->setValue(value);
 }
 
+void ViewerWindow::setHorizontalScrollPosition(int value)
+{
+    this->_scrollArea->horizontalScrollBar()->setValue(value);
+}
+
 /** Public methods **/
 
 QScrollBar *ViewerWindow::getVerticalScroll() const
 {
     return this->_scrollArea->verticalScrollBar();
+}
+
+QScrollBar *ViewerWindow::getHorizontalScroll() const
+{
+    return this->_scrollArea->horizontalScrollBar();
+}
+
+void ViewerWindow::scale(float scale)
+{
+    this->_zoom *= scale;
+    this->resizeImages(this->_scrollArea->width());
 }
 
 void ViewerWindow::loadDirectory(QString const &dirPath)
@@ -122,6 +140,8 @@ void ViewerWindow::loadDirectory(QString const &dirPath)
     this->resizeImages(this->_scrollArea->width());
 }
 
+/** PROTECTED **/
+
 void ViewerWindow::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
@@ -133,16 +153,31 @@ void ViewerWindow::resizeEvent(QResizeEvent *event)
     }
 }
 
+void ViewerWindow::keyPressEvent(QKeyEvent *event)
+{
+    QWidget::keyPressEvent(event);
+    if (!_integratedMode) {
+        if (event->key() == Qt::Key::Key_Plus || event->key() == Qt::Key::Key_ZoomIn) {
+            this->scale(1.0 + ZOOM_SHIFT);
+        } else if (event->key() == Qt::Key::Key_Minus || event->key() == Qt::Key::Key_ZoomOut) {
+            this->scale(1.0 - ZOOM_SHIFT);
+        }
+    }
+}
+
+/** PRIVATE **/
+
 void ViewerWindow::resizeImages(const int width)
 {
     if (this->_listImgLabel.size() != this->_listImage.size()) {
         qWarning("Warning: ViewerWindow::resizeEvent list sizes don't match. That must never occur.");
         return;
     }
+    int newWidth = (width - this->_scrollArea->verticalScrollBar()->width()) /* * (_zoom / 100.0f)*/;
     for (size_t i = 0; i < this->_listImgLabel.size(); i++) {
         QLabel *label = this->_listImgLabel.at(i);
         QImage *img = this->_listImage.at(i);
-        QPixmap pixmap = QPixmap::fromImage(*img).scaledToWidth(width - this->_scrollArea->verticalScrollBar()->width());
+        QPixmap pixmap = QPixmap::fromImage(*img).scaledToWidth(newWidth);
 
         label->setPixmap(pixmap);
     }

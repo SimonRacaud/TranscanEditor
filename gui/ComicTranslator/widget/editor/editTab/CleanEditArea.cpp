@@ -1,5 +1,7 @@
 #include "CleanEditArea.h"
 
+using namespace std;
+
 CleanEditArea::CleanEditArea()
 {
     // -----------------------
@@ -20,19 +22,14 @@ CleanEditArea::CleanEditArea()
         },
     }};
     this->setPages(debug); // DEBUG
-    this->setSourceDirectory("/media/work/personnal-projects/scanTranslator/data/dataset/debug");
+    //this->setSourceDirectory("/media/work/personnal-projects/scanTranslator/data/dataset/debug");
 }
 
 /** PUBLIC **/
 
 void CleanEditArea::setPages(vector<OCRPage> const &pages)
 {
-    AEditArea::setPages(pages); // Load pages
-    for (OCRPage const &page : pages) {
-        for (BlockCluster const &cluster : page.clusters) {
-            this->createBlock(cluster);
-        }
-    }
+    ImageViewer::setPages(pages); // Load pages
 }
 
 std::vector<BlockCluster> CleanEditArea::getClusters() const
@@ -56,3 +53,4 @@ void CleanEditArea::createBlock(BlockCluster const &cluster)
     this->_scene->addItem(rect);
     this->_rects.append(rect);
 }
+

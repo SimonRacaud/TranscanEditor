@@ -6,6 +6,8 @@
 #include <QVBoxLayout>
 #include <QStackedWidget>
 
+#include "widget/imageViewer/ImageViewer.h"
+
 #include "widget/editor/propertyTab/CleanPropertyTab.h"
 #include "widget/editor/propertyTab/EditPropertyTab.h"
 #include "widget/editor/propertyTab/ExtractionPropertyTab.h"
@@ -53,18 +55,22 @@ protected:
     QLabel *_separator2;
     QLabel *_separator3;
 
+    // Body
+    //      Property tabs
     CleanPropertyTab *_cleanPropTab;
     EditPropertyTab *_editPropTab;
     ExtractionPropertyTab *_extractPropTab;
     SavePropertyTab *_savePropTab;
 
+    //      Editors
     ExtractionEditArea *_extractEditTab;
     CleanEditArea *_cleanEditTab;
     EditorEditArea *_editEditTab;
     SaveEditArea *_saveEditTab;
-
+    //      Stacks
     QStackedWidget *_stackEdit;
     QStackedWidget *_stackProp;
+    ImageViewer *_sourcePages;
 };
 
 #endif // EDITORVIEW_H
