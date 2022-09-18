@@ -1,18 +1,20 @@
+#cython: language_level=3
 # -*- coding: utf-8 -*-
 import time
-from numpy import ndarray
 from collections import OrderedDict
-import torch
+
+from numpy import ndarray
+import numpy as np
+from torch import nn, load, from_numpy, no_grad
 import torch.backends.cudnn as cudnn
 from torch.autograd import Variable
 import cv2
-import numpy as np
 
-import src.ocr.default.charaterRecognition.craft.craft_utils as craft_utils
-import src.ocr.default.charaterRecognition.craft.imgproc as imgproc
+import src.ocr.default.characterRecognition.craft.craft_utils as craft_utils
+import src.ocr.default.characterRecognition.craft.imgproc as imgproc
 
-from src.ocr.default.charaterRecognition.craft.craft import CRAFT
-from src.ocr.default.charaterRecognition.craft.refinenet import RefineNet
+from src.ocr.default.characterRecognition.craft.craft import CRAFT
+from src.ocr.default.characterRecognition.craft.refinenet import RefineNet
 
 from src.model import CraftConfig
 
@@ -25,13 +27,13 @@ class CharacterDetector:
 
         print('Loading weights from checkpoint (' + args.trained_model + ')')
         if args.cuda:
-            cls.net.load_state_dict(cls.__copyStateDict(torch.load(args.trained_model)))
+            cls.net.load_state_dict(cls.__copyStateDict(load(args.trained_model)))
         else:
-            cls.net.load_state_dict(cls.__copyStateDict(torch.load(args.trained_model, map_location='cpu')))
+            cls.net.load_state_dict(cls.__copyStateDict(load(args.trained_model, map_location='cpu')))
 
         if args.cuda:
             cls.net = cls.net.cuda()
-            cls.net = torch.nn.DataParallel(cls.net)
+            cls.net = nn.DataParallel(cls.net)
             cudnn.benchmark = False
 
         cls.net.eval() # Enable eval mode
@@ -42,11 +44,11 @@ class CharacterDetector:
             cls.refine_net = RefineNet()
             print('Loading weights of refiner from checkpoint (' + args.refiner_model + ')')
             if args.cuda:
-                cls.refine_net.load_state_dict(cls.__copyStateDict(torch.load(args.refiner_model)))
+                cls.refine_net.load_state_dict(cls.__copyStateDict(load(args.refiner_model)))
                 cls.refine_net = cls.refine_net.cuda()
-                cls.refine_net = torch.nn.DataParallel(cls.refine_net)
+                cls.refine_net = nn.DataParallel(cls.refine_net)
             else:
-                cls.refine_net.load_state_dict(cls.__copyStateDict(torch.load(args.refiner_model, map_location='cpu')))
+                cls.refine_net.load_state_dict(cls.__copyStateDict(load(args.refiner_model, map_location='cpu')))
 
             cls.refine_net.eval()
             args.poly = True
@@ -119,13 +121,13 @@ class CharacterDetector:
 
         # preprocessing
         x = imgproc.normalizeMeanVariance(img_resized)
-        x = torch.from_numpy(x).permute(2, 0, 1)    # [h, w, c] to [c, h, w]
+        x = from_numpy(x).permute(2, 0, 1)    # [h, w, c] to [c, h, w]
         x = Variable(x.unsqueeze(0))                # [c, h, w] to [b, c, h, w]
         if config.cuda:
             x = x.cuda()
 
         # forward pass
-        with torch.no_grad():
+        with no_grad():
             y, feature = net(x)
 
         # make score and link map
@@ -134,7 +136,7 @@ class CharacterDetector:
 
         # refine link
         if refine_net is not None:
-            with torch.no_grad():
+            with no_grad():
                 y_refiner = refine_net(y, feature)
             score_link = y_refiner[0,:,:,0].cpu().data.numpy()
 

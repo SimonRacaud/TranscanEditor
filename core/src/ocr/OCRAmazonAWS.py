@@ -8,12 +8,12 @@ import os
 
 from src.utility.OCRResultCacheManager import OCRResultCacheManager
 from src.utility.extract_image_area import extract_image_area
-from .IOpticalCharacterRecognition import IOpticalCharacterRecognition
+from src.ocr.IOpticalCharacterRecognition import IOpticalCharacterRecognition
 from src.model import OCRBlock, OCRConfig, OCRPage
 from src.utility.cyrillic_to_latin import cyrillic_to_latin
 
-import boto3
-from botocore.config import Config
+from boto3 import client as AWSClient
+from botocore.config import Config as AWSConfig
 
 class OCRAmazonAWS(IOpticalCharacterRecognition):
     def __init__(self, config: OCRConfig) -> None:
@@ -22,7 +22,7 @@ class OCRAmazonAWS(IOpticalCharacterRecognition):
         if (not "AWS_ACCESS_KEY_ID" in os.environ) or (not "AWS_SECRET_ACCESS_KEY" in os.environ):
             print("Error: missing env variable AWS_ACCESS_KEY_ID or/and AWS_SECRET_ACCESS_KEY. exit")
             exit(1)
-        my_config = Config(
+        my_config = AWSConfig(
             region_name='eu-west-1', # Irland
             signature_version='v4',
             retries = {
@@ -30,7 +30,7 @@ class OCRAmazonAWS(IOpticalCharacterRecognition):
                 'mode': 'standard'
             }
         )
-        self.client = boto3.client('rekognition', config=my_config)
+        self.client = AWSClient('rekognition', config=my_config)
 
     def process_batch(self, img_path_list: Sequence[str]) -> Sequence[OCRPage]:
         """ Process a batch of image and return a list of text and bouncing boxes """

@@ -2,7 +2,7 @@ from typing import Sequence
 
 from src.model import OCRConfig, OCRPage
 from src.ocr.IOpticalCharacterRecognition import IOpticalCharacterRecognition
-from src.ocr.default.charaterRecognition.CharacterDetector import CharacterDetector
+from src.ocr.default.characterRecognition.CharacterDetector import CharacterDetector
 from src.ocr.default.TextExtractor import TextExtractor
 
 class OCRCraftTesseract(IOpticalCharacterRecognition):

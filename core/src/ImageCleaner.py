@@ -1,4 +1,3 @@
-from scipy.spatial import distance as dist
 from typing import Sequence
 import cv2
 import numpy as np

@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 from src.model import Vector2I
-from src.utility.show_debug import show_debug
+#from src.utility.show_debug import show_debug
 
 def __compute_angle(pointl: Vector2I, pointh: Vector2I):
     """ Compute angle with trigonometry (arc sinus) """

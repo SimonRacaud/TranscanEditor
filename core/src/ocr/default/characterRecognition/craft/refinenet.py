@@ -4,12 +4,9 @@ MIT License
 """
 
 # -*- coding: utf-8 -*-
-import torch
+from torch import cat
 import torch.nn as nn
-import torch.nn.functional as F
-from torch.autograd import Variable
-from .basenet.vgg16_bn import init_weights
-
+from src.ocr.default.characterRecognition.craft.basenet.vgg16_bn import init_weights
 
 class RefineNet(nn.Module):
     def __init__(self):
@@ -52,7 +49,7 @@ class RefineNet(nn.Module):
         init_weights(self.aspp4.modules())
 
     def forward(self, y, upconv4):
-        refine = torch.cat([y.permute(0,3,1,2), upconv4], dim=1)
+        refine = cat([y.permute(0,3,1,2), upconv4], dim=1)
         refine = self.last_conv(refine)
 
         aspp1 = self.aspp1(refine)

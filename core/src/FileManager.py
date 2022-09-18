@@ -4,7 +4,7 @@ import string
 import cv2
 from numpy import ndarray
 
-from .model import AppConfig
+from src.model import AppConfig
 
 class FileManager:
     @staticmethod

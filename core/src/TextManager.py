@@ -44,7 +44,7 @@ class TextManager:
             res_lines = lines
             scale += 1
         if res_lines == None:
-            res_lines = line
+            res_lines = lines
             res_text_height = text_height
         ## Assemble lines
         text_lines = []

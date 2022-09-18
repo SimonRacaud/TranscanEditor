@@ -1,6 +1,5 @@
 from collections import namedtuple
 
-import torch
 import torch.nn as nn
 import torch.nn.init as init
 from torchvision import models
@@ -19,16 +18,16 @@ def init_weights(modules):
             m.weight.data.normal_(0, 0.01)
             m.bias.data.zero_()
 
-class vgg16_bn(torch.nn.Module):
+class vgg16_bn(nn.Module):
     def __init__(self, pretrained=True, freeze=True):
         super(vgg16_bn, self).__init__()
         model_urls['vgg16_bn'] = model_urls['vgg16_bn'].replace('https://', 'http://')
         vgg_pretrained_features = models.vgg16_bn(pretrained=pretrained).features
-        self.slice1 = torch.nn.Sequential()
-        self.slice2 = torch.nn.Sequential()
-        self.slice3 = torch.nn.Sequential()
-        self.slice4 = torch.nn.Sequential()
-        self.slice5 = torch.nn.Sequential()
+        self.slice1 = nn.Sequential()
+        self.slice2 = nn.Sequential()
+        self.slice3 = nn.Sequential()
+        self.slice4 = nn.Sequential()
+        self.slice5 = nn.Sequential()
         for x in range(12):         # conv2_2
             self.slice1.add_module(str(x), vgg_pretrained_features[x])
         for x in range(12, 19):         # conv3_3
@@ -39,7 +38,7 @@ class vgg16_bn(torch.nn.Module):
             self.slice4.add_module(str(x), vgg_pretrained_features[x])
 
         # fc6, fc7 without atrous conv
-        self.slice5 = torch.nn.Sequential(
+        self.slice5 = nn.Sequential(
                 nn.MaxPool2d(kernel_size=3, stride=1, padding=1),
                 nn.Conv2d(512, 1024, kernel_size=3, padding=6, dilation=6),
                 nn.Conv2d(1024, 1024, kernel_size=1)

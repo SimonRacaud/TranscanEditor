@@ -1,4 +1,7 @@
+#cython: language_level=3
+
 import argparse
+import sys
 from dotenv import load_dotenv
 
 from src.OCRManager import OCRManager
@@ -39,7 +42,7 @@ if __name__ == '__main__':
         translator = TranslatorManager(config.translation_service, src_lang='en', dest_lang='fr')
     except BaseException as err:
         print("Program setup failure.", err)
-        exit(1)
+        sys.exit(1)
     # Process
     image_path_list = FileManager.get_files(config.input_folder)
     for file_path in image_path_list:
@@ -65,4 +68,4 @@ if __name__ == '__main__':
             FileManager.save_image(image_final, page.image_path, config)
         except BaseException as err:
             print("Error: Fail to process image", file_path, '-', err)
-            exit(1)
+            sys.exit(1)

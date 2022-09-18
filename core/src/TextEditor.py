@@ -7,7 +7,7 @@ from src.TextManager import TextManager
 from src.model import AppConfig, BlockCluster, Vector2I
 from src.utility.extract_image_area import extract_image_area
 
-from src.utility.show_debug import show_debug
+#from src.utility.show_debug import show_debug
 
 class TextEditor:
     @classmethod
