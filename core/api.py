@@ -3,13 +3,15 @@ from flask import Flask, request
 from dotenv import load_dotenv
 
 from src.model.apiModel import OCRInput
-from src.model.model import OCRPage
+from src.model.model import OCRPage, TranslatorService
 from src.utility.create_block_cluster import create_block_cluster
 from src.utility.exception import InvalidJson, InternalError, InvalidRequest, APIError
+from src.utility.check import check_argument
 
 from src.FileManager import FileManager
 from src.OCRManager import OCRManager
 from src.ImageCleaner import ImageCleaner
+from src.TranslatorManager import TranslatorManager
 
 app = Flask(__name__)
 
@@ -103,15 +105,33 @@ def process_clean():
         raise InternalError("Fail to save image")
     return input.serialize()
 
-# @app.route("/translate", methods=['POST'])
-# def process_translation():
-#     """
-#         Input: OCRPage structure
-#         Output: OCRPage strcture
-#     """
-#     # translator = TranslatorManager(config.translation_service, src_lang='en', dest_lang='fr')
-#     # translator.translate_page(page)
-#     pass
+@app.route("/translate", methods=['POST'])
+def process_translation():
+    """
+        Input: OCRPage structure, TranslationService
+        Output: OCRPage strcture
+    """
+    try:
+        inputJson = request.json
+        check_argument(inputJson, ["page", "translationService"])
+        pageJson = inputJson["page"]
+        translation_service = inputJson["translationService"]
+        if type(translation_service) is not str:
+            raise InvalidJson("Invalid translation service value")
+        translation_service = TranslatorService[translation_service]
+        input = OCRPage.deserialize(pageJson)
+    except APIError as err:
+        raise err
+    except Exception as err:
+        print("Error {}".format(err))
+        raise InvalidJson("Invalid body")
+    try:
+        translator = TranslatorManager(translation_service, src_lang='en', dest_lang='fr')
+        input = translator.translate_page(input)
+    except Exception as err:
+        print("Error translator: {}".format(err))
+        raise InternalError("The translator failed to process.")
+    return input.serialize()
 
 # @app.route("/render", methods=['POST'])
 # def process_render():
