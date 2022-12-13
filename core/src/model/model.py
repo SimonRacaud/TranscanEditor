@@ -124,11 +124,10 @@ class Vector2I:
             "x": int(self.x),
             "y": int(self.y)
         }
-    def deserialize(self, data):
+    @staticmethod
+    def deserialize(data) -> Vector2I:
         check_argument(data, ['x', 'y'])
-        self.x = data["x"]
-        self.y = data["y"]
-        
+        return Vector2I(int(data["x"]), int(data["y"]))
 
 ## ENTITIES
 
@@ -153,14 +152,17 @@ class OCRBlock:
             "size": self.size.serialize(),
             "angle": self.angle
         }
-    def deserialize(self, data):
+    @staticmethod
+    def deserialize(data) -> OCRBlock:
         check_argument(data, ['polygon', 'text', 'pivot', 'size', 'angle'])
 
-        self.polygon = data['polygon']
-        self.text = data['text']
-        self.pivot = Vector2I().deserialize(data['pivot'])
-        self.size = Vector2I().deserialize(data['size'])
-        self.angle = data['angle']
+        return OCRBlock(
+            polygon=np.array(data['polygon']),
+            text=data['text'],
+            pivot=Vector2I.deserialize(data['pivot']),
+            size=Vector2I.deserialize(data['size']),
+            angle=float(data['angle'])
+        )
 
 @dataclass
 class BlockCluster:
@@ -172,7 +174,7 @@ class BlockCluster:
     cleanBox: bool = True
     font: str = None
     color: int = None
-    line_height: float = None
+    line_height: float = 0
 
     def serialize(self):
         return {
@@ -185,17 +187,19 @@ class BlockCluster:
             "color": self.color,
             "line_height": self.line_height
         }
-    def deserialize(self, data):
+    @staticmethod
+    def deserialize(data) -> BlockCluster:
         check_argument(data, ['blocks', 'polygon', 'sentence', 'translation', 'clean_box', 'font', 'color', 'line_height'])
 
-        self.blocks = list(map(lambda b: b.deserialize(), data['blocks']))
-        self.polygon = list(map(lambda p: p.deserialize(), data['polygon']))
-        self.sentence = data["sentence"]
-        self.translation = data["translation"]
-        self.cleanBox = data["clean_box"]
-        self.font = data["font"]
-        self.color = data["color"]
-        self.line_height = data["line_height"]
+        return BlockCluster(
+            blocks=list(map(lambda b: OCRBlock.deserialize(b), data['blocks'])),
+            polygon=np.array(data['polygon']),
+            sentence=data["sentence"],
+            translation=data["translation"],
+            cleanBox=data["clean_box"],
+            font=data["font"],
+            color=data["color"],
+            line_height=float(data["line_height"]))
 
 @dataclass
 class OCRPage:
@@ -216,14 +220,17 @@ class OCRPage:
             "blocks": list(map(lambda b: b.serialize(), self.blocks)),
             "clusters": list(map(lambda c: c.serialize(), self.clusters)),
         }
-    def deserialize(self, data):
+    @staticmethod
+    def deserialize(data) -> OCRPage:
         check_argument(data, ['srcImgPath', "cleanImgPath", "renderImgPath", 'blocks', 'clusters'])
 
-        self.index = int(data['index'])
-        self.src_path = data['srcImgPath']
-        self.clean_path = data['cleanImgPath']
-        self.render_path = data['renderImgPath']
-
-        self.blocks = list(map(lambda b: b.deserialize(), data['blocks']))
-        self.clusters = list(map(lambda c: c.deserialize(), data['clusters']))
-        
+        page = OCRPage(
+            index=int(data['index']),
+            src_path=data['srcImgPath'],
+            clean_path=data['cleanImgPath'],
+            render_path=data['renderImgPath'],
+            blocks=[],
+            clusters=[])
+        page.blocks=list(map(lambda b: OCRBlock.deserialize(b), data['blocks']))
+        page.clusters=list(map(lambda c: BlockCluster.deserialize(c), data['clusters']))
+        return page

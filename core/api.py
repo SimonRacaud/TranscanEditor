@@ -2,11 +2,14 @@
 from flask import Flask, request
 from dotenv import load_dotenv
 
-from src.FileManager import FileManager
-from src.OCRManager import OCRManager
 from src.model.apiModel import OCRInput
+from src.model.model import OCRPage
 from src.utility.create_block_cluster import create_block_cluster
 from src.utility.exception import InvalidJson, InternalError, InvalidRequest, APIError
+
+from src.FileManager import FileManager
+from src.OCRManager import OCRManager
+from src.ImageCleaner import ImageCleaner
 
 app = Flask(__name__)
 
@@ -60,11 +63,8 @@ def ocr():
         print("Error: ", err)
         raise InternalError("Fail to generate block clusters")
     try:
-        FileManager.save_image(image, input.ocr_config.src_img_path, input.ocr_config.output_folder)
-    except Exception as err:
-        print("Error: ", err)
-        raise InternalError()
-    try:
+        page.clean_path = input.ocr_config.output_folder # Save output location
+        page.render_path = input.ocr_config.output_folder
         pageOut = page.serialize()
         pageOut['index'] = input.index
     except Exception as err:
@@ -72,14 +72,36 @@ def ocr():
         raise InternalError("Fail to serialise output JSON")
     return pageOut
 
-# @app.route("/clean", methods=['POST'])
-# def process_clean():
-#     """
-#         Input: OCRPage structure
-#         Output: Cleaned image 
-#     """
-#     #  image_clean = ImageCleaner.process(page.image, page.blocks)
-#     pass
+@app.route("/clean", methods=['POST'])
+def process_clean():
+    """
+        Input: OCRPage structure
+        Output: Cleaned image 
+    """
+    try:
+        inputJson = request.json
+        input = OCRPage.deserialize(inputJson)
+    except Exception as err:
+        print("Error {}".format(err))
+        raise InvalidJson("Invalid body")
+    try:
+        src_image = FileManager.load_image(input.src_path)
+    except Exception as err:
+        print("Error loading image: {}".format(err))
+        raise InvalidJson("Unable to load source image")
+    try:
+        image_clean = ImageCleaner.process(src_image, input.blocks)
+    except Exception as err:
+        print("Error processing image: {}".format(err))
+        raise InternalError("An error occured when processing the image")
+    try:
+        output_directory = FileManager.path_from_filepath(input.clean_path)
+        filename = FileManager.filename_from_filepath(FileManager.add_file_suffix(input.src_path, "_clean"))
+        input.clean_path = FileManager.save_image(image_clean, filename, output_directory)
+    except Exception as err:
+        print("Error save result: {}".format(err))
+        raise InternalError("Fail to save image")
+    return input.serialize()
 
 # @app.route("/translate", methods=['POST'])
 # def process_translation():
