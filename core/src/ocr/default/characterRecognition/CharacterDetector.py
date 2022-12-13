@@ -16,7 +16,7 @@ import src.ocr.default.characterRecognition.craft.imgproc as imgproc
 from src.ocr.default.characterRecognition.craft.craft import CRAFT
 from src.ocr.default.characterRecognition.craft.refinenet import RefineNet
 
-from src.model import CraftConfig
+from src.model.model import CraftConfig
 
 class CharacterDetector:
 

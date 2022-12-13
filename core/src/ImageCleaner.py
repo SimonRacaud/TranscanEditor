@@ -2,7 +2,7 @@ from typing import Sequence
 import cv2
 import numpy as np
 
-from src.model import OCRBlock
+from src.model.model import OCRBlock
 from src.utility.mymath import order_points
 
 from src.utility.show_debug import show_debug

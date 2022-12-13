@@ -9,7 +9,7 @@ from deep_translator import (GoogleTranslator,
                              PapagoTranslator,
                              DeeplTranslator)
 
-from src.model import OCRPage, TranslatorService
+from src.model.model import OCRPage, TranslatorService
 
 class TranslatorManager:
     def __init__(self, service: TranslatorService, src_lang: str = 'en', dest_lang: str = 'fr') -> None:

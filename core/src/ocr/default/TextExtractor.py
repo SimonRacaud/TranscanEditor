@@ -4,7 +4,7 @@ import pytesseract
 import numpy as np
 import cv2
 
-from src.model import OCRBlock
+from src.model.model import OCRBlock
 from src.utility.extract_image_area import extract_image_area
 
 class TextExtractor:

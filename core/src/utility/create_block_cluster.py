@@ -1,29 +1,33 @@
-from typing import Sequence
+from typing import Sequence, Tuple, List
 from statistics import mean
 import numpy as np
 
-from src.model import AppConfig, OCRPage, BlockCluster, OCRBlock, Vector2I
+from src.model.model import OCRPage, BlockCluster, OCRBlock, Vector2I
 from src.utility.mymath import middle_point, rotate_point
 
-def create_block_cluster(page: OCRPage, config: AppConfig) -> OCRPage:
+def create_block_cluster(page: OCRPage, search_range: int, search_step: int) -> OCRPage:
     """ Create cluster of bounding boxes close from each others on the y axis """
+    # Create a list of tuple with a couple (index, block)
     block_buffer = list(page.blocks)
     page.clusters = []
-    search_range = config.box_cluster_search_range
-    search_step = config.box_cluster_search_step
 
     while len(block_buffer) > 0:
-        block = block_buffer[0]
+        block = block_buffer.pop() # get last element
         pack = []
         point_target = __get_init_point(block.polygon)
         pack.append(block)
-        block_buffer.remove(block)
-        # Process lower boxes
-        pack, block_buffer = __find_neightbour_points(point_target, block_buffer, block, pack, search_range, search_step)
+        # Find lower neighbours:
+        pack, block_buffer = __find_neighbour_points(point_target, block_buffer, block, pack, search_range, search_step)
         page.clusters.append(__pack_boxes(pack))
     return page
 
-def __find_neightbour_points(target_point, block_buffer, block, pack, search_range, search_step):
+def __find_neighbour_points(
+    target_point: Vector2I, 
+    block_buffer: List[OCRBlock], 
+    block: OCRBlock, 
+    pack: List[OCRBlock], 
+    search_range: int, 
+    search_step: int) -> Tuple[List[OCRBlock], List[OCRBlock]]:
     stop = False
     while not stop:
         stop = True
@@ -31,7 +35,7 @@ def __find_neightbour_points(target_point, block_buffer, block, pack, search_ran
         for pt in __browse_line(target_point, search_step, search_range):
             size = len(pack)
             # Search block which match the current point
-            for bck in list(block_buffer):
+            for bck in block_buffer:
                 if bck != block and __check_collide(bck.polygon, pt):
                     pack.append(bck)
                     target_point = __get_init_point(bck.polygon)
@@ -44,6 +48,7 @@ def __find_neightbour_points(target_point, block_buffer, block, pack, search_ran
     return pack, block_buffer
 
 def __get_init_point(poly: np.array) -> Vector2I:
+    """ compute the coordinate of a point at the bottom (on Y) and middle (on X) of the polygone """
     if len(poly) != 4:
         print("__get_init_point: warning wrong polygon size")
     data = sorted(poly.tolist(), key=lambda point: point[0], reverse=True)
@@ -57,6 +62,7 @@ def __get_init_point(poly: np.array) -> Vector2I:
     return max_y
 
 def __browse_line(point: Vector2I, delta_y, end_y) -> Vector2I:
+    """ Return the next point, moving delta_y pixels """
     if end_y < 0: # go upper
         end_y += point.y
         while point.y - delta_y >= end_y:
@@ -83,12 +89,17 @@ def __check_collide(poly, point) -> bool:
 def __pack_boxes(block_list: Sequence[OCRBlock]) -> BlockCluster:
     polygon = __get_cluster_rect(block_list)
     sentence = __make_sentence(block_list)
-    return BlockCluster(block_list, polygon, sentence)
+    return BlockCluster(blocks=block_list, polygon=polygon, sentence=sentence)
 
-def __get_cluster_rect(block_list: Sequence[OCRBlock]) -> Sequence[Vector2I]:
+def __get_cluster_rect(block_list: Sequence[OCRBlock]) -> np.array:
+    """ 
+        Compute a polygon which include all sub-blocks polygons 
+        Take into account the angle of every blocks
+    """
     pack_points = []
     pack_angle_list = []
 
+    # Compute average angle
     for block in block_list:
         pack_angle_list.append(block.angle)
         for point in block.polygon:
@@ -96,7 +107,7 @@ def __get_cluster_rect(block_list: Sequence[OCRBlock]) -> Sequence[Vector2I]:
     global_rect = __get_global_rect(pack_points)
     avg_angle = mean(pack_angle_list)
     if abs(avg_angle) < 5:
-        return global_rect # The polygon is ~~horizontal
+        return global_rect # The polygon is ~horizontal~
     center_coord = middle_point(pack_points)
     for i in range(0, len(pack_points), 1):
         pack_points[i] = rotate_point(pack_points[i], origin=center_coord, degrees=-avg_angle)
@@ -105,7 +116,8 @@ def __get_cluster_rect(block_list: Sequence[OCRBlock]) -> Sequence[Vector2I]:
         global_rect[i] = np.array(rotate_point(global_rect[i], origin=center_coord, degrees=avg_angle))
     return global_rect
 
-def __get_global_rect(point_list) -> Sequence[Vector2I]:
+def __get_global_rect(point_list) -> np.array:
+    """ compute a polygon which include all sub-blocks polygons """
     list_x = []
     list_y = []
     for point in point_list:
@@ -123,6 +135,7 @@ def __get_global_rect(point_list) -> Sequence[Vector2I]:
     ])
 
 def __make_sentence(block_list: Sequence[OCRBlock]) -> str:
+    """ Concat the text of the member blocks to create a sentence """
     buffer = ""
     for block in block_list:
         text = block.text.strip()

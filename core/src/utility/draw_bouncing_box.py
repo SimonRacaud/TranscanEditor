@@ -1,7 +1,7 @@
 from typing import Sequence
 import cv2
 import numpy as np
-from src.model import BlockCluster, OCRBlock
+from src.model.model import BlockCluster, OCRBlock
 
 def draw_bouncing_box(img, blocks: Sequence[OCRBlock], color=(0, 0, 255), thickness=1):
     """ save text detection result one by one

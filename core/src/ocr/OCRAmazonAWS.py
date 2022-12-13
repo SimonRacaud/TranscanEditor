@@ -1,5 +1,5 @@
 import io
-from typing import Sequence
+from typing import Sequence, Tuple
 import os
 import cv2
 import numpy as np
@@ -9,11 +9,13 @@ import os
 from src.utility.OCRResultCacheManager import OCRResultCacheManager
 from src.utility.extract_image_area import extract_image_area
 from src.ocr.IOpticalCharacterRecognition import IOpticalCharacterRecognition
-from src.model import OCRBlock, OCRConfig, OCRPage
+from src.model.model import OCRBlock, OCRConfig, OCRPage
 from src.utility.cyrillic_to_latin import cyrillic_to_latin
 
 from boto3 import client as AWSClient
 from botocore.config import Config as AWSConfig
+
+from numpy import ndarray
 
 class OCRAmazonAWS(IOpticalCharacterRecognition):
     def __init__(self, config: OCRConfig) -> None:
@@ -40,7 +42,7 @@ class OCRAmazonAWS(IOpticalCharacterRecognition):
         return result
 
 
-    def process_img(self, img_path: str) -> OCRPage:
+    def process_img(self, img_path: str) -> Tuple[OCRPage, ndarray]:
         """ Process an image and return a list of text and bouncing boxes """
         try:
             with open(img_path, 'rb') as img_file:
@@ -59,7 +61,7 @@ class OCRAmazonAWS(IOpticalCharacterRecognition):
                     OCRResultCacheManager.save_result(img_bytes, response, self.config.cache_path)
                 blocks = response['TextDetections']
                 ### Format data
-                return OCRAmazonAWS.__format_page(blocks, img_path, image) 
+                return OCRAmazonAWS.__format_page(blocks, img_path, image), image 
         except BaseException as err:
             print("Error: OCRAmazonAWS::process_img -", err)
             raise BaseException()
@@ -79,7 +81,7 @@ class OCRAmazonAWS(IOpticalCharacterRecognition):
                 #size = Vector2I(polygon[1][0] - polygon[0][0], polygon[3][1] - polygon[0][1])
                 area, angle, pivot, size = extract_image_area(polygon, image, True)
                 textBlockList.append(OCRBlock(polygon, text, pivot, size, angle))
-        return OCRPage(textBlockList, img_path, image)
+        return OCRPage(blocks=textBlockList, src_path=img_path)
     
     @staticmethod
     def __format_bounding_box(bbox, width, height):

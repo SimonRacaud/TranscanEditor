@@ -1,7 +1,8 @@
 import abc
-from typing import Sequence
+from typing import Sequence, Tuple
 
-from src.model import OCRConfig, OCRPage
+from src.model.model import OCRConfig, OCRPage
+from numpy import ndarray
 
 class IOpticalCharacterRecognition(metaclass=abc.ABCMeta):    
     @classmethod
@@ -25,6 +26,6 @@ class IOpticalCharacterRecognition(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def process_img(cls, img_path: str) -> OCRPage:
+    def process_img(cls, img_path: str) -> Tuple[OCRPage, ndarray]:
         """ Process an image and return a list of text and bouncing boxes """
         raise NotImplementedError

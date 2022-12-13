@@ -1,7 +1,7 @@
 from argparse import ArgumentError
 from PIL import ImageFont
 
-from src.model import Vector2I
+from src.model.model import Vector2I
 
 class TextManager:
     @staticmethod
