@@ -4,8 +4,9 @@
 
 from dataclasses import dataclass
 
-from src.model.model import OCRConfig
+from src.model.model import OCRConfig, OCRPage, EditConfig
 from src.utility.check import check_argument
+from src.utility.exception import InvalidJson
 
 @dataclass
 class OCRInput:
@@ -20,3 +21,21 @@ class OCRInput:
         obj = OCRInput(int(data['index']))
         obj.ocr_config = OCRConfig.deserialize(data['config'])
         return obj
+
+@dataclass
+class RenderInput:
+    # Config
+    config: EditConfig
+    # Page
+    page: OCRPage
+
+    @staticmethod
+    def deserialize(data):
+        check_argument(data, ["config", "page"])
+        if type(data["config"]) is not dict:
+            raise InvalidJson("Invalid config field type")
+        #
+        return RenderInput(
+            config=EditConfig.deserialize(data["config"]),
+            page=OCRPage.deserialize(data["page"])
+        )

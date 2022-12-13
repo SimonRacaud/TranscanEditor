@@ -80,26 +80,20 @@ class OCRConfig:
             obj.box_cluster_search_step = data['boxClusterSearchRange']
         return obj
 
-# @dataclass
-# class AppConfig:
-#     translation_service: TranslatorService
-#     default_font: str = 'Chilanka-Regular.otf'
-#     ocr_config: OCRConfig = OCRConfig()
-#     text_padding_y = 8              # Default text padding (y axis)
-#     text_stroke_width = 3           # Text stroke border width
+@dataclass
+class EditConfig:
+    line_height: int = 8
+    font: str = 'Chilanka-Regular.otf'
+    stroke_width: int = 3 # Text stroke width
 
-#     @staticmethod
-#     def deserialize(data):
-#         required = ['input_folder', 'translation_service', 'output_folder', 'default_font', 'ocr_service', 'line_height', 'text_stroke']
-#         check_argument(data, required)
-#         config = AppConfig(data['input_folder'], data['translation_service'])
-#         config.translation_service = TranslatorService[data['translation_service']]
-#         config.output_folder = data['output_folder']
-#         config.default_font = data['default_font']
-#         config.ocr_service = OCRService[data['ocr_service']]
-#         config.text_padding_y = data['line_height']
-#         config.text_stroke_width = data['text_stroke']
-#         return config
+    @staticmethod
+    def deserialize(data: dict) -> EditConfig:
+        check_argument(data, ["lineHeight", "font", "strokeWidth"])
+        return EditConfig(
+            line_height=int(data["lineHeight"]),
+            font=str(data["font"]),
+            stroke_width=int(data["strokeWidth"]),
+        )
 
 ## UTILITY
 
@@ -174,7 +168,8 @@ class BlockCluster:
     cleanBox: bool = True
     font: str = None
     color: int = None
-    line_height: float = 0
+    line_height: float = 0.0
+    stroke_width: int = 0
 
     def serialize(self):
         return {
@@ -182,24 +177,28 @@ class BlockCluster:
             "polygon": self.polygon.astype(int).tolist() if self.polygon.shape == (4, 2) else [],
             "sentence": self.sentence,
             "translation": self.translation,
-            "clean_box": self.cleanBox,
+            "cleanBox": self.cleanBox,
             "font": self.font,
             "color": self.color,
-            "line_height": self.line_height
+            "lineHeight": self.line_height,
+            "strokeWidth": self.stroke_width
         }
     @staticmethod
     def deserialize(data) -> BlockCluster:
-        check_argument(data, ['blocks', 'polygon', 'sentence', 'translation', 'clean_box', 'font', 'color', 'line_height'])
+        check_argument(data, 
+            ['blocks', 'polygon', 'sentence', 'translation', 'cleanBox', 
+            'font', 'color', 'lineHeight', 'strokeWidth'])
 
         return BlockCluster(
             blocks=list(map(lambda b: OCRBlock.deserialize(b), data['blocks'])),
             polygon=np.array(data['polygon']),
             sentence=data["sentence"],
             translation=data["translation"],
-            cleanBox=data["clean_box"],
+            cleanBox=data["cleanBox"],
             font=data["font"],
             color=data["color"],
-            line_height=float(data["line_height"]))
+            line_height=float(data["lineHeight"]),
+            stroke_width=data["strokeWidth"])
 
 @dataclass
 class OCRPage:

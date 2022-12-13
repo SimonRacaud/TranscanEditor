@@ -2,7 +2,7 @@
 from flask import Flask, request
 from dotenv import load_dotenv
 
-from src.model.apiModel import OCRInput
+from src.model.apiModel import OCRInput, RenderInput
 from src.model.model import OCRPage, TranslatorService
 from src.utility.create_block_cluster import create_block_cluster
 from src.utility.exception import InvalidJson, InternalError, InvalidRequest, APIError
@@ -12,6 +12,7 @@ from src.FileManager import FileManager
 from src.OCRManager import OCRManager
 from src.ImageCleaner import ImageCleaner
 from src.TranslatorManager import TranslatorManager
+from src.TextEditor import TextEditor
 
 app = Flask(__name__)
 
@@ -133,16 +134,43 @@ def process_translation():
         raise InternalError("The translator failed to process.")
     return input.serialize()
 
-# @app.route("/render", methods=['POST'])
-# def process_render():
-#     """
-#         Input: OCRPage structure
-#         Output: Rendered image
-#     """
-#     #FileManager.setup(config)    
-#     # image_final = TextEditor.process_img(config, page.clusters, image_clean, page.image)
-#     # FileManager.save_image(image_final, page.image_path, config)
-#     pass
+@app.route("/render", methods=['POST'])
+def process_render():
+    """
+        Input: OCRPage structure, Editing config
+        Output: Rendered image
+    """
+    try:
+        inputJson = request.json
+        input = RenderInput.deserialize(inputJson)
+    except APIError as err:
+        raise err
+    except Exception as err:
+        print("Error {}".format(err))
+        raise InvalidJson("Invalid body")
+    # Read cleaned image
+    try:
+        image_clean = FileManager.load_image(input.page.clean_path)
+    except Exception as err:
+        print("Error loading image: {}".format(err))
+        raise InvalidJson("Unable to load cleaned image")
+    # Read source image
+    try:
+        image_src = FileManager.load_image(input.page.src_path)
+    except Exception as err:
+        print("Error loading image: {}".format(err))
+        raise InvalidJson("Unable to load source image")
+    # Render result
+    image_final = TextEditor.process_img(input.config, input.page.clusters, image_clean, image_src)
+    # Save result
+    try:
+        output_directory = FileManager.path_from_filepath(input.page.render_path)
+        filename = FileManager.filename_from_filepath(FileManager.add_file_suffix(input.page.src_path, "_render"))
+        input.page.render_path = FileManager.save_image(image_final, filename, output_directory)
+    except Exception as err:
+        print("Error save result: {}".format(err))
+        raise InternalError("Fail to save image")
+    return input.page.serialize()
 
 ### Error management
 

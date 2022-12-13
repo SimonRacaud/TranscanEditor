@@ -4,26 +4,26 @@ import cv2
 import numpy as np
 
 from src.TextManager import TextManager
-from src.model.model import AppConfig, BlockCluster, Vector2I
+from src.model.model import BlockCluster, Vector2I, EditConfig
 from src.utility.extract_image_area import extract_image_area
 
 #from src.utility.show_debug import show_debug
 
 class TextEditor:
     @classmethod
-    def process_img(cls, config: AppConfig, blockList: Sequence[BlockCluster], image: np.ndarray, raw_image: np.ndarray) -> np.ndarray:
+    def process_img(cls, config: EditConfig, blockList: Sequence[BlockCluster], image: np.ndarray, raw_image: np.ndarray) -> np.ndarray:
         for block in blockList:
             area, angle, pivot, size = extract_image_area(block.polygon, raw_image, False)
             if not area.size:
                 continue
             color = cls.__get_auto_text_color(area)
-            text_padding = config.text_padding_y
-            font, lines, text_height = TextManager.compute(config.default_font, block.translation, size, text_padding)
+            text_padding = config.line_height
+            font, lines, text_height = TextManager.compute(config.font, block.translation, size, text_padding)
             if len(lines) == 0:
                 continue
             # Create text segment
             segment = cls.__create_text_segment(lines, image, pivot,
-                color, font, size, text_padding, config.text_stroke_width, text_height)
+                color, font, size, text_padding, config.stroke_width, text_height)
             # Rotate segment
             if abs(angle) > 2:
                 segment = cls.__rotate_segment(pivot, angle, segment)
