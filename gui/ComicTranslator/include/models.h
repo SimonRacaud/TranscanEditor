@@ -4,6 +4,7 @@
 #include <QString>
 #include <QList>
 #include <vector>
+#include <QFont>
 
 class ServiceItem {
 public:
@@ -35,6 +36,30 @@ public:
                 "fr"
             })
         : ServiceItem(name, needConfig, helpMessage), srcLang(srcLanguages), destLang(destLanguages) {};
+};
+
+class ProjectConfig {
+public:
+    QString srcPath;
+    QString destPath;
+    QString OCRService;
+    QString transService;
+    QString transSrc;
+    QString transDest;
+    QFont font;
+
+public:
+    ProjectConfig(
+            QString const &srcPath,
+            QString const &destPath,
+            QString const &OCRService,
+            QString const &transService,
+            QString const &transSrc,
+            QString const &transDest,
+            QFont const &font
+            ) : srcPath(srcPath), destPath(destPath), OCRService(OCRService),
+                transService(transService), transSrc(transSrc), transDest(transDest), font(font)
+    {}
 };
 
 #endif // MODELS_H

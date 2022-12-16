@@ -6,6 +6,7 @@ using namespace std;
 
 ATextEditArea::ATextEditArea(RectMode mode) : _mode(mode)
 {
+    connect(_view, &PageGraphicsView::onDoubleClick, this, &ATextEditArea::doubleClickEvent);
 }
 
 /** PUBLIC **/
@@ -19,15 +20,16 @@ void ATextEditArea::setPages(vector<OCRPage> const &pages)
 void ATextEditArea::createAreaRectAtCoord(QPoint const &coord)
 {
     const QPoint size(DEF_EDITAREA_SIZE);
+    const QPoint origin(coord.x() - (size.x() / 2), coord.y() - (size.y() / 2));
+
     const BlockCluster defaultData = {
         .blocks = {},
         .sentence = "Text",
-        .box = QRect(coord.x() - (size.x() / 2), coord.y() - (size.y() / 2), DEF_EDITAREA_SIZE),
-        .polygon = {},
+        .polygon = QPolygon(QRect(origin, origin + size)),
         .translation = "",
         .font = QFont(),
         .color = Qt::black,
-        .line_height = DEF_LINE_HEIGHT,
+        .lineHeight = DEF_LINE_HEIGHT
     };
     this->createAreaRect(defaultData);
 }
@@ -59,6 +61,25 @@ vector<BlockCluster> ATextEditArea::getClusters() const
     return result;
 }
 
+OCRPage ATextEditArea::getPage(size_t index)
+{
+    OCRPage page = ImageViewer::getPage(index);
+
+    page.clusters.clear();
+    for (EditAreaRect *rect : _rects) {
+        if (index >= _pageItems.size()) {
+            throw std::invalid_argument("ATextEditArea::getPage, invalid _pageItems size");
+        }
+        QGraphicsPixmapItem *pageItem = _pageItems[index];
+        if (rect->isOnArea(pageItem->boundingRect())) {
+            page.clusters.push_back(rect->getData());
+            break;
+        }
+    }
+    return page;
+}
+
+
 /** PROTECTED **/
 
 void ATextEditArea::keyPressEvent(QKeyEvent *event)
@@ -70,15 +91,12 @@ void ATextEditArea::keyPressEvent(QKeyEvent *event)
     }
 }
 
-void ATextEditArea::mouseDoubleClickEvent(QMouseEvent *event)
+void ATextEditArea::doubleClickEvent(QMouseEvent *event)
 {
-    QWidget::mouseDoubleClickEvent(event);
-    const QPointF position = event->position(); // Position on the screen
-    int sliderPosY = this->_view->verticalScrollBar()->sliderPosition(); // scroll bar shift
-    int sliderPosX = this->_view->horizontalScrollBar()->sliderPosition(); // scroll bar shift
-    int width = position.x() + sliderPosX;
+    const QPointF position = event->position(); // Position on the widget
+    QPointF scenePos = this->_view->mapToScene(position.toPoint()); // Position on the scene
 
-    this->createAreaRectAtCoord(QPoint(width, position.y() + sliderPosY));
+    this->createAreaRectAtCoord(scenePos.toPoint());
 }
 
 void ATextEditArea::createAreaRect(BlockCluster const &data)

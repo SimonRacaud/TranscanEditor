@@ -1,5 +1,6 @@
 #include "PageGraphicsView.h"
 #include <QScrollBar>
+#include <QMouseEvent>
 
 PageGraphicsView::PageGraphicsView()
 {
@@ -15,4 +16,9 @@ PageGraphicsView::PageGraphicsView()
 void PageGraphicsView::resizeEvent(QResizeEvent *event)
 {
     emit this->resizedSignal();
+}
+
+void PageGraphicsView::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    emit this->onDoubleClick(event);
 }

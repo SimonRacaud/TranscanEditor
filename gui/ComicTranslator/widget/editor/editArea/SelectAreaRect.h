@@ -21,7 +21,14 @@ public:
 
     bool isSelected() const;
 
-    BlockCluster const &getData() const;
+    BlockCluster const &getData();
+
+    /**
+     * @brief isOnSpace True if the rect is located on the target area
+     * @param index Index of the page
+     * @return
+     */
+    bool isOnArea(QRectF area) const;
 
 protected:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

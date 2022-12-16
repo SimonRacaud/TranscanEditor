@@ -35,7 +35,14 @@ public:
     void setLineHeight(int percentage);
     void setLineHeightAbs(int pixels);
 
-    BlockCluster const &getData();
+    BlockCluster getData();
+
+    /**
+     * @brief isOnSpace True if the rect is located on the target area
+     * @param index Index of the page
+     * @return
+     */
+    bool isOnArea(QRectF area) const;
 
 signals:
     void focusChanged(bool state, EditAreaRect &rect);

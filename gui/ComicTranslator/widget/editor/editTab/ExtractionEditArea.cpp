@@ -19,17 +19,16 @@ ExtractionEditArea::ExtractionEditArea() : ATextEditArea(RectMode::EDIT_SENT)
 //                  .translation = "LorenIpsum",
 //                  .font = QFont(),
 //                  .color = Qt::blue,
-//                  .line_height = 100,
+//                  .lineHeight = 100,
 //              },
               BlockCluster { // DEBUG
                   .blocks = {},
                   .sentence = "Hello World",
-                  .box = QRect(100, 200, 200, 100),
-                  .polygon = {},
+                  .polygon = {QPoint(100, 200), QPoint(300, 200), QPoint(300, 300), QPoint(100, 300)},
                   .translation = "LorenIpsum",
                   .font = QFont(),
                   .color = Qt::blue,
-                  .line_height = 100,
+                  .lineHeight = 100
               },
             }
         },

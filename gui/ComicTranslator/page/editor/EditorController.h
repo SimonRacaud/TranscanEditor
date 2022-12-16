@@ -9,7 +9,18 @@ class EditorController : public EditorView
     Q_OBJECT
 public:
     EditorController(QWidget *parent = nullptr);
+    ~EditorController();
 
+    /**
+     * @brief onStart Called when starting a new project edition (switching from home to editor page)
+     * @param config
+     */
+    void onStart(ProjectConfig const &config);
+
+    /**
+     * @brief setTab Change Editor tab
+     * @param tab
+     */
     void setTab(EditorTab tab);
 
     void showSourcePageTab(bool enable);
@@ -28,6 +39,8 @@ private slots:
     void saveButtonClickedSlot(bool checked);
     void exitButtonClickedSlot(bool checked);
 
+private:
+    ProjectConfig *_config = nullptr;
 };
 
 #endif // EDITORCONTROLLER_H

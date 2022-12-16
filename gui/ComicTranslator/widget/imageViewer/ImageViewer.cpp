@@ -4,6 +4,9 @@
 #include <QScrollBar>
 #include <QMovie>
 #include <QKeyEvent>
+#include <QtGlobal>
+#include <QDir>
+#include <stdexcept>
 
 using namespace std;
 
@@ -43,14 +46,13 @@ ImageViewer::ImageViewer(QWidget *parent) : QWidget{parent}
 }
 
 /** PUBLIC **/
-#include <QtGlobal>
 
 void ImageViewer::setPages(vector<OCRPage> const &pages)
 {
     this->_pages = pages;
     size_t offsetY = 0;
 
-    this->_imageWidth = 0;
+    this->clearView(); // Remove current pages
     for (const OCRPage &page : pages) {
         QPixmap img(page.imagePath); // TODO : get the right image to display
         this->_pixmapList.append(img);
@@ -61,6 +63,60 @@ void ImageViewer::setPages(vector<OCRPage> const &pages)
         offsetY += img.height();
         this->_imageWidth = qMax(_imageWidth, (size_t)img.width());
     }
+}
+
+void ImageViewer::loadPagesFromPath(QString const &path)
+{
+    vector<OCRPage> pages;
+    this->clearView();
+
+    try {
+        QDir dir(path);
+        QStringList filter;
+        QFileInfoList filelistinfo;
+
+        // Filter image files
+        for (size_t i = 0; i < SUPPORTED_EXTENSION.size(); i++) {
+            filter << SUPPORTED_EXTENSION.at(i);
+        }
+        dir.setNameFilters(filter);
+        // Load images
+        filelistinfo = dir.entryInfoList();
+        foreach (const QFileInfo &fileinfo, filelistinfo) {
+            QString imageFile = fileinfo.absoluteFilePath();
+            OCRPage page;
+            page.imagePath = imageFile;
+            pages.push_back(page);
+        }
+        if (pages.size()) {
+            this->setPages(pages);
+        }
+    } catch (std::exception const &err) {
+        std::cerr << "Error: " << err.what() << std::endl;
+        throw std::invalid_argument("Unable to access source directory.");
+    }
+    if (pages.size() == 0) {
+        throw std::invalid_argument("The source directory doesn't contain any valid image.");
+    }
+}
+
+std::vector<OCRPage> ImageViewer::getPages()
+{
+    std::vector<OCRPage> pages;
+
+    for (size_t i = 0; i < _pages.size(); i++) {
+        // calling getPage() to use EditTab's override instance.
+        pages.push_back(this->getPage(i));
+    }
+    return pages;
+}
+
+OCRPage ImageViewer::getPage(size_t index)
+{
+    if (index >= _pages.size()) {
+        throw std::invalid_argument("ImageViewer::getPage, Invalid page index.");
+    }
+    return _pages[index];
 }
 
 void ImageViewer::setLoadingState(bool enable)
@@ -94,6 +150,14 @@ void ImageViewer::resizeEvent(QResizeEvent *event)
         }
         this->_timePreviousResize = now;
     }
+}
+
+void ImageViewer::clearView()
+{
+    this->_pageItems.clear();
+    this->_pixmapList.clear();
+    this->_scene->clear();
+    this->_imageWidth = 0;
 }
 
 /** SLOTS **/

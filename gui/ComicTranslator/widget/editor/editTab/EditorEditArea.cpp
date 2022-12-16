@@ -12,12 +12,12 @@ EditorEditArea::EditorEditArea(): ATextEditArea(RectMode::EDIT_TRAN)
           BlockCluster { // DEBUG
               .blocks = {},
               .sentence = "Hello World",
-              .box = QRect(0, 0, 200, 100),
+              //.box = QRect(0, 0, 200, 100),
               .polygon = {QPoint(0, 0), QPoint(200, 0), QPoint(200, 100), QPoint(0, 100)},
               .translation = "LorenIpsum",
               .font = QFont(),
               .color = Qt::blue,
-              .line_height = 100,
+              .lineHeight = 100
           },
         },
     }};

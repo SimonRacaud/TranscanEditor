@@ -12,12 +12,11 @@ CleanEditArea::CleanEditArea()
           BlockCluster { // DEBUG
               .blocks = {},
               .sentence = "",
-              .box = QRect(100, 50, 200, 100),
-              .polygon = {},
+              .polygon = {QPoint(100, 50), QPoint(300, 50), QPoint(300, 150), QPoint(100, 150)},
               .translation = "",
               .font = QFont(),
               .color = Qt::blue,
-              .line_height = 100,
+              .lineHeight = 100
           },
         },
     }};
@@ -42,6 +41,23 @@ std::vector<BlockCluster> CleanEditArea::getClusters() const
         }
     }
     return result;
+}
+
+OCRPage CleanEditArea::getPage(size_t index)
+{
+    OCRPage page = ImageViewer::getPage(index);
+
+    page.clusters.clear();
+    for (SelectAreaRect *rect : _rects) {
+        if (_pageItems.size() >= index) {
+            throw std::invalid_argument("CleanEditArea::getPage, invalid _pageItems size");
+        }
+        QGraphicsPixmapItem *pageItem = _pageItems[index];
+        if (rect->isOnArea(pageItem->boundingRect()) == index) {
+            page.clusters.push_back(rect->getData());
+        }
+    }
+    return page;
 }
 
 /** PRIVATE **/

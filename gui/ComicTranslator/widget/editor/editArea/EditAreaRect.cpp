@@ -25,16 +25,16 @@ EditAreaRect::EditAreaRect(BlockCluster const &data, RectMode mode)
     _textEdit->setStyleSheet("background-color: transparent; border: none");
     this->centerText();
     this->_textEdit->setReadOnly(true);
-    this->_textEdit->setFixedWidth(this->boundingRect().width());
+    this->_textEdit->setFixedWidth(data.polygon.boundingRect().width());
     this->setWidget(_textEdit);
     this->setZValue(8);
-    this->setPos(data.box.x(), data.box.y());
+    this->setPos(data.polygon.boundingRect().x(), data.polygon.boundingRect().y());
 }
 
 QRectF EditAreaRect::boundingRect() const
 {
-    return QRectF(0, 0,
-                  _data.box.width(), _data.box.height());
+    QRectF rect = _data.polygon.boundingRect();
+    return QRectF(0, 0, rect.width(), rect.height());
 }
 
 void EditAreaRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -55,6 +55,8 @@ void EditAreaRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     }
     painter->drawRect(rect);
 
+    QGraphicsProxyWidget::paint(painter,option,widget);
+
     // Resize Triangle
     QPainterPath path;
     path.moveTo(rect.width() - RESIZE_CURSOR_SIZE, rect.height());
@@ -63,8 +65,6 @@ void EditAreaRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     path.lineTo(rect.width() - RESIZE_CURSOR_SIZE, rect.height());
     painter->setBrush(Qt::black); // background color
     painter->drawPath(path);
-
-    QGraphicsProxyWidget::paint(painter,option,widget);
 }
 
 void EditAreaRect::setFont(QFont &font)
@@ -90,7 +90,7 @@ void EditAreaRect::setLineHeight(int percentage)
                             QTextBlockFormat::ProportionalHeight);
     newFormat->setAlignment(Qt::AlignCenter);
     textCursor.setBlockFormat(*newFormat);
-    _data.line_height = percentage;
+    _data.lineHeight = percentage;
 }
 
 void EditAreaRect::setLineHeightAbs(int pixels)
@@ -106,24 +106,36 @@ void EditAreaRect::setLineHeightAbs(int pixels)
     textCursor.setBlockFormat(*newFormat);
 }
 
-BlockCluster const &EditAreaRect::getData()
+BlockCluster EditAreaRect::getData()
 {
+    BlockCluster cluster = _data;
     // Update position
-    this->_data.box = QRect(x(), y(), _data.box.width(), _data.box.height());
-    return _data;
+    QPointF diff = this->pos() - this->_data.polygon.boundingRect().topLeft();
+    cluster.polygon.translate(diff.x(), diff.y());
+    return cluster;
+}
+
+bool EditAreaRect::isOnArea(QRectF area) const
+{
+    const QRectF &rect = this->boundingRect().translated(pos());
+    return rect.intersects(area);
 }
 
 /** Private **/
 
 void EditAreaRect::resize(QPointF diff)
 {
-    QRect preview = _data.box.adjusted(0, 0, diff.x(), diff.y());
+    const QRectF &rect = this->boundingRect();
+    const QRectF &currentRect = rect.adjusted(0, 0, diff.x(), diff.y()); // Rect after resize
 
-    if (preview.width() >= MIN_RECT_SIZE && preview.height() >= MIN_RECT_SIZE) {
-        _data.box.adjust(0, 0, diff.x(), diff.y());
+    if (currentRect.width() >= MIN_RECT_SIZE && currentRect.height() >= MIN_RECT_SIZE) {
+        QPointF scale(
+                    (rect.width()) ? currentRect.width() / rect.width() : 1,
+                    (rect.height()) ? currentRect.height() / rect.height() : 1);
+        _data.polygon = QTransform().scale(scale.x(), scale.y()).map(_data.polygon);
 
-        this->_textEdit->setFixedWidth(this->_data.box.width());
-        this->_textEdit->setFixedHeight(this->_data.box.height());
+        this->_textEdit->setFixedWidth(currentRect.width());
+        this->_textEdit->setFixedHeight(currentRect.height());
         this->centerText();
     }
 }
@@ -132,7 +144,7 @@ void EditAreaRect::centerText()
 {
     float realLineHeight = _textEdit->textCursor().blockFormat().lineHeight();
     float docHeight = _textEdit->document()->documentLayout()->documentSize().height();
-    int rectHeight = _data.box.height();
+    int rectHeight = this->boundingRect().height();
     int lineHeight;
     int nbLine;
 
@@ -210,8 +222,8 @@ void EditAreaRect::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     const QPointF pos = event->pos();
 
-    if ((_data.box.width() - pos.x()) < RESIZE_CURSOR_SIZE
-            && (_data.box.height() - pos.y()) < RESIZE_CURSOR_SIZE) {
+    if ((boundingRect().width() - pos.x()) < RESIZE_CURSOR_SIZE
+            && (boundingRect().height() - pos.y()) < RESIZE_CURSOR_SIZE) {
         // Resize
         this->_isResizing = true;
         this->setCursor(Qt::ClosedHandCursor);

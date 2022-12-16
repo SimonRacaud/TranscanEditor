@@ -16,8 +16,37 @@ class ImageViewer : public QWidget
 public:
     explicit ImageViewer(QWidget *parent = nullptr);
 
+    /**
+     * @brief setPages Overwrite current pages with the ones given as parameter
+     * @param pages
+     */
     virtual void setPages(std::vector<OCRPage> const &pages);
 
+    /**
+     * @brief loadPagesFromPath Read every supported images located in path directory
+     *  and overwrite the current OCRPage list.
+     * @param path Path of a local directory
+     */
+    void loadPagesFromPath(QString const& path);
+
+    /**
+     * @brief getPages Export current pages
+     * @return vector<OCRPage>
+     */
+    virtual std::vector<OCRPage> getPages();
+
+    /**
+     * @brief getPage Export page at index
+     * @param index
+     * @return
+     */
+    virtual OCRPage getPage(size_t index);
+
+    /**
+     * @brief setLoadingState - Enable or Disable the loading state of the widget.
+     *   If enabled, will lock the edition and show a loading cursor.
+     * @param enable
+     */
     void setLoadingState(bool enable);
 
     /**
@@ -40,6 +69,11 @@ signals:
 protected:
     virtual void resizeEvent(QResizeEvent *event) override;
 
+    /**
+     * @brief clearView Clear pages widgets
+     */
+    void clearView();
+
 private:
     // Loading icon
     QMovie *_loadingImg;
@@ -47,12 +81,12 @@ private:
     bool _loading{false};
 
     float _scale{1.0}; // Scale of the images
-    QList<QGraphicsPixmapItem *> _pageItems; // Buffer of pages
     int _timePreviousResize{0};
 
     size_t _imageWidth{0};
 
 protected:
+    QList<QGraphicsPixmapItem *> _pageItems; // Buffer of pages
     std::vector<OCRPage> _pages;
     PageGraphicsView *_view;
     QGraphicsScene *_scene;

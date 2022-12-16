@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 #include <QGridLayout>
+#include "include/models.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _stack(nullptr), _homePage(nullptr), _viewer(nullptr)
 {
@@ -11,7 +12,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _stack(nullptr), 
     this->setCentralWidget(this->_stack);
     this->centralWidget()->layout()->setContentsMargins(0, 0, 0, 0);
 
-    this->setPage(Page::EDITOR); // DEBUG temp
+    //this->setPage(Page::HOME); // DEBUG temp
+    this->setPage(Page::EDITOR);
 
     // Set background color
     QPalette pal = QPalette(QColor(0xFFFFFF));
@@ -32,6 +34,11 @@ void MainWindow::showViewer(QString const &dirPath)
     }
     this->_viewer->show();
     this->_viewer->loadDirectory(dirPath);
+}
+
+void MainWindow::setConfig(ProjectConfig const &config)
+{
+    this->_editor->onStart(config);
 }
 
 void MainWindow::setPage(Page page)

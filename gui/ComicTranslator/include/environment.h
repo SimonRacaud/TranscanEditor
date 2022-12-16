@@ -26,6 +26,12 @@ const TranslationServiceItem TRANS_SERVICE_LIST[] = {
     TranslationServiceItem("Libre", true, "TRAD_KEY_LIBRE and TRAD_LIBRE_BASE_URL variables are required")
 };
 
+const QList<QString> SUPPORTED_EXTENSION = {
+    "*.png",
+    "*.jpg",
+    "*.jpeg"
+};
+
 // Style
 
 #define EDITOR_BG 0xF2F2F2

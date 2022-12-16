@@ -107,13 +107,22 @@ void HomePage::on_submitButton_clicked()
     const QString &srcDirectory = this->sourceDirectory;
     const QString &destDirectory = this->destDirectory;
     const int OCRServiceIndex = this->ui->ocrComboBox->currentIndex();
-    const int TranslationServiceIndex = this->ui->transComboBox->currentIndex();
-    const QString &srcLang = (TranslationServiceIndex) ? this->ui->transSrcComboBox->currentText() : nullptr;
-    const QString &destLang = (TranslationServiceIndex) ? this->ui->transDestComboBox->currentText() : nullptr;
+    const int translationServiceIndex = this->ui->transComboBox->currentIndex();
+    const QString &srcLang = (translationServiceIndex) ? this->ui->transSrcComboBox->currentText() : nullptr;
+    const QString &destLang = (translationServiceIndex) ? this->ui->transDestComboBox->currentText() : nullptr;
     const QFont &font = this->ui->fontComboBox->currentFont();
+    //
+    ProjectConfig config(
+                srcDirectory,
+                destDirectory,
+                OCR_SERVICE_LIST[OCRServiceIndex].name,
+                TRANS_SERVICE_LIST[translationServiceIndex].name,
+                srcLang,
+                destLang,
+                font);
 
-    // TODO: submit form !
     mainWindow->setPage(Page::EDITOR);
+    mainWindow->setConfig(config);
 }
 
 // Change selection OCR Service

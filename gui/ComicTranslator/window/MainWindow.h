@@ -25,6 +25,8 @@ public:
 
     void setPage(Page page);
 
+    void setConfig(ProjectConfig const &config);
+
 private:
     QStackedWidget *_stack;
     HomePage *_homePage;

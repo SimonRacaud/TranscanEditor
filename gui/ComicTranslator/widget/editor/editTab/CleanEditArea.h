@@ -17,6 +17,13 @@ public:
      */
     std::vector<BlockCluster> getClusters() const;
 
+    /**
+     * @brief getPage Export SelectAreaRect list as a list of OCRBlock
+     * @param index
+     * @return
+     */
+    virtual OCRPage getPage(size_t index) override;
+
 private:
     void createBlock(BlockCluster const &cluster);
 

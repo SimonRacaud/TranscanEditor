@@ -8,8 +8,6 @@ extern MainWindow *mainWindow;
 EditorController::EditorController(QWidget *parent) : EditorView(parent)
 {
     this->setupEvents();
-    this->setTab(EditorTab::EXTRACT);
-    this->showSourcePageTab(false);
 
     vector<OCRPage> debug = { // TODO: debug
         { .imagePath = "/media/work/personnal-projects/scanTranslator/scrapper/data_overlord/Chapter_1/5-o.jpg" },
@@ -17,6 +15,12 @@ EditorController::EditorController(QWidget *parent) : EditorView(parent)
         { .imagePath = "/media/work/personnal-projects/scanTranslator/scrapper/data_overlord/Chapter_1/5-o.jpg" },
     };
     this->_sourcePages->setPages(debug); // DEBUG
+}
+
+EditorController::~EditorController()
+{
+    if (_config != nullptr)
+        delete _config;
 }
 
 /** INTERNAL FUNCTIONS **/
@@ -50,20 +54,39 @@ void EditorController::keyPressEvent(QKeyEvent *event)
 
 /** Public **/
 
+void EditorController::onStart(ProjectConfig const &config)
+{
+    // Save project configuration
+    if (_config)
+        delete _config;
+    this->_config = new ProjectConfig(config);
+    //
+    this->setTab(EditorTab::EXTRACT); // Extraction step
+    this->showSourcePageTab(false);
+    // Load source images
+    this->_sourcePages->loadPagesFromPath(_config->srcPath);
+    this->_extractEditTab->loadPagesFromPath(_config->srcPath);
+    // OCR API call
+    // TODO : OCR API call
+}
+
 void EditorController::setTab(EditorTab tab)
 {
     auto *prop = dynamic_cast<APropertyTab *>(_stackProp->currentWidget());
     auto *editor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
 
+    // Disconnect previous event flow
     disconnect(prop, &APropertyTab::nextStep, nullptr, nullptr);
     disconnect(editor, &ImageViewer::horizontalScrollValueChanged, nullptr, nullptr);
     disconnect(editor, &ImageViewer::verticalScrollValueChanged, nullptr, nullptr);
     disconnect(_sourcePages, &ImageViewer::horizontalScrollValueChanged, nullptr, nullptr);
     disconnect(_sourcePages, &ImageViewer::verticalScrollValueChanged, nullptr, nullptr);
 
+    // Select new tabs
     this->_stackEdit->setCurrentIndex((int)tab);
     this->_stackProp->setCurrentIndex((int)tab);
 
+    // Connect new event flow
     prop = dynamic_cast<APropertyTab *>(_stackProp->currentWidget());
     editor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
     connect(prop, &APropertyTab::nextStep, [this, tab]() {

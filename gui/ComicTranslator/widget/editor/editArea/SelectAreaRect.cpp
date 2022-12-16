@@ -27,8 +27,7 @@ void SelectAreaRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
 QRectF SelectAreaRect::boundingRect() const
 {
-    return QRectF(_data.box.x(), _data.box.y(),
-                  _data.box.width(), _data.box.height());
+    return _data.polygon.boundingRect();
 }
 
 bool SelectAreaRect::isSelected() const
@@ -36,9 +35,15 @@ bool SelectAreaRect::isSelected() const
     return _selected;
 }
 
-BlockCluster const &SelectAreaRect::getData() const
+BlockCluster const &SelectAreaRect::getData()
 {
+    this->_data.cleanBox = _selected; // Update state
     return _data;
+}
+
+bool SelectAreaRect::isOnArea(QRectF area) const
+{
+    return area.contains(this->boundingRect());
 }
 
 /** Protected **/

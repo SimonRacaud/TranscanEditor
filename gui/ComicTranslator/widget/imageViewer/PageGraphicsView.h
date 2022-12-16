@@ -12,8 +12,12 @@ public:
 signals:
     void resizedSignal();
 
+    void onDoubleClick(QMouseEvent *event);
+
 private:
     virtual void resizeEvent(QResizeEvent *event) override;
+
+    virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
 };
 
 #endif // QPAGEVIEWER_H

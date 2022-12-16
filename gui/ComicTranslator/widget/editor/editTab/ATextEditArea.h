@@ -12,17 +12,28 @@ class ATextEditArea : public ImageViewer, public ITextEditArea
 public:
     ATextEditArea(RectMode mode);
 
-    virtual void setPages(std::vector<OCRPage> const &pages);
+    virtual void setPages(std::vector<OCRPage> const &pages) override;
 
-    void createAreaRectAtCoord(QPoint const &coord);
+    void createAreaRectAtCoord(QPoint const &coord) override;
 
-    void removeRect();
+    void removeRect() override;
 
     std::vector<BlockCluster> getClusters() const;
 
+    /**
+     * @brief getPage Convert local EditAreaRect list to BlockClusters
+     * @param index Index of the page to export
+     * @return
+     */
+    virtual OCRPage getPage(size_t index) override;
+
 protected:
-    virtual void keyPressEvent(QKeyEvent *event);
-    virtual void mouseDoubleClickEvent(QMouseEvent *event);
+    virtual void keyPressEvent(QKeyEvent *event) override;
+    /**
+     * @brief doubleClickEvent Mouse event on Graphic View
+     * @param event
+     */
+    void doubleClickEvent(QMouseEvent *event);
 
     void createAreaRect(BlockCluster const& data);
 
