@@ -5,3 +5,11 @@ dataset
 result
 .env
 cache
+scrapper/data_overlord
+build.sh
+tmp
+*.spec
+build
+dist
+output
+doc
