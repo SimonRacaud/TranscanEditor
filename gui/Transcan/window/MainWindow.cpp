@@ -6,9 +6,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _stack(nullptr), 
 {
     this->_stack = new QStackedWidget;
     this->_homePage = new HomePage;
-    this->_editor = new EditorController(this);
     this->_stack->addWidget(this->_homePage);
-    this->_stack->addWidget(this->_editor);
     this->setCentralWidget(this->_stack);
     this->centralWidget()->layout()->setContentsMargins(0, 0, 0, 0);
 
@@ -44,10 +42,17 @@ void MainWindow::setPage(Page page)
 {
     switch (page) {
         case Page::HOME:
-            this->_stack->setCurrentIndex(0);
+            this->_stack->setCurrentWidget(_homePage);
         break;
         case Page::EDITOR:
-            this->_stack->setCurrentIndex(1);
+            if (_editor) { // remove previous instance
+                this->_stack->removeWidget(_editor);
+                delete _editor;
+            }
+            this->_editor = new EditorController(this);
+            this->_stack->addWidget(this->_editor);
+
+            this->_stack->setCurrentWidget(_editor);
         break;
     default:
         throw std::runtime_error("MainWindow::setPage page unsupported");

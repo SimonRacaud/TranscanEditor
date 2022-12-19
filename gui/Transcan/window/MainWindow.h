@@ -30,7 +30,7 @@ public:
 private:
     QStackedWidget *_stack;
     HomePage *_homePage;
-    EditorController *_editor;
+    EditorController *_editor{nullptr};
     ViewerWindow *_viewer;
 };
 #endif // MAINWINDOW_H
