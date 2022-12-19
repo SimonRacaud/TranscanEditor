@@ -51,6 +51,7 @@ void ImageViewer::setPages(vector<OCRPage> const &pages)
 {
     this->_pages = pages;
     size_t offsetY = 0;
+    size_t maxImgWidth = 0;
 
     this->clearView(); // Remove current pages
     for (const OCRPage &page : pages) {
@@ -62,9 +63,14 @@ void ImageViewer::setPages(vector<OCRPage> const &pages)
         this->_scene->addItem(item);
         this->_pageItems.push_back(item);
         offsetY += img.height();
-        this->_imageWidth = qMax(_imageWidth, (size_t)img.width());
+         maxImgWidth = qMax(maxImgWidth, (size_t)img.width());
     }
-    this->_scene->setSceneRect(QRectF(0, 0, _imageWidth, offsetY));
+    if (_imageWidth == 0) {
+        // First images loaded. Not an update of a previous display.
+        _imageWidth = maxImgWidth;
+        this->_scene->setSceneRect(QRectF(0, 0, _imageWidth, offsetY));
+    }
+
 }
 
 void ImageViewer::updatePage(OCRPage const &page)
@@ -144,11 +150,13 @@ void ImageViewer::setLoadingState(bool enable)
 {
     this->_loading = enable;
     if (enable) {
+        this->_loadingWidget->show();
         _loadingWidget->move(this->width() / 2 - _loadingWidget->width() / 2,
                              this->height() / 2 - _loadingWidget->height() / 2);
         _loadingImg->start();
     } else {
         this->_loadingImg->stop();
+        this->_loadingWidget->hide();
     }
 }
 
@@ -178,7 +186,6 @@ void ImageViewer::clearView()
     this->_pageItems.clear();
     this->_pixmapList.clear();
     this->_scene->clear();
-    this->_imageWidth = 0;
 }
 
 /** SLOTS **/
@@ -196,7 +203,7 @@ void ImageViewer::refreshImageListSlot()
     // Scale widget for the image to fix the view width:
     this->scale(scale);
     // Update displayed images width:
-    this->_imageWidth = _imageWidth * scale;
+    this->_imageWidth *= scale;
 }
 
 void ImageViewer::setVerticalScrollPosition(int value)

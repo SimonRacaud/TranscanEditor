@@ -18,7 +18,9 @@ void APIClient::sendToOCR(ProjectConfig const& config,
     QJsonObject obj;
     obj["index"] = QJsonValue((int)pageIdx);
     obj["config"] = config.serialize();
-    obj["config"].toObject()["srcImgPath"] = pageImgPath;
+    QJsonObject configObj = obj["config"].toObject();
+    configObj["srcImgPath"] = pageImgPath;
+    obj["config"] = configObj;
     QJsonDocument doc(obj);
     QByteArray body(doc.toJson());
 
@@ -27,17 +29,17 @@ void APIClient::sendToOCR(ProjectConfig const& config,
 
 void APIClient::sendToClean(OCRPage const& page)
 {
-    // TODO
+    // TODO : api
 }
 
 void APIClient::sendToTranslate(OCRPage const& page, QString const& transService)
 {
-    // TODO
+    // TODO : api
 }
 
 void APIClient::sendToRender(OCRPage const& page, RenderConfig const& config)
 {
-    // TODO
+    // TODO : api
 }
 
 /** Protected **/
@@ -45,7 +47,7 @@ void APIClient::sendToRender(OCRPage const& page, RenderConfig const& config)
 void APIClient::sendRequest(QString const& target, QByteArray const &body,
                             NetCallback &callback, NetErrCallback &errFunc)
 {
-    QUrl url(QString("%1/%2/")
+    QUrl url(QString("%1/%2")
              .arg(_url)
              .arg(target));
     QNetworkRequest request(url);
@@ -57,8 +59,8 @@ void APIClient::sendRequest(QString const& target, QByteArray const &body,
             qDebug() << "Network Error: " << reply->errorString() << reply->error();
             errFunc(reply->errorString());
         } else {
-            qDebug() << "Network reply received."; // TODO
             QByteArray const &rawData = reply->readAll();
+            qDebug() << "Network reply received. " << rawData;
             QJsonDocument doc = QJsonDocument::fromJson(rawData);
             QJsonObject body = doc.object();
             // Convert JSON to OCRPage

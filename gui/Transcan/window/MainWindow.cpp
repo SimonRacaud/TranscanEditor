@@ -12,8 +12,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _stack(nullptr), 
     this->setCentralWidget(this->_stack);
     this->centralWidget()->layout()->setContentsMargins(0, 0, 0, 0);
 
-    //this->setPage(Page::HOME); // DEBUG temp
-    this->setPage(Page::EDITOR);
+    this->setPage(Page::HOME);
 
     // Set background color
     QPalette pal = QPalette(QColor(0xFFFFFF));

@@ -81,7 +81,7 @@ BlockCluster BlockCluster::deserialize(QJsonObject const &obj)
     b.color = QColor(obj["color"].toInteger(0));
     b.lineHeight = obj["lineHeight"].toDouble(DEF_EDIT_LINE_HEIGHT);
     b.strokeWidth = obj["strokeWidth"].toInt(DEF_EDIT_STROKE_WIDTH);
-    b.font = QFont(obj["font"].toString(), -1, b.strokeWidth);
+    b.font = QFont(obj["font"].toString(), 20/* temp */, b.strokeWidth);
     b.translation = obj["translation"].toString();
     b.sentence = obj["sentence"].toString();
     b.polygon = deserializePolygon(obj["polygon"]);
@@ -119,15 +119,15 @@ OCRPage OCRPage::deserialize(QJsonObject &data)
         throw std::invalid_argument("invalid JSON, source image");
     }
     page.cleanImagePath = data["cleanImgPath"].toString("#invalid");
-    if (page.cleanImagePath == ""
-            || !FileUtils::checkImgFilePath(page.cleanImagePath)
-            || !FileUtils::checkDirExist(page.cleanImagePath)) {
+    if (page.cleanImagePath != ""
+            && !FileUtils::checkImgFilePath(page.cleanImagePath)
+            && !FileUtils::checkDirExist(page.cleanImagePath)) {
         throw std::invalid_argument("invalid JSON, clean image");
     }
     page.renderImagePath = data["renderImgPath"].toString("#invalid");
-    if (page.renderImagePath == ""
-            || !FileUtils::checkImgFilePath(page.renderImagePath)
-            || !FileUtils::checkDirExist(page.renderImagePath)) {
+    if (page.renderImagePath != ""
+            && !FileUtils::checkImgFilePath(page.renderImagePath)
+            && !FileUtils::checkDirExist(page.renderImagePath)) {
         throw std::invalid_argument("invalid JSON, rendered image");
     }
     const QJsonArray &blockList = data["blocks"].toArray();

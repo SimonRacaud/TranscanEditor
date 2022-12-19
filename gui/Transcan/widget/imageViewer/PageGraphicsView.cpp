@@ -15,10 +15,12 @@ PageGraphicsView::PageGraphicsView()
 
 void PageGraphicsView::resizeEvent(QResizeEvent *event)
 {
+    QGraphicsView::resizeEvent(event);
     emit this->resizedSignal();
 }
 
 void PageGraphicsView::mouseDoubleClickEvent(QMouseEvent *event)
 {
+    QGraphicsView::mouseDoubleClickEvent(event);
     emit this->onDoubleClick(event);
 }

@@ -96,14 +96,14 @@ void EditAreaRect::setLineHeight(int percentage)
 void EditAreaRect::setLineHeightAbs(int pixels)
 {
     QTextCursor textCursor = _textEdit->textCursor();
-    QTextBlockFormat *newFormat = new QTextBlockFormat();
+    QTextBlockFormat newFormat = QTextBlockFormat();
 
     textCursor.clearSelection();
     textCursor.select(QTextCursor::Document);
-    newFormat->setLineHeight(pixels,
+    newFormat.setLineHeight(pixels,
                             QTextBlockFormat::MinimumHeight);
-    newFormat->setAlignment(Qt::AlignCenter);
-    textCursor.setBlockFormat(*newFormat);
+    newFormat.setAlignment(Qt::AlignCenter);
+    textCursor.setBlockFormat(newFormat);
 }
 
 BlockCluster EditAreaRect::getData()
@@ -117,7 +117,7 @@ BlockCluster EditAreaRect::getData()
 
 bool EditAreaRect::isOnArea(QRectF area) const
 {
-    const QRectF &rect = this->boundingRect().translated(pos());
+    QRectF rect = this->boundingRect().translated(pos());
     return rect.intersects(area);
 }
 

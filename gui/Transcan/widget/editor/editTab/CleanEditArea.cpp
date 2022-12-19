@@ -20,7 +20,7 @@ CleanEditArea::CleanEditArea()
           },
         },
     }};
-    this->setPages(debug); // DEBUG
+    //this->setPages(debug); // DEBUG
     //this->setSourceDirectory("/media/work/personnal-projects/scanTranslator/data/dataset/debug");
 }
 
@@ -65,14 +65,14 @@ void CleanEditArea::load(std::vector<OCRPage> const &pages)
     this->setPages(pages); // Apply pages to view
 }
 
-void CleanEditArea::load(OCRPage const &page)
+void CleanEditArea::loadPage(OCRPage const &page)
 {
     this->updatePage(page);
 }
 
 void CleanEditArea::unload()
 {
-    // TODO
+    // TODO : unload clean tab
 }
 
 /** PRIVATE **/

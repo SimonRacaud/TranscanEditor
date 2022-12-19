@@ -16,6 +16,12 @@ HomePage::HomePage(QWidget *parent)
     ui->projectListView->setModel(this->previousProjectListModel);
     // Create project form
     this->loadNewProjectFormContent();
+
+    // TODO : DEBUG auto fill form
+    this->sourceDirectory = "/home/simon/scanTranslator/data/dataset/debug";
+    this->destDirectory = "/home/simon/scanTranslator/data/result";
+    this->ui->ocrComboBox->setCurrentIndex(1); // AWS
+    this->ui->transComboBox->setCurrentIndex(1); // GOOGLE
 }
 
 HomePage::~HomePage()
@@ -115,8 +121,8 @@ void HomePage::on_submitButton_clicked()
     ProjectConfig config(
                 srcDirectory,
                 destDirectory,
-                OCR_SERVICE_LIST[OCRServiceIndex].name,
-                TRANS_SERVICE_LIST[translationServiceIndex].name,
+                OCR_SERVICE_LIST[OCRServiceIndex].apiLabel,
+                TRANS_SERVICE_LIST[translationServiceIndex].apiLabel,
                 srcLang,
                 destLang,
                 font);

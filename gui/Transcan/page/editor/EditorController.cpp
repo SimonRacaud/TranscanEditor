@@ -72,12 +72,14 @@ void EditorController::onStart(ProjectConfig const &config)
     // OCR API call
     std::vector<OCRPage> const &pages = this->_extractEditTab->getPages();
     size_t i = 0;
+    this->_extractEditTab->setLoadingState(true);
     for (OCRPage const &page : pages) {
         using std::placeholders::_1;
         NetCallback callback = bind(&IEditTab::loadPage, _extractEditTab, _1);
         NetErrCallback errCallback = bind(&EditorController::netError, this, _1);
         this->_api.sendToOCR(config, i, page.imagePath, callback, errCallback);
         i++;
+        break; // TODO : to improve (error management)
     }
 }
 

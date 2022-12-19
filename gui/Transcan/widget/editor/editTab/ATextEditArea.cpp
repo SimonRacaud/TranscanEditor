@@ -73,7 +73,7 @@ OCRPage ATextEditArea::getPage(size_t index)
             throw std::invalid_argument("ATextEditArea::getPage, invalid _pageItems size");
         }
         QGraphicsPixmapItem *pageItem = _pageItems[index];
-        if (rect->isOnArea(pageItem->boundingRect())) {
+        if (pageItem && rect->isOnArea(pageItem->boundingRect())) {
             page.clusters.push_back(rect->getData());
             break;
         }

@@ -17,7 +17,7 @@ bool FileUtils::checkImgFilePath(QString const& filepath)
         return false; // File doesn't exist
     }
     QFileInfo fi(filepath);
-    if (!SUPPORTED_EXTENSION.contains(fi.suffix())) {
+    if (!SUPPORTED_EXTENSION_SUFFIX.contains(fi.suffix())) {
         return false; // invalid extension
     }
     return true;

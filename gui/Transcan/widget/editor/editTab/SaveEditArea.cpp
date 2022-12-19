@@ -9,18 +9,18 @@ SaveEditArea::SaveEditArea()
 
 void SaveEditArea::load(std::vector<OCRPage> const &pages)
 {
-    // TODO
+    // TODO : load save tab
     // API call to render each page
 }
 
-void SaveEditArea::load(OCRPage const &page)
+void SaveEditArea::loadPage(OCRPage const &page)
 {
     this->updatePage(page);
 }
 
 void SaveEditArea::unload()
 {
-    // TODO
+    // TODO : unload save tab
     // Stop any API call
 }
 

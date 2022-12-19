@@ -34,13 +34,14 @@ void ExtractionEditArea::load(std::vector<OCRPage> const &pages)
 
 void ExtractionEditArea::loadPage(OCRPage const &page)
 {
+    this->setLoadingState(false);
     // Replace page and Reload view
     this->updatePage(page);
 }
 
 void ExtractionEditArea::unload()
 {
-    // TODO
+    // TODO : unload Extract tab
     // Stop any API call
 
 }

@@ -28,7 +28,7 @@ EditorEditArea::EditorEditArea(): ATextEditArea(RectMode::EDIT_TRAN)
 
 void EditorEditArea::load(std::vector<OCRPage> const &pages)
 {
-    // TODO
+    // TODO : load Edit tab
     // Load pages
     // Translation API Call (if first load)
 }
@@ -40,5 +40,5 @@ void EditorEditArea::loadPage(OCRPage const &page)
 
 void EditorEditArea::unload()
 {
-    // TODO
+    // TODO : unload edit tab
 }

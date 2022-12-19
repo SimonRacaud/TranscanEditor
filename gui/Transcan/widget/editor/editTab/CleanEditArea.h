@@ -25,7 +25,7 @@ public:
     virtual OCRPage getPage(size_t index) override;
 
     virtual void load(std::vector<OCRPage> const &pages = {});
-    virtual void load(OCRPage const &page);
+    virtual void loadPage(OCRPage const &page);
     virtual void unload();
 
 private:
