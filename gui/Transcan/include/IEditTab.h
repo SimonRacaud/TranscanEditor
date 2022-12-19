@@ -3,7 +3,7 @@
 
 #include <QPoint>
 
-#include "include/model/OCRPage.h"
+#include "model/Page.h"
 
 class IEditTab {
 public:

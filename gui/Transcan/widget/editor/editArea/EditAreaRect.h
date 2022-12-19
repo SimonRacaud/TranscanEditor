@@ -5,7 +5,7 @@
 #include <QTextEdit>
 #include <iostream>
 
-#include "include/model/OCRPage.h"
+#include "model/Page.h"
 
 #define MIN_RECT_SIZE 40
 #define RESIZE_CURSOR_SIZE 15

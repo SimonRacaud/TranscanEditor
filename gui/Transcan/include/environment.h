@@ -66,6 +66,9 @@ const QList<QString> SUPPORTED_EXTENSION = {
 #define DEF_LINE_HEIGHT 100 // Editor -> Text
 #define DEF_EDITAREA_SIZE 100, 50 // Editor
 
+#define DEF_EDIT_LINE_HEIGHT 8 // Edition/render config
+#define DEF_EDIT_STROKE_WIDTH 3
+
 // Editor page zoom key shortcut
 #define ZOOM_SHIFT 0.05 // scale shift
 

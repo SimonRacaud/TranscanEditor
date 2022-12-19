@@ -2,7 +2,7 @@
 #define APICLIENT_H
 
 #include "include/models.h"
-#include "include/model/OCRPage.h"
+#include "model/Page.h"
 #include "include/environment.h"
 
 #include <QtNetwork/QNetworkAccessManager>

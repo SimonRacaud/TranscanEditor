@@ -7,7 +7,7 @@
 #include <QGraphicsPixmapItem>
 
 #include "include/environment.h"
-#include "include/model/OCRPage.h"
+#include "model/Page.h"
 #include "PageGraphicsView.h"
 
 class ImageViewer : public QWidget

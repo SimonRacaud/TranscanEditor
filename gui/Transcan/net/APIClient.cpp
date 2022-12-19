@@ -1,9 +1,10 @@
 #include "APIClient.h"
 
+#include "model/Page.h"
 #include <QJsonObject>
 #include <QJsonDocument>
 
-APIClient::APIClient(QString const &url) : _url(url)
+APIClient::APIClient(QString const &url) : _url(url), _netManager(nullptr)
 {
 }
 
@@ -47,7 +48,7 @@ void APIClient::sendRequest(QString const& target, QByteArray const &body,
     QUrl url(QString("%1/%2/")
              .arg(_url)
              .arg(target));
-    QNetworkRequest request{url};
+    QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     QNetworkReply *reply = _netManager.post(request, body);
 
@@ -62,50 +63,19 @@ void APIClient::sendRequest(QString const& target, QByteArray const &body,
             QJsonObject body = doc.object();
             // Convert JSON to OCRPage
             OCRPage page;
+            try {
+                page = OCRPage::deserialize(body);
+            } catch (std::exception const &err) {
+                qDebug() << "Network Error: invalid body. " << err.what();
+                reply->disconnect(reply, &QNetworkReply::finished, 0, 0);
+                reply->deleteLater();
+                return;
+            }
             //
-            callback(body);
+            callback(page);
         }
         reply->disconnect(reply, &QNetworkReply::finished, 0, 0);
         reply->deleteLater();
     });
     this->_pendingReplies.push_back(reply);
-}
-
-
-{
-    "blocks": [
-        {
-            "angle": 0.0,
-            "pivot": {
-                "x": 152,
-                "y": 12
-            },
-            "polygon": [
-
-            ],
-            "size": {
-                "x": 170,
-                "y": 23
-            },
-            "text": "THERE IS NO"
-        },
-    ],
-    "cleanImgPath": "./result/sample_small_clean.jpg",
-    "clusters": [
-        {
-            "blocks": [],
-            "cleanBox": true,
-            "color": null,
-            "font": null,
-            "lineHeight": 0.0,
-            "polygon": [
-            ],
-            "sentence": "WOULD BE PROUD.",
-            "strokeWidth": 0,
-            "translation": "SERAIT FIÈRE."
-        },
-    ],
-    "index": 0,
-    "renderImgPath": "./result/sample_small_render.jpg",
-    "srcImgPath": "../data/dataset/sample_small.jpg"
 }

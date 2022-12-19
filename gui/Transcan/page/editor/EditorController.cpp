@@ -12,12 +12,12 @@ EditorController::EditorController(QWidget *parent) : EditorView(parent)
 {
     this->setupEvents();
 
-    vector<OCRPage> debug = { // TODO: debug
-        { .imagePath = "/media/work/personnal-projects/scanTranslator/scrapper/data_overlord/Chapter_1/5-o.jpg" },
-        { .imagePath = "/media/work/personnal-projects/scanTranslator/scrapper/data_overlord/Chapter_1/5-o.jpg" },
-        { .imagePath = "/media/work/personnal-projects/scanTranslator/scrapper/data_overlord/Chapter_1/5-o.jpg" },
-    };
-    this->_sourcePages->setPages(debug); // DEBUG
+//    vector<OCRPage> debug = { // TODO: debug
+//        { .imagePath = "/media/work/personnal-projects/scanTranslator/scrapper/data_overlord/Chapter_1/5-o.jpg" },
+//        { .imagePath = "/media/work/personnal-projects/scanTranslator/scrapper/data_overlord/Chapter_1/5-o.jpg" },
+//        { .imagePath = "/media/work/personnal-projects/scanTranslator/scrapper/data_overlord/Chapter_1/5-o.jpg" },
+//    };
+//    this->_sourcePages->setPages(debug); // DEBUG
 }
 
 EditorController::~EditorController()
@@ -70,7 +70,6 @@ void EditorController::onStart(ProjectConfig const &config)
     this->_sourcePages->loadPagesFromPath(_config->srcPath);
     this->_extractEditTab->loadPagesFromPath(_config->srcPath);
     // OCR API call
-    // TODO : OCR API call
     std::vector<OCRPage> const &pages = this->_extractEditTab->getPages();
     size_t i = 0;
     for (OCRPage const &page : pages) {
@@ -133,23 +132,23 @@ void EditorController::showSourceButtonClickedSlot(bool checked)
     // show/hide source document tab
     this->showSourcePageTab(checked);
 }
-void EditorController::extractButtonClickedSlot(bool checked)
+void EditorController::extractButtonClickedSlot(bool)
 {
     this->setTab(EditorTab::EXTRACT);
 }
-void EditorController::cleanButtonClickedSlot(bool checked)
+void EditorController::cleanButtonClickedSlot(bool)
 {
     this->setTab(EditorTab::CLEAN);
 }
-void EditorController::editButtonClickedSlot(bool checked)
+void EditorController::editButtonClickedSlot(bool)
 {
     this->setTab(EditorTab::EDIT);
 }
-void EditorController::saveButtonClickedSlot(bool checked)
+void EditorController::saveButtonClickedSlot(bool)
 {
     this->setTab(EditorTab::SAVE);
 }
-void EditorController::exitButtonClickedSlot(bool checked)
+void EditorController::exitButtonClickedSlot(bool)
 {
     // Go back to home page
     mainWindow->setPage(Page::HOME);

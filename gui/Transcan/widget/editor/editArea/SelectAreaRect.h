@@ -4,7 +4,7 @@
 #include <QGraphicsObject>
 #include <QObject>
 
-#include "include/model/OCRPage.h"
+#include "model/Page.h"
 
 class SelectAreaRect : public QGraphicsObject
 {

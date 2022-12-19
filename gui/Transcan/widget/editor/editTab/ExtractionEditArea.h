@@ -4,7 +4,7 @@
 #include "ATextEditArea.h"
 #include "widget/editor/editArea/EditAreaRect.h"
 #include "include/environment.h"
-#include "include/model/OCRPage.h"
+#include "model/Page.h"
 
 class ExtractionEditArea : public ATextEditArea
 {

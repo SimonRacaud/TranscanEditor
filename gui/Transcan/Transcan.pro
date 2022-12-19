@@ -1,6 +1,6 @@
-0QT       += core gui
+0QT       += core gui network
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets network
 
 CONFIG += c++17
 
@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
 	main.cpp \
+    model/Page.cpp \
         window/MainWindow.cpp \
         window/ViewerWindow.cpp \
         page/editor/EditorView.cpp \
@@ -33,11 +34,11 @@ SOURCES += \
 	utils/FileUtils.cpp 
 
 HEADERS += \
+    model/Page.h \
     window/MainWindow.h \
     window/ViewerWindow.h \
     include/environment.h \
     include/models.h \
-    include/model/OCRPage.h \
     include/model/Utils.h \
     page/editor/EditorView.h \
     page/editor/EditorController.h \

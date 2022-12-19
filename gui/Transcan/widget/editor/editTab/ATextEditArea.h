@@ -12,11 +12,6 @@ class ATextEditArea : public ImageViewer, public IEditTab
 public:
     ATextEditArea(RectMode mode);
 
-    /**
-     * @brief load : called on first display
-     */
-    virtual void load();
-
     virtual void setPages(std::vector<OCRPage> const &pages) override;
 
     void createAreaRectAtCoord(QPoint const &coord);
