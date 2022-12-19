@@ -18,6 +18,17 @@ Vector2i deserializeVector(QJsonObject const &obj)
     return d;
 }
 
+QJsonObject serializeVector(Vector2i const &v)
+{
+    QJsonObject obj;
+
+    obj["x"] = v.x;
+    obj["y"] = v.y;
+    return obj;
+}
+
+//
+
 QPolygon deserializePolygon(QJsonValue const &obj)
 {
     QPolygon poly;
@@ -36,6 +47,18 @@ QPolygon deserializePolygon(QJsonValue const &obj)
         poly << p;
     }
     return poly;
+}
+
+QJsonArray serializePolygon(QPolygon const &p)
+{
+    QJsonArray polyList;
+
+    for (QPoint const &pt : p) {
+        QJsonArray point;
+        point << pt.x() << pt.y();
+        polyList << point;
+    }
+    return polyList;
 }
 
 /**
@@ -58,6 +81,18 @@ OCRBlock OCRBlock::deserialize(QJsonObject const &obj)
     b.size = deserializeVector(obj["size"].toObject());
     b.polygon = deserializePolygon(obj["polygon"]);
     return b;
+}
+
+QJsonObject OCRBlock::serialize() const
+{
+    QJsonObject obj;
+
+    obj["angle"] = this->angle;
+    obj["pivot"] = serializeVector(this->pivot);
+    obj["polygon"] = serializePolygon(this->polygon);
+    obj["size"] = serializeVector(this->size);
+    obj["text"] = this->text;
+    return obj;
 }
 
 /**
@@ -85,13 +120,30 @@ BlockCluster BlockCluster::deserialize(QJsonObject const &obj)
     b.translation = obj["translation"].toString();
     b.sentence = obj["sentence"].toString();
     b.polygon = deserializePolygon(obj["polygon"]);
+
+    // TODO: deserialize cluster's blocks
     //const QJsonArray &blockList = obj["blocks"].toArray();
     //for (QJsonValue const &val : blockList) {
         //const QJsonObject &blockJson = val.toObject();
         //b.blocks.push_back(OCRBlock::deserialize(blockJson));
-        // TODO: deserialize cluster's blocks
     //}
     return b;
+}
+
+QJsonObject BlockCluster::serialize() const
+{
+    QJsonObject obj;
+
+    obj["blocks"] = QJsonArray(); // TODO : serialize blocks
+    obj["cleanBox"] = this->cleanBox;
+    obj["color"] = QJsonValue((qint64)this->color.rgba64());
+    obj["font"] = this->font.family();
+    obj["translation"] = this->translation;
+    obj["lineHeight"] = this->lineHeight;
+    obj["polygon"] = serializePolygon(this->polygon);
+    obj["sentence"] = this->sentence;
+    obj["strokeWidth"] = this->strokeWidth;
+    return obj;
 }
 
 /**
@@ -101,7 +153,8 @@ BlockCluster BlockCluster::deserialize(QJsonObject const &obj)
 OCRPage OCRPage::deserialize(QJsonObject &data)
 {
     OCRPage page;
-    QList<QString> required = {"index", "srcImgPath", "cleanImgPath", "renderImgPath", "blocks", "clusters"};
+    QList<QString> required = {"index", "srcImgPath", "cleanImgPath", "renderImgPath",
+                               "blocks", "clusters"};
 
     for (QString const& req : required) {
         if (!data.contains(req)) {
@@ -141,4 +194,27 @@ OCRPage OCRPage::deserialize(QJsonObject &data)
         page.clusters.push_back(BlockCluster::deserialize(clusterJson));
     }
     return page;
+}
+
+QJsonObject OCRPage::serialize() const
+{
+    QJsonObject obj;
+
+    obj["index"] = (qint64)this->index;
+    obj["srcImgPath"] = this->imagePath;
+    obj["cleanImgPath"] = this->cleanImagePath;
+    obj["renderImgPath"] = this->renderImagePath;
+
+    QJsonArray blockList;
+    for (OCRBlock const &b : this->blocks) {
+        blockList << b.serialize();
+    }
+    obj["blocks"] = blockList;
+
+    QJsonArray clusterList;
+    for (BlockCluster const &c : this->clusters) {
+        clusterList << c.serialize();
+    }
+    obj["clusters"] = clusterList;
+    return obj;
 }

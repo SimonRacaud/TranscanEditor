@@ -22,6 +22,7 @@ struct OCRBlock {
     float angle;
 
     static OCRBlock deserialize(QJsonObject const &obj);
+    QJsonObject serialize() const;
 };
 
 struct BlockCluster {
@@ -36,6 +37,7 @@ struct BlockCluster {
     int strokeWidth;
 
     static BlockCluster deserialize(QJsonObject const &obj);
+    QJsonObject serialize() const;
 };
 
 struct OCRPage {
@@ -47,6 +49,7 @@ struct OCRPage {
     std::vector<BlockCluster> clusters;
 
     static OCRPage deserialize(QJsonObject &data);
+    QJsonObject serialize() const;
 };
 
 #endif // PAGE_H
