@@ -21,7 +21,7 @@ class ImageCleaner:
         return cv2.inpaint(image, mask, 7, cv2.INPAINT_NS)
     
     @staticmethod
-    def __poly_distension(poly, angle,  shift):
+    def __poly_distension(poly, angle, shift):
         if abs(angle) > 2:
             return poly
         poly_sort = poly[np.lexsort((poly[:,0],poly[:,1]))]

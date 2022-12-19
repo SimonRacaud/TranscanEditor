@@ -182,5 +182,5 @@ def handle_invalid_body(error: APIError):
 
 if __name__ == '__main__':
     load_dotenv() # Load env variables
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5000, threaded=True)
     # args = parser.parse_args()
