@@ -55,6 +55,7 @@ void ImageViewer::setPages(vector<OCRPage> const &pages)
     this->clearView(); // Remove current pages
     for (const OCRPage &page : pages) {
         QPixmap img(page.imagePath); // TODO : get the right image to display
+        std::cerr << "Load page : " << page.imagePath.toStdString() << std::endl; // TODO temp
         this->_pixmapList.append(img);
         auto *item = new QGraphicsPixmapItem(img);
         item->setPos(0, offsetY);
@@ -63,6 +64,7 @@ void ImageViewer::setPages(vector<OCRPage> const &pages)
         offsetY += img.height();
         this->_imageWidth = qMax(_imageWidth, (size_t)img.width());
     }
+    this->_scene->setSceneRect(QRectF(0, 0, _imageWidth, offsetY));
 }
 
 void ImageViewer::updatePage(OCRPage const &page)
@@ -95,7 +97,7 @@ void ImageViewer::loadPagesFromPath(QString const &path)
         QFileInfoList filelistinfo;
 
         // Filter image files
-        for (size_t i = 0; i < SUPPORTED_EXTENSION.size(); i++) {
+        for (size_t i = 0; i < (size_t)SUPPORTED_EXTENSION.size(); i++) {
             filter << SUPPORTED_EXTENSION.at(i);
         }
         dir.setNameFilters(filter);
@@ -184,11 +186,12 @@ void ImageViewer::clearView()
 void ImageViewer::refreshImageListSlot()
 {
     int viewWidth = this->_view->width() /* Widget borders */ - 4;
-    qreal offsetY = 0;
 
     if (this->_view->verticalScrollBar()->isEnabled()) {
         viewWidth -= this->_view->verticalScrollBar()->width();
     }
+    if (!_imageWidth || !viewWidth)
+        return; // avoid div by zero - invalid data
     float scale = (float)viewWidth / (float)_imageWidth;
     // Scale widget for the image to fix the view width:
     this->scale(scale);
