@@ -1,8 +1,7 @@
 #include "SaveEditArea.h"
 
-SaveEditArea::SaveEditArea()
+SaveEditArea::SaveEditArea(APIClient &client) : NetEditTab(client, RENDER)
 {
-
 }
 
 /** PUBLIC **/

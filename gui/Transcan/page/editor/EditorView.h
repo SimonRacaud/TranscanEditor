@@ -24,7 +24,7 @@ class EditorView : public QWidget
 {
     Q_OBJECT
 public:
-    explicit EditorView(QWidget *parent = nullptr);
+    explicit EditorView(APIClient &api, QWidget *parent = nullptr);
 
     enum class EditorTab {
         EXTRACT = 0,

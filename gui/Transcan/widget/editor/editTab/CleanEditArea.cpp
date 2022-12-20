@@ -1,8 +1,9 @@
 #include "CleanEditArea.h"
+#include <functional>
 
 using namespace std;
 
-CleanEditArea::CleanEditArea()
+CleanEditArea::CleanEditArea(APIClient &client) : NetEditTab(client, CLEAN)
 {
     // -----------------------
     vector<OCRPage> debug = { // TODO: debug
@@ -62,7 +63,18 @@ OCRPage CleanEditArea::getPage(size_t index)
 
 void CleanEditArea::load(std::vector<OCRPage> const &pages)
 {
+    static bool firstLoad = true;
+
     this->setPages(pages); // Apply pages to view
+    if (firstLoad) {
+        // API call
+        for (OCRPage const &page: pages) {
+            NetCallback success = bind(&IEditTab::loadPage, this, std::placeholders::_1);
+            NetErrCallback error = bind(&NetEditTab::netError, this, std::placeholders::_1);
+            this->_api.sendToClean(page, success, error); // TODO : to improve
+        }
+        firstLoad = false;
+    }
 }
 
 void CleanEditArea::loadPage(OCRPage const &page)

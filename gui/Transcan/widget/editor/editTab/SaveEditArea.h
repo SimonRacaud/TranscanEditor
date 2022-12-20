@@ -1,13 +1,13 @@
 #ifndef SAVEEDITAREA_H
 #define SAVEEDITAREA_H
 
-#include "widget/imageViewer/ImageViewer.h"
+#include "NetEditTab.h"
 
-class SaveEditArea : public ImageViewer
+class SaveEditArea : public NetEditTab
 {
     Q_OBJECT
 public:
-    SaveEditArea();
+    SaveEditArea(APIClient &client);
 
     virtual void load(std::vector<OCRPage> const &pages = {});
     virtual void loadPage(OCRPage const &page);

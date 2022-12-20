@@ -1,16 +1,15 @@
 #ifndef ATEXTEDITAREA_H
 #define ATEXTEDITAREA_H
 
-#include "include/IEditTab.h"
 #include "include/environment.h"
 #include "widget/editor/editArea/EditAreaRect.h"
-#include "widget/imageViewer/ImageViewer.h"
+#include "NetEditTab.h"
 
-class ATextEditArea : public ImageViewer, public IEditTab
+class ATextEditArea : public NetEditTab
 {
     Q_OBJECT
 public:
-    ATextEditArea(RectMode mode);
+    ATextEditArea(APIClient &client, ImageMode modeImg, RectMode mode);
 
     virtual void setPages(std::vector<OCRPage> const &pages) override;
 

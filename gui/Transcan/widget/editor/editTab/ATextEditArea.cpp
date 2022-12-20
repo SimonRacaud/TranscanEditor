@@ -4,7 +4,7 @@
 
 using namespace std;
 
-ATextEditArea::ATextEditArea(RectMode mode) : _mode(mode)
+ATextEditArea::ATextEditArea(APIClient &client, ImageMode modeImg, RectMode mode) : NetEditTab(client, modeImg), _mode(mode)
 {
     connect(_view, &PageGraphicsView::onDoubleClick, this, &ATextEditArea::doubleClickEvent);
 }

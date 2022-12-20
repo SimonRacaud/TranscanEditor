@@ -11,6 +11,7 @@ CONFIG += c++17
 SOURCES += \
 	main.cpp \
     model/Page.cpp \
+    widget/editor/editTab/NetEditTab.cpp \
         window/MainWindow.cpp \
         window/ViewerWindow.cpp \
         page/editor/EditorView.cpp \
@@ -34,7 +35,9 @@ SOURCES += \
 	utils/FileUtils.cpp 
 
 HEADERS += \
+    include/ServiceItem.h \
     model/Page.h \
+    widget/editor/editTab/NetEditTab.h \
     window/MainWindow.h \
     window/ViewerWindow.h \
     include/environment.h \

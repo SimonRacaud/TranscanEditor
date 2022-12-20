@@ -4,7 +4,7 @@
 
 using namespace std;
 
-ExtractionEditArea::ExtractionEditArea() : ATextEditArea(RectMode::EDIT_SENT)
+ExtractionEditArea::ExtractionEditArea(APIClient &client) : ATextEditArea(client, SOURCE, RectMode::EDIT_SENT)
 {
 //    vector<OCRPage> debug = { // TODO: debug
 //        {

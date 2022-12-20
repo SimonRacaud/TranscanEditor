@@ -1,46 +1,34 @@
 #ifndef MODELS_H
 #define MODELS_H
 
+#include "environment.h"
+
 #include <QString>
-#include <QList>
-#include <vector>
 #include <QFont>
-
-class ServiceItem {
-public:
-    const QString name;
-    const QString apiLabel;
-    bool needConfig; // Do this service require configuration variable(s) ?
-    const QString helpMessage = nullptr;
-
-    ServiceItem(const ServiceItem& copy)
-        : name(copy.name), needConfig(copy.needConfig), helpMessage(copy.helpMessage)
-    {}
-    ServiceItem(const QString &name, const QString &apiLabel, bool needConfig, const QString &helpMessage = nullptr)
-        : name(name), apiLabel(apiLabel), needConfig(needConfig), helpMessage(helpMessage)
-    {}
-};
-
-class TranslationServiceItem : public ServiceItem {
-public:
-    const QStringList srcLang;
-    const QStringList destLang;
-
-    TranslationServiceItem(
-            const QString &name,
-            const QString &apiLabel,
-            bool needConfig,
-            const QString &helpMessage = nullptr,
-            const QStringList &srcLanguages = {
-                "en"
-            },
-            const QStringList &destLanguages = {
-                "fr"
-            })
-        : ServiceItem(name, apiLabel, needConfig, helpMessage), srcLang(srcLanguages), destLang(destLanguages) {};
-};
-
 #include <QJsonObject>
+
+/**
+ * Config
+ */
+
+class RenderConfig {
+public:
+    unsigned int defLineHeight;
+    QFont defFont;
+    unsigned int defStrokeWidth;
+
+    RenderConfig(unsigned int defLineHeight, QFont defFont, unsigned int defStrokeWidth)
+        : defLineHeight(defLineHeight), defFont(defFont), defStrokeWidth(defStrokeWidth) {}
+
+    QJsonObject serialize() const
+    {
+        QJsonObject obj;
+        obj["lineHeight"] = (qint64)this->defLineHeight;
+        obj["font"] = this->defFont.family();
+        obj["strokeWidth"] = (qint64)this->defStrokeWidth;
+        return obj;
+    }
+};
 
 class ProjectConfig {
 public:
@@ -51,6 +39,7 @@ public:
     QString transSrc;
     QString transDest;
     QFont font;
+    RenderConfig renderConf = RenderConfig(DEF_EDIT_LINE_HEIGHT, QFont(DEF_EDIT_FONT, -1, DEF_EDIT_STROKE_WIDTH), DEF_EDIT_STROKE_WIDTH);
 
 public:
     ProjectConfig(
@@ -75,25 +64,6 @@ public:
         //o["boxClusterSearchRange"] = 0;
         //o["boxClusterSearchStep"] = 0;
         return o;
-    }
-};
-
-class RenderConfig {
-public:
-    unsigned int defLineHeight;
-    QFont defFont;
-    unsigned int defStrokeWidth;
-
-    RenderConfig(unsigned int defLineHeight, QFont defFont, unsigned int defStrokeWidth)
-        : defLineHeight(defLineHeight), defFont(defFont), defStrokeWidth(defStrokeWidth) {}
-
-    QJsonObject serialize() const
-    {
-        QJsonObject obj;
-        obj["lineHeight"] = (qint64)this->defLineHeight;
-        obj["font"] = this->defFont.family();
-        obj["strokeWidth"] = (qint64)this->defStrokeWidth;
-        return obj;
     }
 };
 

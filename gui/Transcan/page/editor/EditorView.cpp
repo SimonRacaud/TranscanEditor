@@ -7,7 +7,7 @@
 
 #include <QHBoxLayout>
 
-EditorView::EditorView(QWidget *parent)
+EditorView::EditorView(APIClient &api, QWidget *parent)
     : QWidget{parent}, _rootLayout(nullptr), _showSourceButton(new QPushButton), _extractButton(new QPushButton),
       _cleanButton(new QPushButton), _editButton(new QPushButton), _saveButton(new QPushButton),
       _exitButton(new QPushButton)
@@ -21,10 +21,10 @@ EditorView::EditorView(QWidget *parent)
     this->_extractPropTab = new ExtractionPropertyTab;
     this->_savePropTab = new SavePropertyTab;
 
-    this->_extractEditTab = new ExtractionEditArea;
-    this->_cleanEditTab = new CleanEditArea;
-    this->_editEditTab = new EditorEditArea;
-    this->_saveEditTab = new SaveEditArea;
+    this->_extractEditTab = new ExtractionEditArea(api);
+    this->_cleanEditTab = new CleanEditArea(api);
+    this->_editEditTab = new EditorEditArea(api);
+    this->_saveEditTab = new SaveEditArea(api);
 
     this->_stackEdit = new QStackedWidget;
     this->_stackEdit->addWidget(_extractEditTab);

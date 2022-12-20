@@ -1,14 +1,14 @@
 #ifndef CLEANEDITAREA_H
 #define CLEANEDITAREA_H
 
-#include "widget/imageViewer/ImageViewer.h"
+#include "NetEditTab.h"
 #include "widget/editor/editArea/SelectAreaRect.h"
 
-class CleanEditArea : public ImageViewer
+class CleanEditArea : public NetEditTab
 {
     Q_OBJECT
 public:
-    CleanEditArea();
+    CleanEditArea(APIClient &client);
 
     virtual void setPages(std::vector<OCRPage> const &pages) override;
 

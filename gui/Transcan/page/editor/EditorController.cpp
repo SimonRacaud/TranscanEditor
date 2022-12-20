@@ -8,7 +8,7 @@ using namespace std;
 
 extern MainWindow *mainWindow;
 
-EditorController::EditorController(QWidget *parent) : EditorView(parent)
+EditorController::EditorController(QWidget *parent) : EditorView(_api, parent)
 {
     this->setupEvents();
 
@@ -63,6 +63,8 @@ void EditorController::onStart(ProjectConfig const &config)
     if (_config)
         delete _config;
     this->_config = new ProjectConfig(config);
+    this->_cleanEditTab->setConfig(config);
+    this->_saveEditTab->setConfig(config);
     //
     this->setTab(EditorTab::EXTRACT); // Extraction step
     this->showSourcePageTab(true);
@@ -79,7 +81,7 @@ void EditorController::onStart(ProjectConfig const &config)
         NetErrCallback errCallback = bind(&EditorController::netError, this, _1);
         this->_api.sendToOCR(config, i, page.imagePath, callback, errCallback);
         i++;
-        break; // TODO : to improve (error management)
+        // TODO : to improve (error management)
     }
 }
 
@@ -121,8 +123,8 @@ void EditorController::setTab(EditorTab tab)
     connect(_sourcePages, &ImageViewer::verticalScrollValueChanged, newEditor, &ImageViewer::setVerticalScrollPosition);
 
     // Tab change, data flow
-    IEditTab *prevEditTab = reinterpret_cast<IEditTab *>(editor);
-    IEditTab *newEditTab = reinterpret_cast<IEditTab *>(newEditor);
+    IEditTab *prevEditTab = dynamic_cast<IEditTab *>(editor);
+    IEditTab *newEditTab = dynamic_cast<IEditTab *>(newEditor);
     std::vector<OCRPage> pages = editor->getPages();
     prevEditTab->unload(); // Unload previous tab
     newEditTab->load(pages); // Load new tab

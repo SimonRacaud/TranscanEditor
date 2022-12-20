@@ -10,7 +10,7 @@ class ExtractionEditArea : public ATextEditArea
 {
     Q_OBJECT
 public:
-    ExtractionEditArea();
+    ExtractionEditArea(APIClient &client);
 
     virtual void loadPage(OCRPage const &page);
     virtual void load(std::vector<OCRPage> const &pages = {});

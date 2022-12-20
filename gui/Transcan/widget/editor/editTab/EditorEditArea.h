@@ -7,7 +7,7 @@ class EditorEditArea : public ATextEditArea
 {
     Q_OBJECT
 public:
-    EditorEditArea();
+    EditorEditArea(APIClient &client);
 
     virtual void load(std::vector<OCRPage> const &pages = {});
     virtual void loadPage(OCRPage const &page);

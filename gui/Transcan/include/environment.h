@@ -3,7 +3,7 @@
 
 #include <QStringList>
 
-#include "models.h"
+#include "ServiceItem.h"
 
 const ServiceItem OCR_SERVICE_LIST[] = {
     ServiceItem("Local - Craft/Tesseract", "LOCAL_CRAFT_TESSERACT", false),
@@ -74,6 +74,7 @@ const QList<QString> SUPPORTED_EXTENSION_SUFFIX = {
 
 #define DEF_EDIT_LINE_HEIGHT 8 // Edition/render config
 #define DEF_EDIT_STROKE_WIDTH 3
+#define DEF_EDIT_FONT "Arial"
 
 // Editor page zoom key shortcut
 #define ZOOM_SHIFT 0.05 // scale shift

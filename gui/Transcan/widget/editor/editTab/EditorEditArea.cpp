@@ -2,7 +2,7 @@
 
 using namespace std;
 
-EditorEditArea::EditorEditArea(): ATextEditArea(RectMode::EDIT_TRAN)
+EditorEditArea::EditorEditArea(APIClient &client): ATextEditArea(client, CLEAN, RectMode::EDIT_TRAN)
 {
     // -----------------------
 //    vector<OCRPage> debug = { // TODO: debug
