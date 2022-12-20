@@ -14,7 +14,14 @@ class ImageViewer : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ImageViewer(QWidget *parent = nullptr);
+    // Image to display from the OCRPage
+    enum ImageMode {
+        SOURCE, // Show source image
+        CLEAN, // Show cleaned image
+        RENDER // Show rendered image
+    };
+
+    explicit ImageViewer(ImageMode mode = SOURCE, QWidget *parent = nullptr);
 
     /**
      * @brief setPages Overwrite current pages with the ones given as parameter
@@ -82,6 +89,7 @@ protected:
     void clearView();
 
 private:
+    ImageMode _mode;
     // Loading icon
     QMovie *_loadingImg;
     QLabel *_loadingWidget;

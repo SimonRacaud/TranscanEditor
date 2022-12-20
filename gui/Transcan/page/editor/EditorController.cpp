@@ -108,17 +108,24 @@ void EditorController::setTab(EditorTab tab)
 
     // Connect new event flow
     prop = dynamic_cast<APropertyTab *>(_stackProp->currentWidget());
-    editor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
+    ImageViewer *newEditor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
     connect(prop, &APropertyTab::nextStep, [this, tab]() {
         EditorTab next = ((int)tab + 1) > (int)EditorTab::SAVE
             ? EditorTab::EXTRACT : (EditorTab)((int)tab + 1);
         this->setTab(next);
     });
     this->setSelectionTabHeader();
-    connect(editor, &ImageViewer::horizontalScrollValueChanged, _sourcePages, &ImageViewer::setHorizontalScrollPosition);
-    connect(editor, &ImageViewer::verticalScrollValueChanged, _sourcePages, &ImageViewer::setVerticalScrollPosition);
-    connect(_sourcePages, &ImageViewer::horizontalScrollValueChanged, editor, &ImageViewer::setHorizontalScrollPosition);
-    connect(_sourcePages, &ImageViewer::verticalScrollValueChanged, editor, &ImageViewer::setVerticalScrollPosition);
+    connect(newEditor, &ImageViewer::horizontalScrollValueChanged, _sourcePages, &ImageViewer::setHorizontalScrollPosition);
+    connect(newEditor, &ImageViewer::verticalScrollValueChanged, _sourcePages, &ImageViewer::setVerticalScrollPosition);
+    connect(_sourcePages, &ImageViewer::horizontalScrollValueChanged, newEditor, &ImageViewer::setHorizontalScrollPosition);
+    connect(_sourcePages, &ImageViewer::verticalScrollValueChanged, newEditor, &ImageViewer::setVerticalScrollPosition);
+
+    // Tab change, data flow
+    IEditTab *prevEditTab = reinterpret_cast<IEditTab *>(editor);
+    IEditTab *newEditTab = reinterpret_cast<IEditTab *>(newEditor);
+    std::vector<OCRPage> pages = editor->getPages();
+    prevEditTab->unload(); // Unload previous tab
+    newEditTab->load(pages); // Load new tab
 }
 
 void EditorController::showSourcePageTab(bool enable)

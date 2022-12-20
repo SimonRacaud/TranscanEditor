@@ -10,7 +10,7 @@
 
 using namespace std;
 
-ImageViewer::ImageViewer(QWidget *parent) : QWidget{parent}
+ImageViewer::ImageViewer(ImageMode mode, QWidget *parent) : QWidget{parent}, _mode(mode)
 {
     // Set background color
     QPalette pal = QPalette(QColor(EDITOR_EDITA_BG));
@@ -55,8 +55,14 @@ void ImageViewer::setPages(vector<OCRPage> const &pages)
 
     this->clearView(); // Remove current pages
     for (const OCRPage &page : pages) {
-        QPixmap img(page.imagePath); // TODO : get the right image to display
-        std::cerr << "Load page : " << page.imagePath.toStdString() << std::endl; // TODO temp
+        QPixmap img;
+        if (_mode == SOURCE) {
+            img.load(page.imagePath);
+        } else if (_mode == CLEAN) {
+            img.load(page.cleanImagePath);
+        } else {
+            img.load(page.renderImagePath);
+        }
         this->_pixmapList.append(img);
         auto *item = new QGraphicsPixmapItem(img);
         item->setPos(0, offsetY);
@@ -82,12 +88,20 @@ void ImageViewer::updatePage(OCRPage const &page)
         throw std::invalid_argument("ImageViewer::updatePage, invalid page index.");
     }
     // Check new image access
-    QImageReader newImgMeta(page.imagePath); // TODO : get the right filepath to load (clean, render)
+    QString filePath;
+    if (_mode == SOURCE) {
+        filePath = page.imagePath;
+    } else if (_mode == CLEAN) {
+        filePath = page.cleanImagePath;
+    } else if (_mode == RENDER) {
+        filePath = page.renderImagePath;
+    }
+    QImageReader newImgMeta(filePath);
     bool success = newImgMeta.canRead();
     if (!success) {
         throw std::runtime_error("ImageViewer::updatePage, failed to load new image.");
     }
-    // ----
+    //
     _pages[index] = page; // Update page data
     this->setPages(_pages); // Load pages again
 }
