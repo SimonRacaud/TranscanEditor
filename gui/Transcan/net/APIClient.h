@@ -33,21 +33,27 @@ public:
      * @brief sendToClean Remove text from image
      * @param page Page to process
      */
-    void sendToClean(OCRPage const &page);
+    void sendToClean(OCRPage const &page,
+                     NetCallback &callback,
+                     NetErrCallback &errCallback);
 
     /**
      * @brief sendToTranslate Translate image's sentences
      * @param page Page to process
      * @param transService Translation service
      */
-    void sendToTranslate(OCRPage const &page, QString const& transService);
+    void sendToTranslate(OCRPage const &page, QString const& transService,
+                         NetCallback &callback,
+                         NetErrCallback &errCallback);
 
     /**
      * @brief sendToRender Render page
      * @param page Page to render
      * @param config Default configuration of the render service
      */
-    void sendToRender(OCRPage const &page, RenderConfig const &config);
+    void sendToRender(OCRPage const &page, RenderConfig const &config,
+                      NetCallback &callback,
+                      NetErrCallback &errCallback);
 
 protected:
     /**

@@ -86,6 +86,15 @@ public:
 
     RenderConfig(unsigned int defLineHeight, QFont defFont, unsigned int defStrokeWidth)
         : defLineHeight(defLineHeight), defFont(defFont), defStrokeWidth(defStrokeWidth) {}
+
+    QJsonObject serialize() const
+    {
+        QJsonObject obj;
+        obj["lineHeight"] = (qint64)this->defLineHeight;
+        obj["font"] = this->defFont.family();
+        obj["strokeWidth"] = (qint64)this->defStrokeWidth;
+        return obj;
+    }
 };
 
 #endif // MODELS_H

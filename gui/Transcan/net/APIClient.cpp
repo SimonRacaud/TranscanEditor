@@ -27,19 +27,39 @@ void APIClient::sendToOCR(ProjectConfig const& config,
     this->sendRequest("ocr", body, callback, errFunc);
 }
 
-void APIClient::sendToClean(OCRPage const& page)
+void APIClient::sendToClean(OCRPage const& page, NetCallback &callback, NetErrCallback &errCallback)
 {
-    // TODO : api
+    QJsonObject json = page.serialize();
+    QJsonDocument body(json);
+    QByteArray bodyData(body.toJson());
+
+    this->sendRequest("clean", bodyData, callback, errCallback);
 }
 
-void APIClient::sendToTranslate(OCRPage const& page, QString const& transService)
+void APIClient::sendToTranslate(OCRPage const& page, QString const& transService,
+                                NetCallback &callback, NetErrCallback &errCallback)
 {
-    // TODO : api
+    QJsonObject rootJson;
+    rootJson["translationService"] = transService;
+    rootJson["page"] = page.serialize();
+
+    QJsonDocument bodyJson(rootJson);
+    QByteArray body(bodyJson.toJson());
+
+    this->sendRequest("translate", body, callback, errCallback);
 }
 
-void APIClient::sendToRender(OCRPage const& page, RenderConfig const& config)
+void APIClient::sendToRender(OCRPage const& page, RenderConfig const& config,
+                             NetCallback &callback, NetErrCallback &errCallback)
 {
-    // TODO : api
+    QJsonObject rootJson;
+    rootJson["config"] = config.serialize();
+    rootJson["page"] = page.serialize();
+
+    QJsonDocument bodyJson(rootJson);
+    QByteArray body(bodyJson.toJson());
+
+    this->sendRequest("render", body, callback, errCallback);
 }
 
 /** Protected **/
@@ -48,8 +68,7 @@ void APIClient::sendRequest(QString const& target, QByteArray const &body,
                             NetCallback &callback, NetErrCallback &errFunc)
 {
     QUrl url(QString("%1/%2")
-             .arg(_url)
-             .arg(target));
+             .arg(_url, target));
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     QNetworkReply *reply = _netManager.post(request, body);
