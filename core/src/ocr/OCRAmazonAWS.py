@@ -11,28 +11,45 @@ from src.utility.extract_image_area import extract_image_area
 from src.ocr.IOpticalCharacterRecognition import IOpticalCharacterRecognition
 from src.model.model import OCRBlock, OCRConfig, OCRPage
 from src.utility.cyrillic_to_latin import cyrillic_to_latin
+from src.utility.exception import InternalError
 
 from boto3 import client as AWSClient
 from botocore.config import Config as AWSConfig
 
 from numpy import ndarray
+import threading
+
 
 class OCRAmazonAWS(IOpticalCharacterRecognition):
+    boto3_client_lock = threading.Lock()
+
     def __init__(self, config: OCRConfig) -> None:
         """ Init OCR """
         self.config = config
         if (not "AWS_ACCESS_KEY_ID" in os.environ) or (not "AWS_SECRET_ACCESS_KEY" in os.environ):
             print("Error: missing env variable AWS_ACCESS_KEY_ID or/and AWS_SECRET_ACCESS_KEY. exit")
             exit(1)
+        if (not "AWS_REGION" in os.environ or os.environ["AWS_REGION"] == ""):
+            print("Error: missing env variable AWS_REGION.")
+            exit(1)
         my_config = AWSConfig(
-            region_name='eu-west-1', # Irland
+            region_name=os.environ["AWS_REGION"], # Irland
             signature_version='v4',
             retries = {
                 'max_attempts': 5,
                 'mode': 'standard'
             }
         )
-        self.client = AWSClient('rekognition', config=my_config)
+        with OCRAmazonAWS.boto3_client_lock:
+            try:
+                self.client = AWSClient(
+                    'rekognition',
+                    aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
+                    aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
+                    config=my_config)
+            except BaseException as e:
+                print("Error: AWS connection - ", e)
+                raise InternalError("Unable to connect to AWS. Did you provide the right credentials?")
 
     def process_batch(self, img_path_list: Sequence[str]) -> Sequence[OCRPage]:
         """ Process a batch of image and return a list of text and bouncing boxes """
@@ -64,7 +81,7 @@ class OCRAmazonAWS(IOpticalCharacterRecognition):
                 return OCRAmazonAWS.__format_page(blocks, img_path, image), image 
         except BaseException as err:
             print("Error: OCRAmazonAWS::process_img -", err)
-            raise BaseException()
+            raise err
     
     @staticmethod
     def __format_page(blocks, img_path, image) -> OCRPage:
