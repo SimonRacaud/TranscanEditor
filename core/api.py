@@ -43,35 +43,35 @@ def ocr():
         print("\nConfiguration: {}\n".format(input))
     except InvalidJson as err:
         raise err
-    except Exception as err:
-        print("Error: ", err)
+    except BaseException as err:
+        print("Error1: ", err)
         raise InvalidJson("Invalid JSON input")
     #
     try:
         ocrManager = OCRManager(input.ocr_config)
-    except Exception as err:
+    except BaseException as err:
         print("Error: ", err)
         raise InvalidJson("ocrService value not supported")
     print("OCR : process image " + input.ocr_config.src_img_path)
     try:
         page, image = ocrManager.process_img(input.ocr_config.src_img_path)
-    except Exception as err:
-        print("Error: ", err)
+    except BaseException as err:
+        print("Error3: ", err)
         raise InternalError("Fail to process page")
     try:
         page = create_block_cluster(page, 
             input.ocr_config.box_cluster_search_range, 
             input.ocr_config.box_cluster_search_step)
-    except Exception as err:
-        print("Error: ", err)
+    except BaseException as err:
+        print("Error4: ", err)
         raise InternalError("Fail to generate block clusters")
     try:
         page.clean_path = input.ocr_config.output_folder # Save output location
         page.render_path = input.ocr_config.output_folder
         pageOut = page.serialize()
         pageOut['index'] = input.index
-    except Exception as err:
-        print("Error: ", err)
+    except BaseException as err:
+        print("Error5: ", err)
         raise InternalError("Fail to serialise output JSON")
     return pageOut
 
@@ -84,24 +84,24 @@ def process_clean():
     try:
         inputJson = request.json
         input = OCRPage.deserialize(inputJson)
-    except Exception as err:
+    except BaseException as err:
         print("Error {}".format(err))
         raise InvalidJson("Invalid body")
     try:
         src_image = FileManager.load_image(input.src_path)
-    except Exception as err:
+    except BaseException as err:
         print("Error loading image: {}".format(err))
         raise InvalidJson("Unable to load source image")
     try:
         image_clean = ImageCleaner.process(src_image, input.blocks)
-    except Exception as err:
+    except BaseException as err:
         print("Error processing image: {}".format(err))
         raise InternalError("An error occured when processing the image")
     try:
         output_directory = FileManager.path_from_filepath(input.clean_path)
         filename = FileManager.filename_from_filepath(FileManager.add_file_suffix(input.src_path, "_clean"))
         input.clean_path = FileManager.save_image(image_clean, filename, output_directory)
-    except Exception as err:
+    except BaseException as err:
         print("Error save result: {}".format(err))
         raise InternalError("Fail to save image")
     return input.serialize()
@@ -112,6 +112,7 @@ def process_translation():
         Input: OCRPage structure, TranslationService
         Output: OCRPage strcture
     """
+    print("POST /translate - request")
     try:
         inputJson = request.json
         check_argument(inputJson, ["page", "translationService"])
@@ -123,13 +124,13 @@ def process_translation():
         input = OCRPage.deserialize(pageJson)
     except APIError as err:
         raise err
-    except Exception as err:
+    except BaseException as err:
         print("Error {}".format(err))
         raise InvalidJson("Invalid body")
     try:
         translator = TranslatorManager(translation_service, src_lang='en', dest_lang='fr')
         input = translator.translate_page(input)
-    except Exception as err:
+    except BaseException as err:
         print("Error translator: {}".format(err))
         raise InternalError("The translator failed to process.")
     return input.serialize()
@@ -140,24 +141,25 @@ def process_render():
         Input: OCRPage structure, Editing config
         Output: Rendered image
     """
+    print("POST /render - request")
     try:
         inputJson = request.json
         input = RenderInput.deserialize(inputJson)
     except APIError as err:
         raise err
-    except Exception as err:
+    except BaseException as err:
         print("Error {}".format(err))
         raise InvalidJson("Invalid body")
     # Read cleaned image
     try:
         image_clean = FileManager.load_image(input.page.clean_path)
-    except Exception as err:
+    except BaseException as err:
         print("Error loading image: {}".format(err))
         raise InvalidJson("Unable to load cleaned image")
     # Read source image
     try:
         image_src = FileManager.load_image(input.page.src_path)
-    except Exception as err:
+    except BaseException as err:
         print("Error loading image: {}".format(err))
         raise InvalidJson("Unable to load source image")
     # Render result
@@ -167,7 +169,7 @@ def process_render():
         output_directory = FileManager.path_from_filepath(input.page.render_path)
         filename = FileManager.filename_from_filepath(FileManager.add_file_suffix(input.page.src_path, "_render"))
         input.page.render_path = FileManager.save_image(image_final, filename, output_directory)
-    except Exception as err:
+    except BaseException as err:
         print("Error save result: {}".format(err))
         raise InternalError("Fail to save image")
     return input.page.serialize()
