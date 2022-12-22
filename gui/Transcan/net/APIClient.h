@@ -55,6 +55,11 @@ public:
                       NetCallback &callback,
                       NetErrCallback &errCallback);
 
+    /**
+     * @brief abortRequests : stop waiting for any reply
+     */
+    void abortRequests();
+
 protected:
     /**
      * @brief sendRequest Send POST request to the core

@@ -62,6 +62,15 @@ void APIClient::sendToRender(OCRPage const& page, RenderConfig const& config,
     this->sendRequest("render", body, callback, errCallback);
 }
 
+void APIClient::abortRequests()
+{
+    for (QNetworkReply *reply : _pendingReplies) {
+        reply->disconnect(reply, &QNetworkReply::finished, 0, 0);
+        reply->deleteLater();
+    }
+    _pendingReplies.clear();
+}
+
 /** Protected **/
 
 void APIClient::sendRequest(QString const& target, QByteArray const &body,
@@ -73,13 +82,13 @@ void APIClient::sendRequest(QString const& target, QByteArray const &body,
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     QNetworkReply *reply = _netManager.post(request, body);
 
-    QObject::connect(reply, &QNetworkReply::finished, [reply, callback, errFunc]() {
+    QObject::connect(reply, &QNetworkReply::finished, [reply, callback, errFunc, this, target]() {
         if (reply->error() != QNetworkReply::NoError){
             qDebug() << "Network Error: " << reply->errorString() << reply->error();
             errFunc(reply->errorString());
         } else {
             QByteArray const &rawData = reply->readAll();
-            qDebug() << "Network reply received. " << rawData;
+            qDebug() << "Network reply received for target : " << target << ".";
             QJsonDocument doc = QJsonDocument::fromJson(rawData);
             QJsonObject body = doc.object();
             // Convert JSON to OCRPage
@@ -97,6 +106,7 @@ void APIClient::sendRequest(QString const& target, QByteArray const &body,
         }
         reply->disconnect(reply, &QNetworkReply::finished, 0, 0);
         reply->deleteLater();
+        this->_pendingReplies.removeOne(reply);
     });
     this->_pendingReplies.push_back(reply);
 }
