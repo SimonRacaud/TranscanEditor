@@ -63,7 +63,7 @@ void EditorController::onStart(ProjectConfig const &config)
     if (_config)
         delete _config;
     this->_config = new ProjectConfig(config);
-    this->_cleanEditTab->setConfig(config);
+    this->_editEditTab->setConfig(config);
     this->_saveEditTab->setConfig(config);
     //
     this->setTab(EditorTab::EXTRACT); // Extraction step
@@ -97,6 +97,11 @@ void EditorController::setTab(EditorTab tab)
     auto *prop = dynamic_cast<APropertyTab *>(_stackProp->currentWidget());
     auto *editor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
 
+    // Tab change, data flow
+    IEditTab *prevEditTab = dynamic_cast<IEditTab *>(editor);
+    std::vector<OCRPage> pages = editor->getPages();
+    prevEditTab->unload(); // Unload previous tab
+
     // Disconnect previous event flow
     disconnect(prop, &APropertyTab::nextStep, nullptr, nullptr);
     disconnect(editor, &ImageViewer::horizontalScrollValueChanged, nullptr, nullptr);
@@ -112,7 +117,7 @@ void EditorController::setTab(EditorTab tab)
     prop = dynamic_cast<APropertyTab *>(_stackProp->currentWidget());
     ImageViewer *newEditor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
     connect(prop, &APropertyTab::nextStep, [this, tab]() {
-        EditorTab next = ((int)tab + 1) > (int)EditorTab::SAVE
+        EditorTab next = ((int)tab + 1) >= (int)EditorTab::LAST_VALUE
             ? EditorTab::EXTRACT : (EditorTab)((int)tab + 1);
         this->setTab(next);
     });
@@ -122,11 +127,8 @@ void EditorController::setTab(EditorTab tab)
     connect(_sourcePages, &ImageViewer::horizontalScrollValueChanged, newEditor, &ImageViewer::setHorizontalScrollPosition);
     connect(_sourcePages, &ImageViewer::verticalScrollValueChanged, newEditor, &ImageViewer::setVerticalScrollPosition);
 
-    // Tab change, data flow
-    IEditTab *prevEditTab = dynamic_cast<IEditTab *>(editor);
+    // Load new tab
     IEditTab *newEditTab = dynamic_cast<IEditTab *>(newEditor);
-    std::vector<OCRPage> pages = editor->getPages();
-    prevEditTab->unload(); // Unload previous tab
     newEditTab->load(pages); // Load new tab
 }
 
