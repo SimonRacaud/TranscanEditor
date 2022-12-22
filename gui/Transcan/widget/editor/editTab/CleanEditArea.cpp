@@ -30,14 +30,23 @@ CleanEditArea::CleanEditArea(APIClient &client) : NetEditTab(client, CLEAN)
 void CleanEditArea::setPages(vector<OCRPage> const &pages)
 {
     ImageViewer::setPages(pages); // Load pages
+    // Create clusters' select boxes
+    for (OCRPage const &page : pages) {
+        for (BlockCluster const &cluster : page.clusters) {
+           this->createBlock(cluster);
+        }
+    }
+
 }
 
 std::vector<BlockCluster> CleanEditArea::getClusters() const
 {
-    std::vector<BlockCluster> result(_rects.size());
+    std::vector<BlockCluster> result;
+    QList<QGraphicsItem *> items = this->_scene->items();
 
-    for (SelectAreaRect *rect : _rects) {
-        if (rect->isSelected()) {
+    for (QGraphicsItem *item : items) {
+        SelectAreaRect *rect = qgraphicsitem_cast<SelectAreaRect*>(item);
+        if (rect && rect->isSelected()) {
             result.push_back(rect->getData());
         }
     }
@@ -46,16 +55,19 @@ std::vector<BlockCluster> CleanEditArea::getClusters() const
 
 OCRPage CleanEditArea::getPage(size_t index)
 {
+    if (index >= (size_t)_pageItems.size()) {
+        throw std::invalid_argument("CleanEditArea::getPage, invalid _pageItems size");
+    }
     OCRPage page = ImageViewer::getPage(index);
 
     page.clusters.clear();
-    for (SelectAreaRect *rect : _rects) {
-        if (_pageItems.size() >= index) {
-            throw std::invalid_argument("CleanEditArea::getPage, invalid _pageItems size");
-        }
-        QGraphicsPixmapItem *pageItem = _pageItems[index];
-        if (rect->isOnArea(pageItem->boundingRect()) == index) {
-            page.clusters.push_back(rect->getData());
+    for (QGraphicsItem *item : this->_scene->items()) {
+        SelectAreaRect *rect = dynamic_cast<SelectAreaRect*>(item);
+        if (rect != nullptr) {
+            QGraphicsPixmapItem *pageItem = _pageItems[index]; // Get page image widget
+            if (rect->isOnArea(pageItem->boundingRect())) {
+                page.clusters.push_back(rect->getData());
+            }
         }
     }
     return page;
@@ -63,28 +75,20 @@ OCRPage CleanEditArea::getPage(size_t index)
 
 void CleanEditArea::load(std::vector<OCRPage> const &pages)
 {
-    static bool firstLoad = true;
-
     this->setPages(pages); // Apply pages to view
-    if (firstLoad) {
-        // API call
-        for (OCRPage const &page: pages) {
-            NetCallback success = bind(&IEditTab::loadPage, this, std::placeholders::_1);
-            NetErrCallback error = bind(&NetEditTab::netError, this, std::placeholders::_1);
-            this->_api.sendToClean(page, success, error); // TODO : to improve
-        }
-        firstLoad = false;
+    this->setLoadingState(true);
+    // API call
+    for (OCRPage const &page: pages) {
+        NetCallback success = bind(&IEditTab::loadPage, this, std::placeholders::_1);
+        NetErrCallback error = bind(&NetEditTab::netError, this, std::placeholders::_1);
+        this->_api.sendToClean(page, success, error); // TODO : to improve
     }
 }
 
 void CleanEditArea::loadPage(OCRPage const &page)
 {
     this->updatePage(page);
-}
-
-void CleanEditArea::unload()
-{
-    // TODO : unload clean tab
+    this->setLoadingState(false);
 }
 
 /** PRIVATE **/
@@ -94,6 +98,5 @@ void CleanEditArea::createBlock(BlockCluster const &cluster)
     auto *rect = new SelectAreaRect(cluster);
 
     this->_scene->addItem(rect);
-    this->_rects.append(rect);
 }
 

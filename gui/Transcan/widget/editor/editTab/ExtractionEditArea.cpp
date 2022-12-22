@@ -39,9 +39,3 @@ void ExtractionEditArea::loadPage(OCRPage const &page)
     this->updatePage(page);
 }
 
-void ExtractionEditArea::unload()
-{
-    // TODO : unload Extract tab
-    // Stop any API call
-
-}

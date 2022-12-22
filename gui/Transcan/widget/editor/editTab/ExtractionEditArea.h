@@ -14,7 +14,6 @@ public:
 
     virtual void loadPage(OCRPage const &page);
     virtual void load(std::vector<OCRPage> const &pages = {});
-    virtual void unload();
 };
 
 #endif // EXTRACTIONEDITAREA_H

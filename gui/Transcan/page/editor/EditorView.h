@@ -30,7 +30,8 @@ public:
         EXTRACT = 0,
         CLEAN = 1,
         EDIT = 2,
-        SAVE = 3
+        SAVE = 3,
+        LAST_VALUE // Nothing after this
     };
 
 protected:

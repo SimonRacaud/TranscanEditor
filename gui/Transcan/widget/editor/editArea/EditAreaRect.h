@@ -42,7 +42,7 @@ public:
      * @param index Index of the page
      * @return
      */
-    bool isOnArea(QRectF area) const;
+    bool isOnArea(QRectF const &area) const;
 
 signals:
     void focusChanged(bool state, EditAreaRect &rect);

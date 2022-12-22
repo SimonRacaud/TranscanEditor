@@ -15,10 +15,13 @@ class NetEditTab : public ImageViewer, public IEditTab
 {
 public:
     NetEditTab(APIClient &client, ImageMode mode);
+    virtual ~NetEditTab();
 
     void netError(QString const &message);
 
     void setConfig(ProjectConfig const &config);
+
+    virtual void unload() override;
 
 protected:
     APIClient &_api;

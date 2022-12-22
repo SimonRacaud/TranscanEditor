@@ -33,7 +33,7 @@ EditAreaRect::EditAreaRect(BlockCluster const &data, RectMode mode)
 
 QRectF EditAreaRect::boundingRect() const
 {
-    QRectF rect = _data.polygon.boundingRect();
+    const QRectF rect = _data.polygon.boundingRect();
     return QRectF(0, 0, rect.width(), rect.height());
 }
 
@@ -112,13 +112,14 @@ BlockCluster EditAreaRect::getData()
     // Update position
     QPointF diff = this->pos() - this->_data.polygon.boundingRect().topLeft();
     cluster.polygon.translate(diff.x(), diff.y());
+    cluster.sentence = _textEdit->toPlainText();
     return cluster;
 }
 
-bool EditAreaRect::isOnArea(QRectF area) const
+bool EditAreaRect::isOnArea(QRectF const &area) const
 {
-    QRectF rect = this->boundingRect().translated(pos());
-    return rect.intersects(area);
+    const QRectF &rect = this->boundingRect();
+    return rect.translated(this->pos()).intersects(area);
 }
 
 /** Private **/

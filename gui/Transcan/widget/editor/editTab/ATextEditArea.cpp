@@ -39,14 +39,14 @@ void ATextEditArea::createAreaRectAtCoord(QPoint const &coord)
 void ATextEditArea::removeRect()
 {
     if (_focusedRect) {
+        QList<QGraphicsItem *> items = this->_scene->items();
+        int index = items.indexOf(_focusedRect->topLevelItem());
         disconnect(_focusedRect, &EditAreaRect::focusChanged, this, &ATextEditArea::changeFocus);
-        int index = _rects.indexOf(_focusedRect);
         if (index == -1) { // not found
             _focusedRect = nullptr;
             std::cerr << "ATextEditArea::removeRect Unable to find element." << std::endl;
             return; // Abort
         }
-        _rects.removeAt(index);
         this->_scene->removeItem(_focusedRect);
         delete _focusedRect;
         _focusedRect = nullptr;
@@ -55,27 +55,33 @@ void ATextEditArea::removeRect()
 
 vector<BlockCluster> ATextEditArea::getClusters() const
 {
-    vector<BlockCluster> result(_rects.size());
+    vector<BlockCluster> result;
+    QList<QGraphicsItem *> items = this->_scene->items();
 
-    for (EditAreaRect *rect : _rects) {
-        result.push_back(rect->getData());
+    for ( QGraphicsItem *item : items) {
+        EditAreaRect *rect = qgraphicsitem_cast<EditAreaRect *>(item);
+        if (rect) {
+            result.push_back(rect->getData());
+        }
     }
     return result;
 }
 
 OCRPage ATextEditArea::getPage(size_t index)
 {
+    if ((qsizetype)index >= _pageItems.size()) {
+        throw std::invalid_argument("ATextEditArea::getPage, invalid _pageItems size");
+    }
     OCRPage page = ImageViewer::getPage(index);
 
     page.clusters.clear();
-    for (EditAreaRect *rect : _rects) {
-        if ((qsizetype)index >= _pageItems.size()) {
-            throw std::invalid_argument("ATextEditArea::getPage, invalid _pageItems size");
-        }
-        QGraphicsPixmapItem *pageItem = _pageItems[index];
+    for (QGraphicsItem *item : _scene->items()) {
+        EditAreaRect *rect = qgraphicsitem_cast<EditAreaRect *>(item);
+        if (!rect)
+            continue; // Not a EditAreaRect
+        QGraphicsPixmapItem *pageItem = _pageItems[index]; // Page image widget
         if (pageItem && rect->isOnArea(pageItem->boundingRect())) {
             page.clusters.push_back(rect->getData());
-            break;
         }
     }
     return page;
@@ -83,7 +89,6 @@ OCRPage ATextEditArea::getPage(size_t index)
 
 void ATextEditArea::clearRects()
 {
-    this->_rects.clear();
     this->_scene->clear();
 }
 
@@ -111,7 +116,6 @@ void ATextEditArea::createAreaRect(BlockCluster const &data)
     auto *rect = new EditAreaRect(data, _mode);
 
     this->_scene->addItem(rect);
-    this->_rects.append(rect);
     connect(rect, &EditAreaRect::focusChanged, this, &ATextEditArea::changeFocus);
 }
 

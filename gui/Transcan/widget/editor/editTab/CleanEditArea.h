@@ -24,15 +24,13 @@ public:
      */
     virtual OCRPage getPage(size_t index) override;
 
-    virtual void load(std::vector<OCRPage> const &pages = {});
-    virtual void loadPage(OCRPage const &page);
-    virtual void unload();
+    virtual void load(std::vector<OCRPage> const &pages = {}) override;
+    virtual void loadPage(OCRPage const &page) override;
 
 private:
     void createBlock(BlockCluster const &cluster);
 
 private:
-    QList<SelectAreaRect *> _rects;
 };
 
 #endif // CLEANEDITAREA_H

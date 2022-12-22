@@ -50,7 +50,6 @@ private:
     RectMode _mode;
 
 protected:
-    QList<EditAreaRect *> _rects;
     EditAreaRect *_focusedRect{nullptr};
 
 };

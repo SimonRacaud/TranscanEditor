@@ -11,7 +11,6 @@ public:
 
     virtual void load(std::vector<OCRPage> const &pages = {});
     virtual void loadPage(OCRPage const &page);
-    virtual void unload();
 private:
 };
 
