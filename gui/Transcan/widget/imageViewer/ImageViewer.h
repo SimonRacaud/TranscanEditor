@@ -101,7 +101,7 @@ private:
     size_t _imageWidth{0};
 
 protected:
-    QList<QGraphicsPixmapItem *> _pageItems; // Buffer of pages
+    QGraphicsItemGroup *_pageGroup{nullptr}; // Group of page items
     std::vector<OCRPage> _pages;
     PageGraphicsView *_view;
     QGraphicsScene *_scene;

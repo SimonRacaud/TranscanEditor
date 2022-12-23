@@ -54,29 +54,40 @@ void ImageViewer::setPages(vector<OCRPage> const &pages)
     size_t maxImgWidth = 0;
 
     this->clearView(); // Remove current pages
+
+    QList<QGraphicsItem *> pageItems;
     for (const OCRPage &page : pages) {
         QPixmap img;
+        QString path;
         if (_mode == SOURCE) {
-            img.load(page.imagePath);
+            path = page.imagePath;
         } else if (_mode == CLEAN) {
-            img.load(page.cleanImagePath);
+            path = page.cleanImagePath;
         } else {
-            img.load(page.renderImagePath);
+            path = page.renderImagePath;
+        }
+        bool loaded = img.load(path);
+        if (!loaded) { // Failed to load image
+            if (_mode != SOURCE) {
+                loaded = img.load(page.imagePath); // Load source image instead
+            }
+            if (_mode == SOURCE || !loaded) {
+                throw std::invalid_argument("ImageViewer::setPages Failed to load image "+path.toStdString());
+            }
         }
         this->_pixmapList.append(img);
         auto *item = new QGraphicsPixmapItem(img);
         item->setPos(0, offsetY);
-        this->_scene->addItem(item);
-        this->_pageItems.push_back(item);
+        pageItems.push_back(item->topLevelItem());
         offsetY += img.height();
-         maxImgWidth = qMax(maxImgWidth, (size_t)img.width());
+        maxImgWidth = qMax(maxImgWidth, (size_t)img.width());
     }
-    if (_imageWidth == 0) {
+    if (_imageWidth == 0 && offsetY > 0/* The images were found */) {
         // First images loaded. Not an update of a previous display.
         _imageWidth = maxImgWidth;
         this->_scene->setSceneRect(QRectF(0, 0, _imageWidth, offsetY));
     }
-
+    this->_pageGroup = this->_scene->createItemGroup(pageItems);
 }
 
 void ImageViewer::updatePage(OCRPage const &page)
@@ -84,8 +95,8 @@ void ImageViewer::updatePage(OCRPage const &page)
     unsigned int index = page.index;
 
     // Check page index
-    if (_pageItems.size() <= index || _pages.size() <= index || _pixmapList.size() <= index) {
-        throw std::invalid_argument("ImageViewer::updatePage, invalid page index.");
+    if (_pages.size() <= index || _pixmapList.size() <= index) {
+        throw std::invalid_argument("ImageViewer::updatePage Invalid page index.");
     }
     // Check new image access
     QString filePath;
@@ -155,7 +166,7 @@ std::vector<OCRPage> ImageViewer::getPages()
 OCRPage ImageViewer::getPage(size_t index)
 {
     if (index >= _pages.size()) {
-        throw std::invalid_argument("ImageViewer::getPage, Invalid page index.");
+        throw std::invalid_argument("ImageViewer::getPage Invalid page index.");
     }
     return _pages[index];
 }
@@ -197,7 +208,7 @@ void ImageViewer::resizeEvent(QResizeEvent *event)
 
 void ImageViewer::clearView()
 {
-    this->_pageItems.clear();
+    this->_pageGroup = nullptr;
     this->_pixmapList.clear();
     this->_scene->clear();
 }
