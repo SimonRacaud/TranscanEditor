@@ -71,6 +71,11 @@ void APIClient::abortRequests()
     _pendingReplies.clear();
 }
 
+bool APIClient::pendingReply() const
+{
+    return !_pendingReplies.empty();
+}
+
 /** Protected **/
 
 void APIClient::sendRequest(QString const& target, QByteArray const &body,
@@ -83,6 +88,7 @@ void APIClient::sendRequest(QString const& target, QByteArray const &body,
     QNetworkReply *reply = _netManager.post(request, body);
 
     QObject::connect(reply, &QNetworkReply::finished, [reply, callback, errFunc, this, target]() {
+        this->_pendingReplies.removeOne(reply);
         if (reply->error() != QNetworkReply::NoError){
             qDebug() << "Network Error: " << reply->errorString() << reply->error();
             errFunc(reply->errorString());
@@ -106,7 +112,6 @@ void APIClient::sendRequest(QString const& target, QByteArray const &body,
         }
         reply->disconnect(reply, &QNetworkReply::finished, 0, 0);
         reply->deleteLater();
-        this->_pendingReplies.removeOne(reply);
     });
     this->_pendingReplies.push_back(reply);
 }

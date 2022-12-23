@@ -23,6 +23,8 @@ public:
 
     virtual void unload() override;
 
+    virtual void setLoadingState(bool enable) override;
+
 protected:
     APIClient &_api;
     const ProjectConfig *_config{nullptr};

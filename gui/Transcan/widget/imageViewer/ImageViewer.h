@@ -61,7 +61,7 @@ public:
      *   If enabled, will lock the edition and show a loading cursor.
      * @param enable
      */
-    void setLoadingState(bool enable);
+    virtual void setLoadingState(bool enable);
 
     /**
      * @brief scale : zoom in or out

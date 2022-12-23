@@ -60,6 +60,12 @@ public:
      */
     void abortRequests();
 
+    /**
+     * @brief pendingReply
+     * @return Return True if there is one or more pending reply
+     */
+    bool pendingReply() const;
+
 protected:
     /**
      * @brief sendRequest Send POST request to the core

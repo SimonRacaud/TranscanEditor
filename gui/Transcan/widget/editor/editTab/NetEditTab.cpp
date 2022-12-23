@@ -25,4 +25,13 @@ void NetEditTab::unload()
 {
     // Don't process pending requests' result
     this->_api.abortRequests();
+
+}
+
+void NetEditTab::setLoadingState(bool enable)
+{
+    // Only hide the loading icon if every requests are complete
+    if (enable || !_api.pendingReply()) {
+        ImageViewer::setLoadingState(enable);
+    }
 }
