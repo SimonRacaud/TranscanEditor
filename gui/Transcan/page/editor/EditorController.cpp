@@ -11,13 +11,6 @@ extern MainWindow *mainWindow;
 EditorController::EditorController(QWidget *parent) : EditorView(_api, parent)
 {
     this->setupEvents();
-
-//    vector<OCRPage> debug = { // TODO: debug
-//        { .imagePath = "/media/work/personnal-projects/scanTranslator/scrapper/data_overlord/Chapter_1/5-o.jpg" },
-//        { .imagePath = "/media/work/personnal-projects/scanTranslator/scrapper/data_overlord/Chapter_1/5-o.jpg" },
-//        { .imagePath = "/media/work/personnal-projects/scanTranslator/scrapper/data_overlord/Chapter_1/5-o.jpg" },
-//    };
-//    this->_sourcePages->setPages(debug); // DEBUG
 }
 
 EditorController::~EditorController()
