@@ -19,7 +19,13 @@ class EditAreaRect : public QGraphicsProxyWidget
 {
     Q_OBJECT
 public:
-    EditAreaRect(BlockCluster const &data, RectMode mode);
+    /**
+     * @brief EditAreaRect
+     * @param data
+     * @param mode
+     * @param pageY : Position on Y axis of the page in the scene
+     */
+    EditAreaRect(BlockCluster const &data, RectMode mode, int pageY);
 
     QRectF boundingRect() const override;
 
@@ -35,6 +41,10 @@ public:
     void setLineHeight(int percentage);
     void setLineHeightAbs(int pixels);
 
+    /**
+     * @brief getData
+     * @return
+     */
     BlockCluster getData();
 
     /**
@@ -71,6 +81,7 @@ private:
     RectMode _mode;
     BlockCluster _data;
     QString &_text;
+    int _pageY;
 
     QGraphicsProxyWidget *_proxy{nullptr};
     QTextEdit *_textEdit{nullptr};

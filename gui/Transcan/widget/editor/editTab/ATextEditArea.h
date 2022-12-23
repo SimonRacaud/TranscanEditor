@@ -39,7 +39,7 @@ protected:
      */
     void doubleClickEvent(QMouseEvent *event);
 
-    void createAreaRect(BlockCluster const& data);
+    void createAreaRect(BlockCluster const& data, int pagePosY);
 
     void setPagesEditAreas(std::vector<OCRPage> const &pages);
 

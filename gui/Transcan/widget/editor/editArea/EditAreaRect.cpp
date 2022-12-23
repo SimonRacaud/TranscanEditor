@@ -9,8 +9,8 @@
 
 using namespace std;
 
-EditAreaRect::EditAreaRect(BlockCluster const &data, RectMode mode)
-    : _mode(mode), _data(data), _text(_data.sentence)
+EditAreaRect::EditAreaRect(BlockCluster const &data, RectMode mode, int pageY)
+    : _mode(mode), _data(data), _text(_data.sentence), _pageY(pageY)
 {
     this->setFlag(ItemIsMovable, true);
     this->setFlag(ItemIsFocusable, true);
@@ -28,7 +28,7 @@ EditAreaRect::EditAreaRect(BlockCluster const &data, RectMode mode)
     this->_textEdit->setFixedWidth(data.polygon.boundingRect().width());
     this->setWidget(_textEdit);
     this->setZValue(8);
-    this->setPos(data.polygon.boundingRect().x(), data.polygon.boundingRect().y());
+    this->setPos(data.polygon.boundingRect().x(), data.polygon.boundingRect().y() + pageY);
 }
 
 QRectF EditAreaRect::boundingRect() const
@@ -112,6 +112,7 @@ BlockCluster EditAreaRect::getData()
     // Update position
     QPointF diff = this->pos() - this->_data.polygon.boundingRect().topLeft();
     cluster.polygon.translate(diff.x(), diff.y());
+    cluster.polygon.translate(0, -_pageY); // Convert coord => relative to page top left corner
     cluster.sentence = _textEdit->toPlainText();
     return cluster;
 }

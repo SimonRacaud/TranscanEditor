@@ -2,8 +2,8 @@
 
 #include <QPainter>
 
-SelectAreaRect::SelectAreaRect(BlockCluster const &cluster)
-    : _data(cluster), _selected(_data.cleanBox)
+SelectAreaRect::SelectAreaRect(BlockCluster const &cluster, int pageY)
+    : _data(cluster), _selected(_data.cleanBox), _pageY(pageY)
 {
     this->setZValue(8);
 }
@@ -27,7 +27,8 @@ void SelectAreaRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *, 
 
 QRectF SelectAreaRect::boundingRect() const
 {
-    return _data.polygon.boundingRect();
+    const QRectF rect = _data.polygon.boundingRect();
+    return rect.translated(0, _pageY);
 }
 
 bool SelectAreaRect::isSelected() const
@@ -35,10 +36,11 @@ bool SelectAreaRect::isSelected() const
     return _selected;
 }
 
-BlockCluster const &SelectAreaRect::getData()
+BlockCluster SelectAreaRect::getData() const
 {
-    this->_data.cleanBox = _selected; // Update state
-    return _data;
+    BlockCluster cluster = _data;
+    cluster.polygon.translate(0, _pageY);
+    return cluster;
 }
 
 bool SelectAreaRect::isOnArea(QRectF area) const

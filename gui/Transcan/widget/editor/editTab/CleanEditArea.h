@@ -28,7 +28,7 @@ public:
     virtual void loadPage(OCRPage const &page) override;
 
 private:
-    void createBlock(BlockCluster const &cluster);
+    void createBlock(BlockCluster const &cluster, int pagePosY);
 
 private:
 };

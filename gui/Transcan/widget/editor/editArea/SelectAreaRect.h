@@ -10,7 +10,7 @@ class SelectAreaRect : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    SelectAreaRect(BlockCluster const &data);
+    SelectAreaRect(BlockCluster const &data, int pageY);
 
     virtual void paint(
             QPainter *painter,
@@ -21,7 +21,7 @@ public:
 
     bool isSelected() const;
 
-    BlockCluster const &getData();
+    BlockCluster getData() const;
 
     /**
      * @brief isOnSpace True if the rect is located on the target area
@@ -36,6 +36,7 @@ protected:
 private:
     BlockCluster _data;
     bool &_selected;
+    const int _pageY;
 };
 
 #endif // SELECTAREARECT_H
