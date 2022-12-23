@@ -13,7 +13,7 @@ public:
 
     virtual void setPages(std::vector<OCRPage> const &pages) override;
 
-    void createAreaRectAtCoord(QPoint const &coord);
+    void createAreaRectAtCoord(QPointF const &coord);
 
     void removeRect();
 

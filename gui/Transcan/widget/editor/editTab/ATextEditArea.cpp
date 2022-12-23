@@ -17,31 +17,32 @@ void ATextEditArea::setPages(vector<OCRPage> const &pages)
     this->setPagesEditAreas(pages);
 }
 
-void ATextEditArea::createAreaRectAtCoord(QPoint const &coord)
+void ATextEditArea::createAreaRectAtCoord(QPointF const &coord)
 {
     const QPoint size(DEF_EDITAREA_SIZE);
     const QPoint origin(coord.x() - (size.x() / 2), coord.y() - (size.y() / 2));
 
-    const BlockCluster defaultData = {
-        .blocks = {},
-        .sentence = "Text",
-        .cleanBox = true,
-        .polygon = QPolygon(QRect(origin, origin + size)),
-        .translation = "",
-        .font = QFont(),
-        .color = Qt::black,
-        .lineHeight = DEF_LINE_HEIGHT,
-        .strokeWidth = 8
-    };
     // Find page under coord coordinates
     QList<QGraphicsItem *> pageItems = _pageGroup->childItems();
-    auto it = std::find_if(pageItems.begin(), pageItems.end(),
-                           [coord](QGraphicsItem *item){ return item->contains(QPointF(coord)); });
-    if (it == pageItems.end()) {
-        std::invalid_argument("ATextEditArea::createAreaRectAtCoord Coordinate outside pages range.");
+    for (QGraphicsItem *pageItem : pageItems) {
+        if (pageItem->sceneBoundingRect().contains(coord)) {
+            const qreal pagePosY = pageItem->scenePos().y();
+
+            const BlockCluster defaultData = {
+                .blocks = {},
+                .sentence = "Text",
+                .cleanBox = true,
+                .polygon = QPolygon(QRect(origin, origin + size).translated(0, -pagePosY)),
+                .translation = "",
+                .font = QFont(),
+                .color = Qt::black,
+                .lineHeight = DEF_LINE_HEIGHT,
+                .strokeWidth = 8
+            };
+            this->createAreaRect(defaultData, pagePosY);
+            break;
+        }
     }
-    qreal pagePosY = (*it)->scenePos().y();
-    this->createAreaRect(defaultData, pagePosY);
 }
 
 void ATextEditArea::removeRect()
@@ -118,10 +119,12 @@ void ATextEditArea::keyPressEvent(QKeyEvent *event)
 
 void ATextEditArea::doubleClickEvent(QMouseEvent *event)
 {
+    if (_focusedRect != nullptr)
+        return; // Editing existing rect. Not creating one.
     const QPointF position = event->position(); // Position on the widget
     QPointF scenePos = this->_view->mapToScene(position.toPoint()); // Position on the scene
 
-    this->createAreaRectAtCoord(scenePos.toPoint());
+    this->createAreaRectAtCoord(scenePos);
 }
 
 void ATextEditArea::createAreaRect(BlockCluster const &data, int pagePosY)
