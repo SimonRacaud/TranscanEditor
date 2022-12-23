@@ -9,6 +9,8 @@ def create_block_cluster(page: OCRPage, search_range: int, search_step: int) -> 
     """ Create cluster of bounding boxes close from each others on the y axis """
     # Create a list of tuple with a couple (index, block)
     block_buffer = list(page.blocks)
+    # Sort by position on Y axis. The research will be done from to top to the bottom.
+    block_buffer.sort(key=lambda b : __get_init_point(b.polygon).y, reverse=True)
     page.clusters = []
 
     while len(block_buffer) > 0:
@@ -34,7 +36,7 @@ def __find_neighbour_points(
         # Research for the next poly
         for pt in __browse_line(target_point, search_step, search_range):
             size = len(pack)
-            # Search block which match the current point
+            # Search block matching the current point
             for bck in block_buffer:
                 if bck != block and __check_collide(bck.polygon, pt):
                     pack.append(bck)
@@ -67,7 +69,7 @@ def __browse_line(point: Vector2I, delta_y, end_y) -> Vector2I:
         end_y += point.y
         while point.y - delta_y >= end_y:
             point.y -= delta_y
-        yield point
+            yield point
     else: # go lower
         end_y += point.y
         while point.y + delta_y <= end_y:
