@@ -9,6 +9,7 @@ SaveEditArea::SaveEditArea(APIClient &client) : NetEditTab(client, RENDER)
 
 void SaveEditArea::load(std::vector<OCRPage> const &pages)
 {
+    this->setPages(pages);
     // API call to render each page
     if (_config == nullptr) {
         throw std::runtime_error("SaveEditArea::load null project config.");
