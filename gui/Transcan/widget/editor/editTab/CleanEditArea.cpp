@@ -48,9 +48,9 @@ OCRPage CleanEditArea::getPage(size_t index)
     page.clusters.clear();
     for (QGraphicsItem *item : this->_scene->items()) {
         SelectAreaRect *rect = dynamic_cast<SelectAreaRect*>(item);
-        if (rect != nullptr) {
+        if (rect) {
             QGraphicsItem *pageItem = pageItems[index]; // Get page image widget
-            if (rect->isOnArea(pageItem->boundingRect())) {
+            if (rect->isOnArea(pageItem->sceneBoundingRect())) {
                 page.clusters.push_back(rect->getData());
             }
         }

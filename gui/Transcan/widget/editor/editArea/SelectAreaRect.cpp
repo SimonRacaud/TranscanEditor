@@ -39,7 +39,6 @@ bool SelectAreaRect::isSelected() const
 BlockCluster SelectAreaRect::getData() const
 {
     BlockCluster cluster = _data;
-    cluster.polygon.translate(0, _pageY);
     return cluster;
 }
 
