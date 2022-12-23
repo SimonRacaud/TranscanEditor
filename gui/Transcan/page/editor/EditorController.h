@@ -46,6 +46,7 @@ private slots:
     void exitButtonClickedSlot(bool checked);
 
 private:
+    EditorTab _lastTab; // Last tab accessed.
     ProjectConfig *_config = nullptr;
     APIClient _api;
 };

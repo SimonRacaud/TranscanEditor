@@ -8,7 +8,7 @@ using namespace std;
 
 extern MainWindow *mainWindow;
 
-EditorController::EditorController(QWidget *parent) : EditorView(_api, parent)
+EditorController::EditorController(QWidget *parent) : EditorView(_api, parent), _lastTab(EditorTab::EXTRACT)
 {
     this->setupEvents();
 }
@@ -87,6 +87,12 @@ void EditorController::netError(QString const &message)
 
 void EditorController::setTab(EditorTab tab)
 {
+    if ((int)tab > (int)_lastTab + 1) {
+        QMessageBox::information(this, "Tab access", "Please, do not skip any step of the process.");
+        return;
+    } else if ((int)tab > (int)_lastTab) {
+        _lastTab = tab;
+    }
     auto *prop = dynamic_cast<APropertyTab *>(_stackProp->currentWidget());
     auto *editor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
 
