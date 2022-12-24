@@ -10,7 +10,7 @@
 class SavePropertyTab : public APropertyTab
 {
 public:
-    SavePropertyTab(QWidget *parent = nullptr);
+    SavePropertyTab(FuncNetCall &reloadFunc, QWidget *parent = nullptr);
 
 private:
     virtual void fillHelp();

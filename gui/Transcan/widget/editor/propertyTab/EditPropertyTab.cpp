@@ -1,10 +1,12 @@
 #include "EditPropertyTab.h"
 #include <QFormLayout>
 
-EditPropertyTab::EditPropertyTab(QWidget *parent) : APropertyTab(parent)
+EditPropertyTab::EditPropertyTab(FuncNetCall &reloadFunc, QWidget *parent)
+    : APropertyTab(reloadFunc, parent)
 {
     this->fillHelp();
     this->initProperties();
+    this->_reloadButton->setText("Translate");
 }
 
 void EditPropertyTab::fillHelp()

@@ -1,7 +1,8 @@
 #include "CleanPropertyTab.h"
 #include <QHBoxLayout>
 
-CleanPropertyTab::CleanPropertyTab(QWidget *parent) : APropertyTab(parent)
+CleanPropertyTab::CleanPropertyTab(FuncNetCall &reloadFunc, QWidget *parent)
+    : APropertyTab(reloadFunc, parent)
 {
     this->fillHelp();
     this->initProperties();

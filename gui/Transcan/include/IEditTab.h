@@ -17,6 +17,11 @@ public:
     virtual void load(std::vector<OCRPage> const &pages = {}) = 0;
 
     /**
+     * @brief loadAPI : send API request for auto processing
+     */
+    virtual void loadAPI() = 0;
+
+    /**
      * @brief load : reload display of one page
      * @param page
      */

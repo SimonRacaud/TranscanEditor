@@ -9,8 +9,7 @@ class EditorEditArea : public ATextEditArea
 public:
     EditorEditArea(APIClient &client);
 
-    virtual void load(std::vector<OCRPage> const &pages = {});
-    virtual void loadPage(OCRPage const &page);
+    virtual void loadAPI() override;
 };
 
 #endif // EDITOREDITAREA_H

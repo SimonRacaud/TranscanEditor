@@ -9,11 +9,21 @@
 
 #include "include/environment.h"
 
+using FuncNetCall = std::function<void()>;
+
 class APropertyTab : public QWidget
 {
     Q_OBJECT
 public:
-    explicit APropertyTab(QWidget *parent = nullptr);
+    /**
+     * @brief APropertyTab
+     * @param reloadFunc : Function called on click of the reload button
+     * @param parent
+     */
+    explicit APropertyTab(FuncNetCall &reloadFunc, QWidget *parent = nullptr);
+
+public slots:
+    void unlockReloadButton();
 
 protected:
     virtual void fillHelp() = 0;
@@ -23,11 +33,13 @@ signals:
     void nextStep();
 
 private:
+    FuncNetCall _netCallback;
     QLabel *_title;
     QLabel *_helpTitle;
     QScrollArea *_propScollArea;
 
 protected:
+    QPushButton *_reloadButton;
     QPushButton *_nextButton;
     QLabel *_help;
     QVBoxLayout *_propertiesLayout;

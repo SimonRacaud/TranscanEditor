@@ -4,7 +4,8 @@
 
 using namespace std;
 
-ATextEditArea::ATextEditArea(APIClient &client, ImageMode modeImg, RectMode mode) : NetEditTab(client, modeImg), _mode(mode)
+ATextEditArea::ATextEditArea(APIClient &client, ImageMode modeImg, RectMode mode, bool autoReload)
+    : NetEditTab(client, modeImg, autoReload), _mode(mode)
 {
     connect(_view, &PageGraphicsView::onDoubleClick, this, &ATextEditArea::doubleClickEvent);
 }
@@ -85,7 +86,7 @@ OCRPage ATextEditArea::getPage(size_t index)
 
     page.clusters.clear();
     QList<QGraphicsItem *> pageItems = _pageGroup->childItems();
-    if (pageItems.size() <= index) {
+    if ((size_t)pageItems.size() <= index) {
         throw std::runtime_error("ATextEditArea::getPage, invalid _pageGroup size");
     }
     QGraphicsItem *pageItem = pageItems[index]; // Page image widget

@@ -29,6 +29,11 @@ void EditorController::setupEvents()
     QObject::connect(_editButton, &QPushButton::clicked, this, &EditorController::editButtonClickedSlot);
     QObject::connect(_saveButton, &QPushButton::clicked, this, &EditorController::saveButtonClickedSlot);
     QObject::connect(_exitButton, &QPushButton::clicked, this, &EditorController::exitButtonClickedSlot);
+
+    connect(_cleanEditTab, &NetEditTab::allAPIRequestsCompleted, _cleanPropTab, &APropertyTab::unlockReloadButton);
+    connect(_editEditTab, &NetEditTab::allAPIRequestsCompleted, _editPropTab, &APropertyTab::unlockReloadButton);
+    connect(_extractEditTab, &NetEditTab::allAPIRequestsCompleted, _extractPropTab, &APropertyTab::unlockReloadButton);
+    connect(_saveEditTab, &NetEditTab::allAPIRequestsCompleted, _savePropTab, &APropertyTab::unlockReloadButton);
 }
 
 void EditorController::keyPressEvent(QKeyEvent *event)
@@ -56,6 +61,7 @@ void EditorController::onStart(ProjectConfig const &config)
     if (_config)
         delete _config;
     this->_config = new ProjectConfig(config);
+    this->_extractEditTab->setConfig(config);
     this->_editEditTab->setConfig(config);
     this->_saveEditTab->setConfig(config);
     //
@@ -65,17 +71,7 @@ void EditorController::onStart(ProjectConfig const &config)
     this->_sourcePages->loadPagesFromPath(_config->srcPath);
     this->_extractEditTab->loadPagesFromPath(_config->srcPath);
     // OCR API call
-    std::vector<OCRPage> const &pages = this->_extractEditTab->getPages();
-    size_t i = 0;
-    this->_extractEditTab->setLoadingState(true);
-    for (OCRPage const &page : pages) {
-        using std::placeholders::_1;
-        NetCallback callback = bind(&IEditTab::loadPage, _extractEditTab, _1);
-        NetErrCallback errCallback = bind(&EditorController::netError, this, _1);
-        this->_api.sendToOCR(config, i, page.imagePath, callback, errCallback);
-        i++;
-        // TODO : to improve (error management)
-    }
+    this->_extractEditTab->loadAPI();
 }
 
 void EditorController::netError(QString const &message)

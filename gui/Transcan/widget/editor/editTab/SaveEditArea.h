@@ -9,8 +9,7 @@ class SaveEditArea : public NetEditTab
 public:
     SaveEditArea(APIClient &client);
 
-    virtual void load(std::vector<OCRPage> const &pages = {});
-    virtual void loadPage(OCRPage const &page);
+    virtual void loadAPI() override;
 private:
 };
 

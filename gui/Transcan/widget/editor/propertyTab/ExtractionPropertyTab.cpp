@@ -1,8 +1,10 @@
 #include "ExtractionPropertyTab.h"
 
-ExtractionPropertyTab::ExtractionPropertyTab(QWidget *parent) : APropertyTab(parent)
+ExtractionPropertyTab::ExtractionPropertyTab(FuncNetCall &reloadFunc, QWidget *parent)
+    : APropertyTab(reloadFunc, parent)
 {
     this->fillHelp();
+    this->_reloadButton->setText("Extract text again");
 }
 
 /** Internal functions **/

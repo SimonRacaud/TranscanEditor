@@ -6,7 +6,7 @@
 class ExtractionPropertyTab : public APropertyTab
 {
 public:
-    ExtractionPropertyTab(QWidget *parent = nullptr);
+    ExtractionPropertyTab(FuncNetCall &reloadFunc, QWidget *parent = nullptr);
 
 private:
     virtual void fillHelp();

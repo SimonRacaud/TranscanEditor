@@ -24,9 +24,7 @@ public:
      */
     virtual OCRPage getPage(size_t index) override;
 
-    virtual void load(std::vector<OCRPage> const &pages = {}) override;
-    virtual void loadPage(OCRPage const &page) override;
-
+    virtual void loadAPI() override;
 private:
     void createBlock(BlockCluster const &cluster, int pagePosY);
 

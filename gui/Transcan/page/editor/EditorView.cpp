@@ -7,6 +7,8 @@
 
 #include <QHBoxLayout>
 
+using std::bind;
+
 EditorView::EditorView(APIClient &api, QWidget *parent)
     : QWidget{parent}, _rootLayout(nullptr), _showSourceButton(new QPushButton), _extractButton(new QPushButton),
       _cleanButton(new QPushButton), _editButton(new QPushButton), _saveButton(new QPushButton),
@@ -16,15 +18,19 @@ EditorView::EditorView(APIClient &api, QWidget *parent)
     this->_rootLayout->setSpacing(0);
     this->setupHeader();
     // BODY
-    this->_cleanPropTab = new CleanPropertyTab;
-    this->_editPropTab = new EditPropertyTab;
-    this->_extractPropTab = new ExtractionPropertyTab;
-    this->_savePropTab = new SavePropertyTab;
-
     this->_extractEditTab = new ExtractionEditArea(api);
     this->_cleanEditTab = new CleanEditArea(api);
     this->_editEditTab = new EditorEditArea(api);
     this->_saveEditTab = new SaveEditArea(api);
+
+    FuncNetCall func = bind(&CleanEditArea::loadAPI, _cleanEditTab);
+    this->_cleanPropTab = new CleanPropertyTab(func);
+    func = bind(&EditorEditArea::loadAPI, _editEditTab);
+    this->_editPropTab = new EditPropertyTab(func);
+    func = bind(&ExtractionEditArea::loadAPI, _extractEditTab);
+    this->_extractPropTab = new ExtractionPropertyTab(func);
+    func = bind(&SaveEditArea::loadAPI, _saveEditTab);
+    this->_savePropTab = new SavePropertyTab(func);
 
     this->_stackEdit = new QStackedWidget;
     this->_stackEdit->addWidget(_extractEditTab);

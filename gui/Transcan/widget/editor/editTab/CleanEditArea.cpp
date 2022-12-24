@@ -3,7 +3,8 @@
 
 using namespace std;
 
-CleanEditArea::CleanEditArea(APIClient &client) : NetEditTab(client, CLEAN)
+CleanEditArea::CleanEditArea(APIClient &client)
+    : NetEditTab(client, CLEAN, true)
 {
 }
 
@@ -58,26 +59,16 @@ OCRPage CleanEditArea::getPage(size_t index)
     return page;
 }
 
-void CleanEditArea::load(std::vector<OCRPage> const &pages)
+void CleanEditArea::loadAPI()
 {
-    try {
-        this->setPages(pages); // Apply pages to view
-    } catch (std::exception const &err) {
-        std::cerr << "(load) An error occured: " << err.what() << std::endl;
-    }
     this->setLoadingState(true);
-    // API call
-    for (OCRPage const &page: pages) {
+
+    for (size_t i = 0; i < _pages.size(); i++) {
+        OCRPage const &page = this->getPage(i);
         NetCallback success = bind(&IEditTab::loadPage, this, std::placeholders::_1);
         NetErrCallback error = bind(&NetEditTab::netError, this, std::placeholders::_1);
         this->_api.sendToClean(page, success, error); // TODO : to improve
     }
-}
-
-void CleanEditArea::loadPage(OCRPage const &page)
-{
-    this->updatePage(page);
-    this->setLoadingState(false);
 }
 
 /** PRIVATE **/

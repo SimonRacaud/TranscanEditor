@@ -1,6 +1,7 @@
 #include "NetEditTab.h"
 
-NetEditTab::NetEditTab(APIClient &client, ImageMode mode) : ImageViewer(mode), _api(client)
+NetEditTab::NetEditTab(APIClient &client, ImageMode mode, bool autoReload)
+    : ImageViewer(mode), _api(client), _autoReload(autoReload)
 {
 }
 
@@ -25,7 +26,39 @@ void NetEditTab::unload()
 {
     // Don't process pending requests' result
     this->_api.abortRequests();
+}
 
+void NetEditTab::load(std::vector<OCRPage> const &pages)
+{
+    try {
+        this->setPages(pages);
+    } catch (std::exception const& err) {
+        std::cerr << "Fail to load pages. " << err.what() << std::endl;
+        // TODO: better error management
+    }
+    if (_autoReload) {
+        // API call to render each page
+        try {
+            this->loadAPI();
+        } catch (std::exception const &err) {
+            std::cerr << "Fail to send API request. " << err.what() << std::endl;
+            // TODO: better error management
+        }
+    }
+}
+
+void NetEditTab::loadPage(OCRPage const &page)
+{
+    try {
+        // Reload scene and update page
+        this->updatePage(page);
+    } catch (std::exception const &err) {
+        std::cerr << "Fail to update the page " << page.index << ". " << err.what() << std::endl;
+    }
+    this->setLoadingState(false);
+    if (!this->_api.pendingReply()) { // All requests completed
+        emit this->allAPIRequestsCompleted();
+    }
 }
 
 void NetEditTab::setLoadingState(bool enable)

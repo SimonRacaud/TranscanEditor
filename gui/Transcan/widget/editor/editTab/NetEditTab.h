@@ -13,8 +13,15 @@
  */
 class NetEditTab : public ImageViewer, public IEditTab
 {
+    Q_OBJECT
 public:
-    NetEditTab(APIClient &client, ImageMode mode);
+    /**
+     * @brief NetEditTab
+     * @param client Client to access the core
+     * @param mode Which path will be used from OCRPage
+     * @param autoReload If the pages will be (re)processed by the core when changing tab.
+     */
+    NetEditTab(APIClient &client, ImageMode mode, bool autoReload = true);
     virtual ~NetEditTab();
 
     void netError(QString const &message);
@@ -22,11 +29,17 @@ public:
     void setConfig(ProjectConfig const &config);
 
     virtual void unload() override;
+    virtual void load(std::vector<OCRPage> const &pages = {}) override;
+    virtual void loadPage(OCRPage const &page) override;
 
     virtual void setLoadingState(bool enable) override;
 
+signals:
+    void allAPIRequestsCompleted();
+
 protected:
     APIClient &_api;
+    const bool _autoReload;
     const ProjectConfig *_config{nullptr};
 };
 

@@ -12,8 +12,7 @@ class ExtractionEditArea : public ATextEditArea
 public:
     ExtractionEditArea(APIClient &client);
 
-    virtual void loadPage(OCRPage const &page);
-    virtual void load(std::vector<OCRPage> const &pages = {});
+    virtual void loadAPI() override;
 };
 
 #endif // EXTRACTIONEDITAREA_H

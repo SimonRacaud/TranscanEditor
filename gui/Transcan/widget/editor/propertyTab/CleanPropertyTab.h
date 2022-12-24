@@ -9,7 +9,7 @@
 class CleanPropertyTab : public APropertyTab
 {
 public:
-    CleanPropertyTab(QWidget *parent = nullptr);
+    CleanPropertyTab(FuncNetCall &reloadFunc, QWidget *parent = nullptr);
 
 private:
     virtual void fillHelp();

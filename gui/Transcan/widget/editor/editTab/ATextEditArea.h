@@ -9,7 +9,7 @@ class ATextEditArea : public NetEditTab
 {
     Q_OBJECT
 public:
-    ATextEditArea(APIClient &client, ImageMode modeImg, RectMode mode);
+    ATextEditArea(APIClient &client, ImageMode modeImg, RectMode mode, bool autoReload);
 
     virtual void setPages(std::vector<OCRPage> const &pages) override;
 

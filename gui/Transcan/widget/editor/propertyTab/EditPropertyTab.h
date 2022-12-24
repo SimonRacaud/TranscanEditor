@@ -12,7 +12,7 @@
 class EditPropertyTab : public APropertyTab
 {
 public:
-    EditPropertyTab(QWidget *parent = nullptr);
+    EditPropertyTab(FuncNetCall &reloadFunc, QWidget *parent = nullptr);
 
     void showProperties();
     void hideProperties();
