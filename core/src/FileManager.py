@@ -44,6 +44,7 @@ class FileManager:
             img = Image.open(io.BytesIO(img_bytes))
             image = np.asarray(img)
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+            print("Image {} loaded.".format(image_path))
             return image
 
     @staticmethod

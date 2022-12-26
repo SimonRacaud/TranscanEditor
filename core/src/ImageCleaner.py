@@ -18,8 +18,8 @@ class ImageCleaner:
             for block in cluster.blocks:
                 if block.text == "":
                     continue # Skip this block
-                block.polygon = ImageCleaner.__poly_distension(block.polygon, block.angle, 3)
-                cv2.fillPoly(mask, [block.polygon], color=(255, 255, 255))
+                distendedPoly = ImageCleaner.__poly_distension(block.polygon, block.angle, 3)
+                cv2.fillPoly(mask, [distendedPoly], color=(255, 255, 255))
         # Apply mask on image
         return cv2.inpaint(image, mask, 7, cv2.INPAINT_NS)
     
