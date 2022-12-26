@@ -1,6 +1,7 @@
 # import argparse
 from flask import Flask, request
 from dotenv import load_dotenv
+import traceback, sys
 
 from src.model.apiModel import OCRInput, RenderInput
 from src.model.model import OCRPage, TranslatorService
@@ -85,6 +86,7 @@ def process_clean():
         inputJson = request.json
         input = OCRPage.deserialize(inputJson)
     except BaseException as err:
+        #traceback.print_exception(*sys.exc_info())
         print("Error {}".format(err))
         raise InvalidJson("Invalid body")
     try:
@@ -93,7 +95,7 @@ def process_clean():
         print("Error loading image: {}".format(err))
         raise InvalidJson("Unable to load source image")
     try:
-        image_clean = ImageCleaner.process(src_image, input.blocks)
+        image_clean = ImageCleaner.process(src_image, input.clusters)
     except BaseException as err:
         print("Error processing image: {}".format(err))
         raise InternalError("An error occured when processing the image")

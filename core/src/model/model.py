@@ -1,7 +1,8 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
-from typing import Sequence, Tuple
+from typing import List, Sequence, Tuple
+from uuid import UUID, uuid4
 
 import numpy as np
 
@@ -129,28 +130,45 @@ class Vector2I:
 class OCRBlock:
     """ Result of an OCR treatment """
     #box: any # Rectangle bouncing box
+    id: UUID 
     polygon: Sequence[Sequence[int]] # Polygon bouncing box
     text: str
     pivot: Vector2I # box top left coord
     size: Vector2I # box size
     angle: float # box rotation angle
+    
+    def __init__(self, polygon, text, pivot, size, angle, id="") -> None:
+        if id=="":
+            self.id = uuid4()
+        else:
+            self.id = id
+        self.polygon = polygon
+        self.text = text
+        self.pivot = pivot
+        self.size = size
+        self.angle = angle
 
     def __eq__(self, __o: object) -> bool:
         return np.array_equal(self.polygon, __o.polygon) and self.text == __o.text
     
     def serialize(self):
         return {
+            "id": self.id.hex,
             "polygon": self.polygon.astype(int).tolist(),
             "text": self.text,
             "pivot": self.pivot.serialize(),
             "size": self.size.serialize(),
             "angle": self.angle
         }
+    def serializeId(self):
+        return self.id.hex
+
     @staticmethod
     def deserialize(data) -> OCRBlock:
-        check_argument(data, ['polygon', 'text', 'pivot', 'size', 'angle'])
+        check_argument(data, ['id', 'polygon', 'text', 'pivot', 'size', 'angle'])
 
         return OCRBlock(
+            id=UUID(hex=data["id"]),
             polygon=np.array(data['polygon']),
             text=data['text'],
             pivot=Vector2I.deserialize(data['pivot']),
@@ -160,9 +178,8 @@ class OCRBlock:
 
 @dataclass
 class BlockCluster:
-    blocks: Sequence[Tuple[int, OCRBlock]]
+    blocks: Sequence[OCRBlock]
     polygon: np.ndarray # 4 points
-    # box: Rect
     sentence: str
     translation: str = None
     cleanBox: bool = True
@@ -173,7 +190,7 @@ class BlockCluster:
 
     def serialize(self):
         return {
-            "blocks": [], # TODO: export blocks indexes ?
+            "blocks": list(map(lambda b : b.serializeId(), self.blocks)),
             "polygon": self.polygon.astype(int).tolist() if self.polygon.shape == (4, 2) else [],
             "sentence": self.sentence,
             "translation": self.translation,
@@ -184,13 +201,22 @@ class BlockCluster:
             "strokeWidth": self.stroke_width
         }
     @staticmethod
-    def deserialize(data) -> BlockCluster:
+    def deserialize(data, blockList: List[OCRBlock]) -> BlockCluster:
         check_argument(data, 
             ['blocks', 'polygon', 'sentence', 'translation', 'cleanBox', 
             'font', 'color', 'lineHeight', 'strokeWidth'])
 
+        idList = data['blocks']
+        blocks = []
+        for id in idList:
+            result = [x for x in blockList if x.serializeId() == id]
+            if len(result) == 1:
+                blocks.append(result[0])
+            else:
+                print("BlockCluster::deserilize Invalid block id", id)  
+                raise InvalidJson("Invalid block id in cluster's block list")
         return BlockCluster(
-            blocks=list(map(lambda b: OCRBlock.deserialize(b), data['blocks'])),
+            blocks=blocks,
             polygon=np.array(data['polygon']),
             sentence=data["sentence"],
             translation=data["translation"],
@@ -231,5 +257,5 @@ class OCRPage:
             blocks=[],
             clusters=[])
         page.blocks=list(map(lambda b: OCRBlock.deserialize(b), data['blocks']))
-        page.clusters=list(map(lambda c: BlockCluster.deserialize(c), data['clusters']))
+        page.clusters=list(map(lambda c: BlockCluster.deserialize(c, page.blocks), data['clusters']))
         return page
