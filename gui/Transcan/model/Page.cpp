@@ -1,6 +1,7 @@
 #include "Page.h"
 
 #include "include/environment.h"
+#include <iostream>
 
 /**
  * Sub-Functions
@@ -65,21 +66,25 @@ QJsonArray serializePolygon(QPolygon const &p)
  * Blocks
  */
 
-OCRBlock OCRBlock::deserialize(QJsonObject const &obj)
+shared_ptr<OCRBlock> OCRBlock::deserialize(QJsonObject const &obj)
 {
-    OCRBlock b;
-    QList<QString> required = {"angle", "pivot", "polygon", "size", "text"};
+    shared_ptr<OCRBlock> b = std::make_shared<OCRBlock>();
+    QList<QString> required = {"id", "angle", "pivot", "polygon", "size", "text"};
 
     for (QString const& req : required) {
         if (!obj.contains(req)) {
             throw std::invalid_argument("Block: invalid JSON, missing key "+req.toStdString());
         }
     }
-    b.angle = obj["angle"].toDouble(0);
-    b.text = obj["text"].toString("");
-    b.pivot = deserializeVector(obj["pivot"].toObject());
-    b.size = deserializeVector(obj["size"].toObject());
-    b.polygon = deserializePolygon(obj["polygon"]);
+    b->uuid = obj["id"].toString();
+    if (b->uuid.isEmpty()) {
+        throw std::invalid_argument("Block: invalid id field.");
+    }
+    b->angle = obj["angle"].toDouble(0);
+    b->text = obj["text"].toString("");
+    b->pivot = deserializeVector(obj["pivot"].toObject());
+    b->size = deserializeVector(obj["size"].toObject());
+    b->polygon = deserializePolygon(obj["polygon"]);
     return b;
 }
 
@@ -87,6 +92,7 @@ QJsonObject OCRBlock::serialize() const
 {
     QJsonObject obj;
 
+    obj["id"] = this->uuid;
     obj["angle"] = this->angle;
     obj["pivot"] = serializeVector(this->pivot);
     obj["polygon"] = serializePolygon(this->polygon);
@@ -99,7 +105,7 @@ QJsonObject OCRBlock::serialize() const
  * Cluster
  */
 
-BlockCluster BlockCluster::deserialize(QJsonObject const &obj)
+BlockCluster BlockCluster::deserialize(QJsonObject const &obj, vector<shared_ptr<OCRBlock>> &blocks)
 {
     BlockCluster b;
     QList<QString> required = {"blocks", "cleanBox", "color", "font", "lineHeight", "polygon",
@@ -121,20 +127,30 @@ BlockCluster BlockCluster::deserialize(QJsonObject const &obj)
     b.sentence = obj["sentence"].toString();
     b.polygon = deserializePolygon(obj["polygon"]);
 
-    // TODO: deserialize cluster's blocks
-    //const QJsonArray &blockList = obj["blocks"].toArray();
-    //for (QJsonValue const &val : blockList) {
-        //const QJsonObject &blockJson = val.toObject();
-        //b.blocks.push_back(OCRBlock::deserialize(blockJson));
-    //}
+    // deserialize cluster's blocks
+    const QJsonArray &blockList = obj["blocks"].toArray(); // Blocks uuids
+    for (QJsonValue const &val : blockList) {
+        const QString &uuid = val.toString();
+        auto it = std::find_if(blocks.begin(), blocks.end(),
+                               [uuid](shared_ptr<OCRBlock> const &b){ return b->uuid == uuid; });
+        if (it == blocks.end()) {
+            std::cerr << "Deserializer: Block id " << uuid.toStdString() << " not found." << std::endl;
+            throw std::invalid_argument("Cluster: block id not found.");
+        }
+        b.blocks.push_back(*it);
+    }
     return b;
 }
 
 QJsonObject BlockCluster::serialize() const
 {
     QJsonObject obj;
+    QJsonArray blocksArray;
 
-    obj["blocks"] = QJsonArray(); // TODO : serialize blocks
+    for (shared_ptr<OCRBlock> const &b : this->blocks) {
+        blocksArray << b->uuid;
+    }
+    obj["blocks"] = blocksArray;
     obj["cleanBox"] = this->cleanBox;
     obj["color"] = QJsonValue((qint64)this->color.rgba64());
     obj["font"] = this->font.family();
@@ -191,7 +207,7 @@ OCRPage OCRPage::deserialize(QJsonObject &data)
     const QJsonArray &clusterList = data["clusters"].toArray();
     for (QJsonValue const &val : clusterList) {
         const QJsonObject &clusterJson = val.toObject();
-        page.clusters.push_back(BlockCluster::deserialize(clusterJson));
+        page.clusters.push_back(BlockCluster::deserialize(clusterJson, page.blocks));
     }
     return page;
 }
@@ -206,8 +222,8 @@ QJsonObject OCRPage::serialize() const
     obj["renderImgPath"] = this->renderImagePath;
 
     QJsonArray blockList;
-    for (OCRBlock const &b : this->blocks) {
-        blockList << b.serialize();
+    for (shared_ptr<OCRBlock> const &b : this->blocks) {
+        blockList << b->serialize();
     }
     obj["blocks"] = blockList;
 

@@ -14,19 +14,23 @@
 
 #include "utils/FileUtils.h"
 
+using std::shared_ptr;
+using std::vector;
+
 struct OCRBlock {
+    QString uuid;
     QPolygon polygon;
     QString text;
     Vector2i pivot;
     Vector2i size;
     float angle;
 
-    static OCRBlock deserialize(QJsonObject const &obj);
+    static shared_ptr<OCRBlock> deserialize(QJsonObject const &obj);
     QJsonObject serialize() const;
 };
 
 struct BlockCluster {
-    std::vector<OCRBlock *> blocks;
+    std::vector<shared_ptr<OCRBlock>> blocks;
     QString sentence;
     bool cleanBox;
     QPolygon polygon;
@@ -36,7 +40,8 @@ struct BlockCluster {
     float lineHeight;
     int strokeWidth;
 
-    static BlockCluster deserialize(QJsonObject const &obj);
+    static BlockCluster deserialize(QJsonObject const &obj,
+                                    vector<shared_ptr<OCRBlock>> &blocks);
     QJsonObject serialize() const;
 };
 
@@ -45,7 +50,7 @@ struct OCRPage {
     QString imagePath;
     QString cleanImagePath;
     QString renderImagePath;
-    std::vector<OCRBlock> blocks;
+    std::vector<shared_ptr<OCRBlock>> blocks;
     std::vector<BlockCluster> clusters;
 
     static OCRPage deserialize(QJsonObject &data);
