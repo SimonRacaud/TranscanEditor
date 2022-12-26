@@ -1,4 +1,5 @@
 from argparse import ArgumentError
+from typing import Tuple, List
 from PIL import ImageFont
 
 from src.model.model import Vector2I
@@ -19,7 +20,7 @@ class TextManager:
                 - Text total height
         """
         if text == "":
-            return ImageFont.load_default()
+            return ImageFont.load_default(), [], 0
         try:
             scale, lines, text_height = cls.__get_optimal_font_scale(text, areaSize, font_path, text_padding)
             return ImageFont.truetype(font_path, size=scale), lines, text_height
@@ -28,7 +29,7 @@ class TextManager:
             raise ArgumentError(message="Fail to load font "+font_path)
     
     @staticmethod
-    def __get_optimal_font_scale(text: str, areaSize: Vector2I, font_path: str, text_padding: int) -> int:
+    def __get_optimal_font_scale(text: str, areaSize: Vector2I, font_path: str, text_padding: int) -> Tuple[int, List[str], int]:
         """ Calcul font size. Based on the bouncing box width and height """
         scale = 1
         word_array = text.split(' ')

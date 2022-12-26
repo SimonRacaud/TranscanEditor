@@ -53,13 +53,14 @@ class FileManager:
         """
         if not output_folder or len(output_folder) == 0:
             raise RuntimeError()
+        if not os.path.isdir(output_folder):
+            os.mkdir(output_folder)
         if output_folder[-1] != '/':
             res_img_file = output_folder + "/" + filename    
         else:
             res_img_file = output_folder + filename
         # Create output folder:
-        if not os.path.isdir(output_folder):
-            os.mkdir(output_folder)
+        
         # Write image
         cv2.imwrite(res_img_file, image)
         print("Image save at {}".format(res_img_file))
@@ -71,7 +72,7 @@ class FileManager:
     
     @staticmethod
     def path_from_filepath(filepath: str) -> str:
-        if filepath[-1] != '/':
+        if '.' not in filepath and filepath[-1] != '/':
             filepath += '/'
         return os.path.dirname(filepath)
     
