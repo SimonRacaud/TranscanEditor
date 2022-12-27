@@ -34,6 +34,8 @@ void EditorController::setupEvents()
     connect(_editEditTab, &NetEditTab::allAPIRequestsCompleted, _editPropTab, &APropertyTab::unlockReloadButton);
     connect(_extractEditTab, &NetEditTab::allAPIRequestsCompleted, _extractPropTab, &APropertyTab::unlockReloadButton);
     connect(_saveEditTab, &NetEditTab::allAPIRequestsCompleted, _savePropTab, &APropertyTab::unlockReloadButton);
+
+    connect(_cleanPropTab, &CleanPropertyTab::sigReplacePage, _cleanEditTab, &CleanEditArea::slotReplacePage);
 }
 
 void EditorController::keyPressEvent(QKeyEvent *event)

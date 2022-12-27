@@ -36,6 +36,7 @@ const QList<QString> SUPPORTED_EXTENSION_SUFFIX = {
     "jpg",
     "jpeg"
 };
+#define IMG_SELECT_FILTER "Images (*.png *.jpeg *.jpg)"
 
 
 #define API_URL "http://127.0.0.1:5000"

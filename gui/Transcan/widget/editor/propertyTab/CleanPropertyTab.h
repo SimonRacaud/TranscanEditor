@@ -8,19 +8,22 @@
 
 class CleanPropertyTab : public APropertyTab
 {
+    Q_OBJECT
 public:
     CleanPropertyTab(FuncNetCall &reloadFunc, QWidget *parent = nullptr);
+
+signals:
+    void sigReplacePage(QString const &filePath);
 
 private:
     virtual void fillHelp();
     virtual void initProperties();
 
+    void onFileSelectButtonClicked();
+
 private:
     QPushButton *_fileSelect;
     QLabel *_fileSelectLabel;
-    QLabel *_previewWidget;
-    QPixmap _previewImg;
-    QPushButton *_applyButton;
 };
 
 #endif // CLEANPROPERTYTAB_H

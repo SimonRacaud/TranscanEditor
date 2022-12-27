@@ -25,6 +25,15 @@ public:
     virtual OCRPage getPage(size_t index) override;
 
     virtual void loadAPI() override;
+
+public slots:
+    /**
+     * @brief slotReplacePage Replac the current page image by the one given
+     * as parameter
+     * @param filePath
+     */
+    void slotReplacePage(QString const &filePath);
+
 private:
     void createBlock(BlockCluster const &cluster, int pagePosY);
 

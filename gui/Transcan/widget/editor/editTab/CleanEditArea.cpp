@@ -1,5 +1,6 @@
 #include "CleanEditArea.h"
 #include <functional>
+#include <QScrollBar>
 
 using namespace std;
 
@@ -68,6 +69,36 @@ void CleanEditArea::loadAPI()
         NetCallback success = bind(&IEditTab::loadPage, this, std::placeholders::_1);
         NetErrCallback error = bind(&NetEditTab::netError, this, std::placeholders::_1);
         this->_api.sendToClean(page, success, error); // TODO : to improve
+    }
+}
+
+/** SLOTS **/
+
+void CleanEditArea::slotReplacePage(QString const &filePath)
+{
+    // Detect the current page
+    QList<QGraphicsItem *> pageItems = this->_pageGroup->childItems();
+    QPoint viewCenter = this->_view->rect().center();
+    QPointF targetPoint = this->_view->mapToScene(viewCenter);
+    int targetPageIndex = -1;
+
+    for (qsizetype i = 0; i < pageItems.size(); i++) {
+        if (pageItems[i]->sceneBoundingRect().contains(targetPoint)) {
+            targetPageIndex = i;
+            break;
+        }
+    }
+    if (targetPageIndex == -1) {
+        std::cerr << "Info: CleanEditArea::slotReplacePage Cannot replace page, not current page." << std::endl;
+        return; // Abort
+    }
+    // Update the current page
+    try {
+        OCRPage page = this->getPage(targetPageIndex);
+        page.cleanImagePath = filePath;
+        this->updatePage(page);
+    } catch (std::exception const &err) {
+        std::cerr << "Error CleanEditArea::slotReplacePage, unable to update page's image." << std::endl;
     }
 }
 
