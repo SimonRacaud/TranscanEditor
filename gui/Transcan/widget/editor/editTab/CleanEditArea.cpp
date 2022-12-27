@@ -1,12 +1,15 @@
 #include "CleanEditArea.h"
 #include <functional>
 #include <QScrollBar>
+#include <QMouseEvent>
+#include <QFileDialog>
 
 using namespace std;
 
 CleanEditArea::CleanEditArea(APIClient &client)
     : NetEditTab(client, CLEAN, true)
 {
+    connect(_view, &PageGraphicsView::onDoubleClick, this, &CleanEditArea::doubleClickEvent);
 }
 
 /** PUBLIC **/
@@ -77,17 +80,10 @@ void CleanEditArea::loadAPI()
 void CleanEditArea::slotReplacePage(QString const &filePath)
 {
     // Detect the current page
-    QList<QGraphicsItem *> pageItems = this->_pageGroup->childItems();
     QPoint viewCenter = this->_view->rect().center();
     QPointF targetPoint = this->_view->mapToScene(viewCenter);
-    int targetPageIndex = -1;
+    int targetPageIndex = this->getPageIndexAtCoord(targetPoint);
 
-    for (qsizetype i = 0; i < pageItems.size(); i++) {
-        if (pageItems[i]->sceneBoundingRect().contains(targetPoint)) {
-            targetPageIndex = i;
-            break;
-        }
-    }
     if (targetPageIndex == -1) {
         std::cerr << "Info: CleanEditArea::slotReplacePage Cannot replace page, not current page." << std::endl;
         return; // Abort
@@ -109,5 +105,53 @@ void CleanEditArea::createBlock(BlockCluster const &cluster, int pagePosY)
     auto *rect = new SelectAreaRect(cluster, pagePosY);
 
     this->_scene->addItem(rect);
+}
+
+void CleanEditArea::replacePageAtCoord(QPointF const &position)
+{
+    int targetPageIndex = this->getPageIndexAtCoord(position);
+    if (targetPageIndex == -1) {
+        return; // Abort
+    }
+    const QString &filePath = QFileDialog::getOpenFileName(this, tr("Select Image"), "", tr(IMG_SELECT_FILTER));
+
+    if (!filePath.isEmpty()) {
+        this->slotReplacePage(filePath);
+    }
+}
+
+ void CleanEditArea::doubleClickEvent(QMouseEvent *event)
+ {
+    const QPointF &coord = event->position();
+    bool isOnRect = false;
+
+    // Check of coord position is located on a SelectAreaRect.
+    // We only want to trigger an action if the click is directly located on a page.
+    for (QGraphicsItem *item : this->_scene->items()) {
+        SelectAreaRect *rect = dynamic_cast<SelectAreaRect*>(item);
+        if (rect) {
+            if (rect->sceneBoundingRect().contains(coord)) {
+                isOnRect = true;
+                break;
+            }
+        }
+    }
+    if (!isOnRect) {
+        this->replacePageAtCoord(coord);
+    }
+ }
+
+int CleanEditArea::getPageIndexAtCoord(QPointF const &coord) const
+{
+    QList<QGraphicsItem *> pageItems = this->_pageGroup->childItems();
+    int pageIndex = -1;
+
+    for (qsizetype i = 0; i < pageItems.size(); i++) {
+        if (pageItems[i]->sceneBoundingRect().contains(coord)) {
+            pageIndex = i;
+            break;
+        }
+    }
+    return pageIndex;
 }
 

@@ -37,6 +37,27 @@ public slots:
 private:
     void createBlock(BlockCluster const &cluster, int pagePosY);
 
+    /**
+     * @brief replacePageAtCoord : Replace a page image (clean) for the page
+     *  located at position
+     * @param position
+     */
+    void replacePageAtCoord(QPointF const &position);
+
+    /**
+     * @brief doubleClickEvent : On a double click on the view
+     * @param event
+     */
+    void doubleClickEvent(QMouseEvent *event);
+
+    /**
+     * @brief getPageIndexAtCoord : Return the index of the page (_pages list)
+     *  located at coord on the scene.
+     * @param coord
+     * @return -1 if no page at this coordinate.
+     */
+    int getPageIndexAtCoord(QPointF const &coord) const;
+
 private:
 };
 
