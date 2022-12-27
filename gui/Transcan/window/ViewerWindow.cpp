@@ -14,10 +14,14 @@ ViewerWindow::ViewerWindow(QWidget *parent, bool integratedMode): QWidget{parent
     this->_integratedMode = integratedMode;
     QVBoxLayout *mainlayout = new QVBoxLayout(this);
     QHBoxLayout *headerLayout = nullptr;
+    QWidget *headerWidget = nullptr;
 
     // HEADER
     if (!integratedMode) {
         headerLayout = new QHBoxLayout();
+        headerWidget = new QWidget();
+        headerWidget->setLayout(headerLayout);
+        headerWidget->setObjectName("ViewerHeader");
         this->_backButton = new QPushButton("Go Back");
         this->_title = new QLabel("Chapter viewer");
         this->_openFolderButton = new QPushButton("Open folder");
@@ -48,7 +52,7 @@ ViewerWindow::ViewerWindow(QWidget *parent, bool integratedMode): QWidget{parent
     this->_imageList->setContentsMargins(0, 0, 0, 0);
     //
     if (!integratedMode) {
-        mainlayout->addLayout(headerLayout);
+        mainlayout->addWidget(headerWidget);
     }
     mainlayout->addWidget(this->_scrollArea);
     mainlayout->setSpacing(0);

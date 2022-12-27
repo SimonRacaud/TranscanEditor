@@ -17,10 +17,13 @@ int main(int argc, char *argv[])
     int status;
 
     // Setup app stylesheet
-    /*QFile stylesheetFile("/media/work/personnal-projects/scanTranslator/gui/ComicTranslator/Devsion.qss");
-    stylesheetFile.open(QFile::ReadOnly);
+    QFontDatabase::addApplicationFont(":/font/Inter.ttf");
+    QFile stylesheetFile(":/stylesheet.qss");
+    if (!stylesheetFile.open(QFile::ReadOnly)) {
+        std::cerr << "ERROR: fail to open stylesheet file." << std::endl;
+    }
     QString stylesheet = QLatin1String(stylesheetFile.readAll());
-    app.setStyleSheet(stylesheet);*/
+    app.setStyleSheet(stylesheet);
 
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();

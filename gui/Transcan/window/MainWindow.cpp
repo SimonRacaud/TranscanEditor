@@ -16,6 +16,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _stack(nullptr), 
     QPalette pal = QPalette(QColor(0xFFFFFF));
     this->setAutoFillBackground(true);
     this->setPalette(pal);
+
+     this->resize(EDITOR_DEF_SIZE);
 }
 
 MainWindow::~MainWindow()

@@ -67,7 +67,8 @@ HEADERS += \
 FORMS += \
     ui/home_page.ui
 
-RESOURCES     = asset.qrc
+RESOURCES     = asset.qrc \
+                stylesheet.qss
 
 TRANSLATIONS += \
     Transcan_fr_FR.ts
