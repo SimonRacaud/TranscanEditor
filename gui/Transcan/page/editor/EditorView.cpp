@@ -6,6 +6,7 @@
 #include "widget/editor/editTab/ExtractionEditArea.h"
 
 #include <QHBoxLayout>
+#include <QtSvgWidgets/QSvgWidget>
 
 using std::bind;
 
@@ -60,6 +61,8 @@ EditorView::EditorView(APIClient &api, QWidget *parent)
 
 void EditorView::setupHeader()
 {
+    QWidget *headerContainer = new QWidget(this);
+    headerContainer->setObjectName("EditorHeaderContainer");
     QHBoxLayout *rootHeaderLay = new QHBoxLayout;
     QHBoxLayout *leftHeaderLay = new QHBoxLayout;
     QHBoxLayout *middleHeaderLay = new QHBoxLayout;
@@ -71,9 +74,15 @@ void EditorView::setupHeader()
     _showSourceButton->setCheckable(true);
     leftHeaderLay->addWidget(_showSourceButton);
     // Middle layout
-    this->_separator1 = new QLabel(">");
-    this->_separator2 = new QLabel(">");
-    this->_separator3 = new QLabel(">");
+    this->_separator1 = new QSvgWidget(EDITOR_HEAD_SEPARATOR);
+    this->_separator2 = new QSvgWidget(EDITOR_HEAD_SEPARATOR);
+    this->_separator3 = new QSvgWidget(EDITOR_HEAD_SEPARATOR);
+    _separator1->setFixedHeight(EDITOR_HEAD_SEPARATOR_HEIGHT);
+    _separator2->setFixedHeight(EDITOR_HEAD_SEPARATOR_HEIGHT);
+    _separator3->setFixedHeight(EDITOR_HEAD_SEPARATOR_HEIGHT);
+    QWidget *middleHeaderWidget = new QWidget();
+    middleHeaderWidget->setObjectName("MiddleHeaderWidget");
+    middleHeaderWidget->setLayout(middleHeaderLay);
     middleHeaderLay->setAlignment(Qt::AlignmentFlag::AlignCenter);
     _extractButton->setText("EXTRACT");
     middleHeaderLay->addWidget(_extractButton);
@@ -93,14 +102,16 @@ void EditorView::setupHeader()
     rightHeaderLay->addWidget(_exitButton);
     //
     rootHeaderLay->addLayout(leftHeaderLay);
-    rootHeaderLay->addLayout(middleHeaderLay);
+    rootHeaderLay->addWidget(middleHeaderWidget);
     rootHeaderLay->addLayout(rightHeaderLay);
-    this->_rootLayout->addLayout(rootHeaderLay);
     // Set background color
     QPalette pal = QPalette(QColor(EDITOR_BG));
     this->setAutoFillBackground(true);
     this->setPalette(pal);
+
     rootHeaderLay->setContentsMargins(EDITOR_HEAD_MARGIN, EDITOR_HEAD_MARGIN, EDITOR_HEAD_MARGIN, EDITOR_HEAD_MARGIN);
+    headerContainer->setLayout(rootHeaderLay);
+    this->_rootLayout->addWidget(headerContainer);
 }
 
 void EditorView::setSelectionTabHeader()

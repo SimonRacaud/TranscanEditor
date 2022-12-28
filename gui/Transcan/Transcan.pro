@@ -1,6 +1,6 @@
-0QT       += core gui network
+QT       += core gui network svgwidgets
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets network
+greaterThan(QT_MAJOR_VERSION, 5): QT += widgets
 
 CONFIG += c++17
 
@@ -10,8 +10,8 @@ CONFIG += c++17
 
 SOURCES += \
 	main.cpp \
-    model/Page.cpp \
-    widget/editor/editTab/NetEditTab.cpp \
+        model/Page.cpp \
+        widget/editor/editTab/NetEditTab.cpp \
         window/MainWindow.cpp \
         window/ViewerWindow.cpp \
         page/editor/EditorView.cpp \

@@ -5,6 +5,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QStackedWidget>
+#include <QtSvgWidgets/QSvgWidget>
 
 #include "widget/imageViewer/ImageViewer.h"
 
@@ -52,9 +53,9 @@ protected:
     QPushButton *_editButton;
     QPushButton *_saveButton;
     QPushButton *_exitButton;
-    QLabel *_separator1;
-    QLabel *_separator2;
-    QLabel *_separator3;
+    QSvgWidget *_separator1;
+    QSvgWidget *_separator2;
+    QSvgWidget *_separator3;
 
     // Body
     //      Property tabs

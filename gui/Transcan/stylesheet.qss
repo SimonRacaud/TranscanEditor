@@ -1,9 +1,9 @@
 /* Generic Elements */
 
 QPushButton {
-    height: 40px;
+    height: 30px;
     background-color: #00B5FF;
-    border-radius: 10px;
+    border-radius: 8px;
 
     font-family: 'Inter';
     font-style: normal;
@@ -136,4 +136,17 @@ QLabel#TitleProject, #TitleViewer {
     font-size: 14px;
     line-height: 20px;
     padding: 0 10px;
+}
+
+/* Editor */
+
+#EditorHeaderContainer {
+    background: #354052;
+    border-bottom: 1px solid #E2E2E2;
+    height: 50px;
+}
+
+#MiddleHeaderWidget > QPushButton:enabled {
+    background: #F7F9F9;
+    color: #2A2D34
 }

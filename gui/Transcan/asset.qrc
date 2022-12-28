@@ -3,5 +3,6 @@
         <file>asset/img/loading.gif</file>
         <file>asset/img/downArrow.svg</file>
         <file>asset/font/Inter.ttf</file>
+        <file>asset/img/leftArrow.svg</file>
     </qresource>
 </RCC>
