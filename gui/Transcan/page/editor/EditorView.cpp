@@ -71,6 +71,7 @@ void EditorView::setupHeader()
     // Left layout
     leftHeaderLay->setAlignment(Qt::AlignmentFlag::AlignLeft);
     _showSourceButton->setText("Show source");
+    _showSourceButton->setObjectName("EditorHeadShowSourceButton");
     _showSourceButton->setCheckable(true);
     leftHeaderLay->addWidget(_showSourceButton);
     // Middle layout

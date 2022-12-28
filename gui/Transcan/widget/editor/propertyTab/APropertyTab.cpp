@@ -11,6 +11,7 @@ APropertyTab::APropertyTab(FuncNetCall &reloadFunc, QWidget *parent)
 
     // Upper section (properties)
     this->_title = new QLabel();
+    this->_title->setObjectName("EditorPropTitle");
     this->_title->setText("Properties:");
     this->_title->setAlignment(Qt::AlignmentFlag::AlignHCenter);
     this->_reloadButton = new QPushButton("Reload");
@@ -32,17 +33,24 @@ APropertyTab::APropertyTab(FuncNetCall &reloadFunc, QWidget *parent)
     // Lower section (help)
     this->_helpTitle = new QLabel();
     this->_helpTitle->setText("Help:");
+    this->_helpTitle->setObjectName("EditorHelpTitle");
     this->_helpTitle->setAlignment(Qt::AlignmentFlag::AlignHCenter);
     lowerLayout->setSpacing(EDITOR_PROP_SPACING);
     lowerLayout->addWidget(_helpTitle);
     lowerLayout->setAlignment(Qt::AlignmentFlag::AlignBottom);
     this->_help = new QLabel();
+    this->_help->setObjectName("EditorHelpText");
     this->_help->setMinimumHeight(EDITOR_PROP_HELP_MIN_HEIGHT);
     this->_help->setAlignment(Qt::AlignmentFlag::AlignTop);
     this->_help->setWordWrap(true);
     lowerLayout->addWidget(_help);
+    QHBoxLayout *nextButtonLay = new QHBoxLayout();
     this->_nextButton = new QPushButton("Next step");
-    lowerLayout->addWidget(_nextButton);
+    this->_nextButton->setObjectName("EditorNextStepButton");
+    nextButtonLay->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Expanding));
+    nextButtonLay->addWidget(_nextButton);
+    nextButtonLay->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Expanding));
+    lowerLayout->addLayout(nextButtonLay);
     //
     rootLayout->addLayout(upperLayout);
     rootLayout->addLayout(lowerLayout);

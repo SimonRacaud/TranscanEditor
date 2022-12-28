@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <iostream>
 #include <QGraphicsPixmapItem>
+#include <QGraphicsDropShadowEffect>
 
 #include "include/environment.h"
 #include "model/Page.h"

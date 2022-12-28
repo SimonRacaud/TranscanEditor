@@ -66,6 +66,10 @@ const QList<QString> SUPPORTED_EXTENSION_SUFFIX = {
 
 #define LOADING_ICON_SIZE 80 // Page viewer
 
+#define EDITOR_PAGE_SHADOW_RADIUS 80
+#define EDITOR_PAGE_SHADOW_COLOR QColor(170, 170, 170)
+
+
 // Asset
 
 #define IMG_LOADING ":/asset/img/loading.gif"

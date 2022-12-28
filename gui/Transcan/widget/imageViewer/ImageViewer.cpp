@@ -76,7 +76,12 @@ void ImageViewer::setPages(vector<OCRPage> const &pages)
             }
         }
         this->_pixmapList.append(img);
+        QGraphicsDropShadowEffect* effect = new QGraphicsDropShadowEffect();
+        effect->setBlurRadius(EDITOR_PAGE_SHADOW_RADIUS);
+        effect->setXOffset(0);
+        effect->setColor(EDITOR_PAGE_SHADOW_COLOR);
         auto *item = new QGraphicsPixmapItem(img);
+        item->setGraphicsEffect(effect);
         item->setPos(0, offsetY);
         pageItems.push_back(item->topLevelItem());
         offsetY += img.height();

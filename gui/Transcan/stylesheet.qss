@@ -146,7 +146,38 @@ QLabel#TitleProject, #TitleViewer {
     height: 50px;
 }
 
+#EditorHeadShowSourceButton:!checked {
+    background: #F7F9F9;
+    color: #2A2D34
+}
+
 #MiddleHeaderWidget > QPushButton:enabled {
     background: #F7F9F9;
     color: #2A2D34
 }
+
+#EditorPropTitle, #EditorHelpTitle {
+    font-family: 'Inter';
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 17px;
+    color: #000000;
+}
+#EditorHelpText {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 17px;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+/* #EditorNextStepButton {} */
+
+APropertyTab QPushButton:!enabled {
+    background: #F7F9F9;
+    color: #999999;
+}
+
+APropertyTab QLabel {
+    font-size: 12px;
+}
+
