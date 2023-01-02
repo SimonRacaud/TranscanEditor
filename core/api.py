@@ -62,7 +62,8 @@ def ocr():
     try:
         page = create_block_cluster(page, 
             input.ocr_config.box_cluster_search_range, 
-            input.ocr_config.box_cluster_search_step)
+            input.ocr_config.box_cluster_search_step,
+            input.ocr_config.style)
     except BaseException as err:
         print("Error4: ", err)
         raise InternalError("Fail to generate block clusters")

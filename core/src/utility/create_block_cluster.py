@@ -2,10 +2,10 @@ from typing import Sequence, Tuple, List
 from statistics import mean
 import numpy as np
 
-from src.model.model import OCRPage, BlockCluster, OCRBlock, Vector2I
+from src.model.model import OCRPage, BlockCluster, OCRBlock, Vector2I, EditConfig
 from src.utility.mymath import middle_point, rotate_point
 
-def create_block_cluster(page: OCRPage, search_range: int, search_step: int) -> OCRPage:
+def create_block_cluster(page: OCRPage, search_range: int, search_step: int, style: EditConfig) -> OCRPage:
     """ Create cluster of bounding boxes close from each others on the y axis """
     # Create a list of tuple with a couple (index, block)
     block_buffer = list(page.blocks)
@@ -20,7 +20,7 @@ def create_block_cluster(page: OCRPage, search_range: int, search_step: int) -> 
         pack.append(block)
         # Find lower neighbours:
         pack, block_buffer = __find_neighbour_points(point_target, block_buffer, block, pack, search_range, search_step)
-        page.clusters.append(__pack_boxes(pack))
+        page.clusters.append(__pack_boxes(pack, style))
     return page
 
 def __find_neighbour_points(
@@ -88,10 +88,17 @@ def __check_collide(poly, point) -> bool:
         j = i
     return inside
 
-def __pack_boxes(block_list: Sequence[OCRBlock]) -> BlockCluster:
+def __pack_boxes(block_list: Sequence[OCRBlock], style_config: EditConfig) -> BlockCluster:
     polygon = __get_cluster_rect(block_list)
     sentence = __make_sentence(block_list)
-    return BlockCluster(blocks=block_list, polygon=polygon, sentence=sentence)
+    return BlockCluster(
+        blocks=block_list, 
+        polygon=polygon, 
+        sentence=sentence,
+        font=style_config.font,
+        color=style_config.color,
+        line_height=style_config.line_height,
+        stroke_width=style_config.stroke_width)
 
 def __get_cluster_rect(block_list: Sequence[OCRBlock]) -> np.array:
     """ 

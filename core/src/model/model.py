@@ -51,10 +51,28 @@ class CraftConfig:
     refiner_model = './weights/craft_refiner_CTW1500.pth' # pretrained refiner model
 
 @dataclass
+class EditConfig:
+    line_height: int = 8
+    font: str = 'Chilanka-Regular.otf'
+    stroke_width: int = 3 # Text stroke width
+    color: int = 0
+
+    @staticmethod
+    def deserialize(data: dict) -> EditConfig:
+        check_argument(data, ["lineHeight", "font", "strokeWidth", "color"])
+        return EditConfig(
+            line_height=int(data["lineHeight"]),
+            font=str(data["font"]),
+            stroke_width=int(data["strokeWidth"]),
+            color=int(data["color"])
+        )
+
+@dataclass
 class OCRConfig:
     src_img_path: str = "" # Target image file path
     output_folder: str = ""
     ocr_service: OCRService = OCRService.LOCAL_CRAFTTESSERACT
+    style: EditConfig = EditConfig()
 
     cache_path = './cache'
     box_cluster_search_range = 20   # Max distance width the text dialogue bubble
@@ -63,7 +81,7 @@ class OCRConfig:
 
     @staticmethod
     def deserialize(data: dict) -> OCRConfig:
-        REQUIRED = ['srcImgPath', 'outputFolder', 'ocrService']
+        REQUIRED = ['srcImgPath', 'outputFolder', 'ocrService', 'style']
         check_argument(data, REQUIRED)
 
         obj = OCRConfig()
@@ -73,6 +91,7 @@ class OCRConfig:
             obj.ocr_service = OCRService[data['ocrService']]
         except:
             raise InvalidJson("Invalid OCR type, " + data['ocrService'])
+        obj.style = EditConfig.deserialize(data['style'])
         if 'cachePath' in data:
             obj.cache_path = data['cachePath']
         if 'boxClusterSearchRange' in data:
@@ -80,21 +99,6 @@ class OCRConfig:
         if 'boxClusterSearchStep' in data:
             obj.box_cluster_search_step = data['boxClusterSearchRange']
         return obj
-
-@dataclass
-class EditConfig:
-    line_height: int = 8
-    font: str = 'Chilanka-Regular.otf'
-    stroke_width: int = 3 # Text stroke width
-
-    @staticmethod
-    def deserialize(data: dict) -> EditConfig:
-        check_argument(data, ["lineHeight", "font", "strokeWidth"])
-        return EditConfig(
-            line_height=int(data["lineHeight"]),
-            font=str(data["font"]),
-            stroke_width=int(data["strokeWidth"]),
-        )
 
 ## UTILITY
 
