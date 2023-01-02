@@ -84,13 +84,6 @@ void EditorController::onStart(ProjectConfig const &config)
     this->_savePropTab->setProjectDestinationPath(config.destPath);
 }
 
-void EditorController::netError(QString const &message)
-{
-    ImageViewer *widget = static_cast<ImageViewer *>(this->_stackEdit->currentWidget());
-    widget->setLoadingState(false);
-    QMessageBox::information(this, "Network error", message);
-}
-
 void EditorController::setTab(EditorTab tab)
 {
     if ((int)tab > (int)_lastTab + 1) {

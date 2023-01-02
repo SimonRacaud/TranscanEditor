@@ -26,11 +26,6 @@ public:
 
     void showSourcePageTab(bool enable);
 
-    /**
-     * @brief netError : Called when a network error fail.
-     */
-    void netError(QString const &message);
-
 private:
     void setupEvents();
 
