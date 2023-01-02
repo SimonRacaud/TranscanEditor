@@ -33,6 +33,8 @@ public:
 
     virtual void loadAPI() override;
 
+    virtual void unload() override;
+
 protected:
     virtual void keyPressEvent(QKeyEvent *event) override;
     virtual void mousePressEvent(QMouseEvent *event) override;

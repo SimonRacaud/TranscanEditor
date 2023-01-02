@@ -114,6 +114,12 @@ void ATextEditArea::loadAPI()
     this->changeFocus(false, nullptr);
 }
 
+void ATextEditArea::unload()
+{
+    NetEditTab::unload();
+    this->changeFocus(false, nullptr); // Reset previous focus
+}
+
 /** PROTECTED **/
 
 void ATextEditArea::keyPressEvent(QKeyEvent *event)
@@ -207,5 +213,8 @@ void ATextEditArea::changeFocus(bool focused, EditAreaRect *rect)
         emit this->sigRectFocusChanged(selectedItem);
     } catch (std::exception const &err) {
         std::cerr << "ATextEditArea::changeFocus : fail to change focus. " << err.what() << std::endl;
+        // Remove current focus:
+        _selectedItemId = QUuid();
+        emit this->sigRectFocusChanged(nullptr);
     }
 }
