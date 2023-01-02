@@ -26,7 +26,7 @@ class TextManager:
             return ImageFont.truetype(font_path, size=scale), lines, text_height
         except OSError as err:
             print("(FontManager) Warning: fail to load font", font_path, "Using default.", err)
-            raise ArgumentError(message="Fail to load font "+font_path)
+            raise ArgumentError(None, message="Fail to load font "+font_path)
     
     @staticmethod
     def __get_optimal_font_scale(text: str, areaSize: Vector2I, font_path: str, text_padding: int) -> Tuple[int, List[str], int]:
