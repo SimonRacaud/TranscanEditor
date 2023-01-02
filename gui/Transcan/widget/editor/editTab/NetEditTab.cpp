@@ -16,9 +16,9 @@ void NetEditTab::netError(QString const &message)
     // TODO : show GUI popup
 }
 
-void NetEditTab::setConfig(ProjectConfig const &config)
+void NetEditTab::setConfig(shared_ptr<ProjectConfig> config)
 {
-    this->_config = std::make_shared<ProjectConfig>(config);
+    this->_config = config;
 }
 
 void NetEditTab::unload()

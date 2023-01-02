@@ -20,6 +20,15 @@ public:
      * @return
      */
     static bool checkDirExist(QString const& dirpath);
+
+    /**
+     * @brief copyToDestination
+     *  Copy image at srcFilePath to destDir directory
+     * @param srcFilePath
+     * @param destDir
+     * @return
+     */
+    static bool copyToDestination(QString const& srcFilePath, QString const &destDir);
 };
 
 #endif // FILEUTILS_H

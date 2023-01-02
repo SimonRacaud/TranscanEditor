@@ -15,8 +15,6 @@ EditorController::EditorController(QWidget *parent) : EditorView(_api, parent), 
 
 EditorController::~EditorController()
 {
-    if (_config != nullptr)
-        delete _config;
 }
 
 /** INTERNAL FUNCTIONS **/
@@ -42,6 +40,9 @@ void EditorController::setupEvents()
     connect(_editPropTab, &EditPropertyTab::sigUpdateAllClusterStyle, _editEditTab, &EditorEditArea::updateAllClusterStyle);
     connect(_editEditTab, &EditorEditArea::sigFocusEditRect, _editPropTab, &EditPropertyTab::onFocusCluster);
     connect(_editEditTab, &EditorEditArea::sigUnfocusEditRect, _editPropTab, &EditPropertyTab::onUnfocusCluster);
+    // Save Tab
+    connect(_savePropTab, &SavePropertyTab::sigUpdateProjectDestinationPath, _saveEditTab, &SaveEditArea::onUpdateProjectDestinationPath);
+    connect(_savePropTab, &SavePropertyTab::sigExport, _saveEditTab, &SaveEditArea::onExport);
 }
 
 void EditorController::keyPressEvent(QKeyEvent *event)
@@ -66,12 +67,10 @@ void EditorController::keyPressEvent(QKeyEvent *event)
 void EditorController::onStart(ProjectConfig const &config)
 {
     // Save project configuration
-    if (_config)
-        delete _config;
-    this->_config = new ProjectConfig(config);
-    this->_extractEditTab->setConfig(config);
-    this->_editEditTab->setConfig(config);
-    this->_saveEditTab->setConfig(config);
+    this->_config = std::make_shared<ProjectConfig>(config);
+    this->_extractEditTab->setConfig(_config);
+    this->_editEditTab->setConfig(_config);
+    this->_saveEditTab->setConfig(_config);
     //
     this->setTab(EditorTab::EXTRACT); // Extraction step
     this->showSourcePageTab(true);
@@ -82,6 +81,7 @@ void EditorController::onStart(ProjectConfig const &config)
     this->_extractEditTab->loadAPI();
     //
     this->_editPropTab->updateProjectConfig(config);
+    this->_savePropTab->setProjectDestinationPath(config.destPath);
 }
 
 void EditorController::netError(QString const &message)

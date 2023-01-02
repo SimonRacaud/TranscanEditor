@@ -26,7 +26,7 @@ public:
 
     void netError(QString const &message);
 
-    void setConfig(ProjectConfig const &config);
+    void setConfig(shared_ptr<ProjectConfig> config);
 
     virtual void unload() override;
     virtual void load(std::vector<OCRPage> const &pages = {}) override;

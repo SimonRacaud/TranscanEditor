@@ -29,3 +29,14 @@ bool FileUtils::checkDirExist(QString const& dirpath)
 
     return dir.exists();
 }
+
+bool FileUtils::copyToDestination(QString const& srcFilePath, QString const &destDir)
+{
+    QString destFile = destDir;
+
+    if (*(destFile.end() - 1) != '/') {
+        destFile += "/";
+    }
+    destFile += QFileInfo(srcFilePath).fileName();
+    return QFile::copy(srcFilePath, destFile);
+}

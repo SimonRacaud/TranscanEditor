@@ -47,7 +47,7 @@ private slots:
 
 private:
     EditorTab _lastTab; // Last tab accessed.
-    ProjectConfig *_config = nullptr;
+    shared_ptr<ProjectConfig> _config;
     APIClient _api;
 };
 

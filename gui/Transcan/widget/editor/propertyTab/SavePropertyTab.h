@@ -9,12 +9,23 @@
 
 class SavePropertyTab : public APropertyTab
 {
+    Q_OBJECT
 public:
     SavePropertyTab(FuncNetCall &reloadFunc, QWidget *parent = nullptr);
 
 private:
-    virtual void fillHelp();
-    virtual void initProperties();
+    void fillHelp();
+    void initProperties();
+
+signals:
+    void sigUpdateProjectDestinationPath(QString const &path);
+    void sigExport();
+
+public slots:
+    void setProjectDestinationPath(QString const &path);
+
+private slots:
+    void onClickSelectDestinationPath();
 
 private:
     QLabel *_destinationTitle;

@@ -35,6 +35,7 @@ void EditorEditArea::updateAllClusterStyle(RenderConfig const &style)
             rect->setStyle(style);
         }
     }
+    this->_config->renderConf = style;
 }
 
 void EditorEditArea::updateSelectedClusterStyle(RenderConfig const &style)

@@ -1,5 +1,8 @@
 #include "SavePropertyTab.h"
 #include <QVBoxLayout>
+#include "window/MainWindow.h"
+
+extern MainWindow *mainWindow;
 
 SavePropertyTab::SavePropertyTab(FuncNetCall &reloadFunc, QWidget *parent)
     : APropertyTab(reloadFunc, parent)
@@ -8,6 +11,15 @@ SavePropertyTab::SavePropertyTab(FuncNetCall &reloadFunc, QWidget *parent)
     this->initProperties();
     this->_nextButton->setText("Home Page");
     this->_reloadButton->setText("Render again");
+
+    disconnect(_nextButton, &QPushButton::clicked, nullptr, nullptr);
+    connect(_nextButton, &QPushButton::clicked, []() {
+       mainWindow->setPage(Page::HOME); // Go back home
+    });
+    connect(_selectDirectoryButton, &QPushButton::clicked, this, &SavePropertyTab::onClickSelectDestinationPath);
+    connect(_exportButton, &QPushButton::clicked, [this]() {
+        emit this->sigExport();
+    });
 }
 
 void SavePropertyTab::fillHelp()
@@ -30,8 +42,10 @@ void SavePropertyTab::initProperties()
     QVBoxLayout *destSelectLayout = new QVBoxLayout;
     this->_destinationTitle = new QLabel("Destination:");
     this->_destinationTitle->setAlignment(Qt::AlignmentFlag::AlignHCenter);
-    this->_selectedPath = new QLabel("/path/test");
+    this->_selectedPath = new QLabel("<>");
     this->_selectedPath->setAlignment(Qt::AlignmentFlag::AlignHCenter);
+    _selectedPath->setWordWrap(true);
+    this->_selectedPath->setMaximumWidth(EDITOR_PROP_FORM_WIDTH);
     this->_selectDirectoryButton = new QPushButton("Select directory");
     destSelectLayout->addWidget(_destinationTitle);
     destSelectLayout->addWidget(_selectedPath);
@@ -43,4 +57,21 @@ void SavePropertyTab::initProperties()
     this->_propertiesLayout->addLayout(destSelectLayout);
     this->_propertiesLayout->addWidget(_exportButton);
     this->_propertiesLayout->setSpacing(50);
+}
+
+/* SLOTS */
+
+void SavePropertyTab::setProjectDestinationPath(QString const &path)
+{
+    this->_selectedPath->setText(path);
+}
+
+void SavePropertyTab::onClickSelectDestinationPath()
+{
+    const QString folderPath = QFileDialog::getExistingDirectory(this, tr("Destination image folder"));
+
+    if (!folderPath.isEmpty()) {
+        emit this->sigUpdateProjectDestinationPath(folderPath);
+        this->setProjectDestinationPath(folderPath);
+    }
 }

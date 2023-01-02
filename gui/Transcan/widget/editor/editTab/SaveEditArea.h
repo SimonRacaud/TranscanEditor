@@ -10,6 +10,11 @@ public:
     SaveEditArea(APIClient &client);
 
     virtual void loadAPI() override;
+
+public slots:
+    void onUpdateProjectDestinationPath(QString const&path);
+    void onExport();
+
 private:
 };
 
