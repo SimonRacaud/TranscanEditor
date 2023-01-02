@@ -34,12 +34,18 @@ public:
             const QStyleOptionGraphicsItem *option,
             QWidget *widget) override;
 
-    void setFont(QFont &font);
-    void setTextColor(QColor color);
+    void setFont(const QFont &font);
+    void setTextColor(QColor const &color);
 
     // Text line height
     void setLineHeight(int percentage);
     void setLineHeightAbs(int pixels);
+
+    /**
+     * @brief setStyle : Set text style
+     * @param style
+     */
+    void setStyle(RenderConfig const &style);
 
     /**
      * @brief getData
@@ -54,8 +60,19 @@ public:
      */
     bool isOnArea(QRectF const &area) const;
 
+    /**
+     * @brief removeFocus : If the element is focused, remove it
+     */
+    void removeFocus();
+
+    /**
+     * @brief getUuid : Return object unique ID
+     * @return
+     */
+    QUuid const &getUuid() const;
+
 signals:
-    void focusChanged(bool state, EditAreaRect &rect);
+    void focusChanged(bool state, EditAreaRect *rect);
 
 private:
     /**
@@ -64,6 +81,12 @@ private:
      */
     void resize(QPointF diff);
 
+    virtual void showEvent(QShowEvent *event) override;
+
+private slots:
+    /**
+     * @brief centerText : Center text vertically by modifying the line height.
+     */
     void centerText();    
 
 protected:
@@ -82,6 +105,7 @@ private:
     BlockCluster _data;
     QString &_text;
     int _pageY;
+    QUuid _uuid;
 
     QGraphicsProxyWidget *_proxy{nullptr};
     QTextEdit *_textEdit{nullptr};

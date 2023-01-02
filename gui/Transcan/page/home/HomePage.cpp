@@ -42,7 +42,7 @@ void HomePage::openViewer(const QString &path)
 void HomePage::addItemPreviousProjectList(const QString &path)
 {
     this->previousProjectList << path;
-    if (this->previousProjectList.size() > HomePage::PREV_PROJECT_LIST_SIZE_LIMIT) {
+    if ((size_t)this->previousProjectList.size() > HomePage::PREV_PROJECT_LIST_SIZE_LIMIT) {
         this->previousProjectList.pop_front();
     }
     this->previousProjectListModel->setStringList(this->previousProjectList);
@@ -135,7 +135,7 @@ void HomePage::on_submitButton_clicked()
 void HomePage::on_ocrComboBox_currentIndexChanged(int index)
 {
     // Show or hide configuration requirement message
-    if (index < sizeof(OCR_SERVICE_LIST) && index >= 0
+    if (index < (int)sizeof(OCR_SERVICE_LIST) && index >= 0
             && OCR_SERVICE_LIST[index].needConfig) {
         this->ui->ocrWarningLabel->setVisible(true);
         if (OCR_SERVICE_LIST[index].helpMessage.isEmpty() == false) {
@@ -152,7 +152,7 @@ void HomePage::on_ocrComboBox_currentIndexChanged(int index)
 void HomePage::on_transComboBox_currentIndexChanged(int index)
 {
     // Show or hide configuration requirement message
-    if (index < sizeof(TRANS_SERVICE_LIST) && index >= 0) {
+    if (index < (int)sizeof(TRANS_SERVICE_LIST) && index >= 0) {
         if (TRANS_SERVICE_LIST[index].needConfig) {
             this->ui->transWarningLabel->setVisible(true);
             if (TRANS_SERVICE_LIST[index].helpMessage.isEmpty() == false) {

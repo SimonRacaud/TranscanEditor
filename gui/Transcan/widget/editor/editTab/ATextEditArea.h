@@ -31,8 +31,11 @@ public:
      */
     void clearRects();
 
+    virtual void loadAPI() override;
+
 protected:
     virtual void keyPressEvent(QKeyEvent *event) override;
+    virtual void mousePressEvent(QMouseEvent *event) override;
     /**
      * @brief doubleClickEvent Mouse event on Graphic View
      * @param event
@@ -43,14 +46,26 @@ protected:
 
     void setPagesEditAreas(std::vector<OCRPage> const &pages);
 
+    EditAreaRect &getRectFromId(QUuid const &id);
+
 protected slots:
-    void changeFocus(bool focused, EditAreaRect &rect);
+    void changeFocus(bool focused, EditAreaRect *rect);
+
+signals:
+    /**
+     * @brief sigRectFocusChanged
+     *  - focused on click
+     *  - lose focus when another rect is focussed or on click on the EditArea
+     * @param rect
+     */
+    void sigRectFocusChanged(EditAreaRect *rect);
 
 private:
     RectMode _mode;
 
 protected:
-    EditAreaRect *_focusedRect{nullptr};
+    QUuid _selectedItemId;
+    bool _focusedRectLostFocus{false};
 
 };
 

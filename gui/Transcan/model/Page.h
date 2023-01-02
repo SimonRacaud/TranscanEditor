@@ -13,6 +13,7 @@
 #include "include/model/Utils.h"
 
 #include "utils/FileUtils.h"
+#include "include/models.h"
 
 using std::shared_ptr;
 using std::vector;
@@ -35,10 +36,7 @@ struct BlockCluster {
     bool cleanBox;
     QPolygon polygon;
     QString translation;
-    QFont font;
-    QColor color;
-    float lineHeight;
-    int strokeWidth;
+    RenderConfig style;
 
     static BlockCluster deserialize(QJsonObject const &obj,
                                     vector<shared_ptr<OCRBlock>> &blocks);

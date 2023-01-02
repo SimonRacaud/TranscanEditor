@@ -58,10 +58,7 @@ const QList<QString> SUPPORTED_EXTENSION_SUFFIX = {
 #define EDITOR_PROPTAB_BG 0xFFFFFF
 #define EDITOR_PROP_HELP_MIN_HEIGHT 200
 #define EDITOR_PROP_SPACING 20
-#define EDITOR_PROP_DEF_FONT_SIZE 11
-#define EDITOR_PROP_MAX_FONT_SIZE 100
 #define EDITOR_PROP_FORM_WIDTH 170
-#define EDITOR_PROP_DEF_LINE_HEIGHT 5
 #define EDITOR_TIME_REFRESH_RESIZE 5 // ms
 
 #define LOADING_ICON_SIZE 80 // Page viewer
@@ -79,9 +76,10 @@ const QList<QString> SUPPORTED_EXTENSION_SUFFIX = {
 #define DEF_LINE_HEIGHT 100 // Editor -> Text
 #define DEF_EDITAREA_SIZE 100, 50 // Editor
 
-#define DEF_EDIT_LINE_HEIGHT 8 // Edition/render config
+#define DEF_EDIT_LINE_HEIGHT 30 // Edition/render config
 #define DEF_EDIT_STROKE_WIDTH 3
 #define DEF_EDIT_FONT "Arial"
+#define DEF_EDIT_COLOR QColor(Qt::black)
 
 // Editor page zoom key shortcut
 #define ZOOM_SHIFT 0.05 // scale shift

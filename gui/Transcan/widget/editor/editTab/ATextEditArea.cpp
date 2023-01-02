@@ -35,10 +35,7 @@ void ATextEditArea::createAreaRectAtCoord(QPointF const &coord)
                 .cleanBox = true,
                 .polygon = QPolygon(QRect(origin, origin + size).translated(0, -pagePosY)),
                 .translation = "",
-                .font = QFont(),
-                .color = Qt::black,
-                .lineHeight = DEF_LINE_HEIGHT,
-                .strokeWidth = 8
+                .style = this->_config->renderConf,
             };
             this->createAreaRect(defaultData, pagePosY);
             break;
@@ -48,18 +45,22 @@ void ATextEditArea::createAreaRectAtCoord(QPointF const &coord)
 
 void ATextEditArea::removeRect()
 {
-    if (_focusedRect) {
+    if (_selectedItemId.isNull())
+        return; // No rect selected
+    try {
+        EditAreaRect &selectedItem = this->getRectFromId(_selectedItemId);
         QList<QGraphicsItem *> items = this->_scene->items();
-        int index = items.indexOf(_focusedRect->topLevelItem());
-        disconnect(_focusedRect, &EditAreaRect::focusChanged, this, &ATextEditArea::changeFocus);
+        int index = items.indexOf(selectedItem.topLevelItem());
+        disconnect(&selectedItem, &EditAreaRect::focusChanged, this, &ATextEditArea::changeFocus);
         if (index == -1) { // not found
-            _focusedRect = nullptr;
             std::cerr << "ATextEditArea::removeRect Unable to find element." << std::endl;
             return; // Abort
         }
-        this->_scene->removeItem(_focusedRect);
-        delete _focusedRect;
-        _focusedRect = nullptr;
+        this->_scene->removeItem(&selectedItem);
+        delete &selectedItem;
+        this->changeFocus(false, nullptr); // Remove focus
+    } catch (std::exception const &err) {
+        std::cerr << "ATextEditArea::removeRect : fail to remove element. " << err.what() << std::endl;
     }
 }
 
@@ -107,6 +108,12 @@ void ATextEditArea::clearRects()
     this->_scene->clear();
 }
 
+void ATextEditArea::loadAPI()
+{
+    // Unfocus current rect
+    this->changeFocus(false, nullptr);
+}
+
 /** PROTECTED **/
 
 void ATextEditArea::keyPressEvent(QKeyEvent *event)
@@ -118,14 +125,36 @@ void ATextEditArea::keyPressEvent(QKeyEvent *event)
     }
 }
 
+void ATextEditArea::mousePressEvent(QMouseEvent *)
+{
+    if (!_selectedItemId.isNull() && _focusedRectLostFocus == true) {
+            _focusedRectLostFocus = false;
+            this->changeFocus(false, nullptr);
+    }
+}
+
 void ATextEditArea::doubleClickEvent(QMouseEvent *event)
 {
-    if (_focusedRect != nullptr)
+    if (!_selectedItemId.isNull()) {
         return; // Editing existing rect. Not creating one.
+    }
     const QPointF position = event->position(); // Position on the widget
     QPointF scenePos = this->_view->mapToScene(position.toPoint()); // Position on the scene
 
     this->createAreaRectAtCoord(scenePos);
+}
+
+EditAreaRect &ATextEditArea::getRectFromId(QUuid const &id)
+{
+    QList<QGraphicsItem *> list = this->_scene->items();
+
+    for (QGraphicsItem *item : list) {
+        EditAreaRect *rect = dynamic_cast<EditAreaRect *>(item);
+        if (rect && rect->getUuid() == id) {
+            return *rect;
+        }
+    }
+    throw std::invalid_argument("ATextEditArea::getRectFromId : "+id.toString().toStdString()+" not found.");
 }
 
 void ATextEditArea::createAreaRect(BlockCluster const &data, int pagePosY)
@@ -156,11 +185,27 @@ void ATextEditArea::setPagesEditAreas(vector<OCRPage> const &pages)
 
 /** SLOTS **/
 
-void ATextEditArea::changeFocus(bool focused, EditAreaRect &rect)
+void ATextEditArea::changeFocus(bool focused, EditAreaRect *rect)
 {
-    if (focused) {
-        this->_focusedRect = &rect;
-    } else if (_focusedRect == &rect) {
-        this->_focusedRect = nullptr;
+    try {
+        EditAreaRect *selectedItem = (!_selectedItemId.isNull()) ? &this->getRectFromId(_selectedItemId) : nullptr;
+
+        if (selectedItem && selectedItem != rect) {
+           selectedItem->removeFocus();
+        }
+        if (focused && rect) { // Focus
+           _selectedItemId = rect->getUuid();
+           selectedItem = (!_selectedItemId.isNull()) ? &this->getRectFromId(_selectedItemId) : nullptr;
+           _focusedRectLostFocus = false;
+        } else if (selectedItem == rect) { // Unfocus
+            _focusedRectLostFocus = true;
+            return; // Don't emit signal
+        } else if (rect == nullptr) { // Apply unfocus
+            _selectedItemId = QUuid(); // Reset to null
+            selectedItem = nullptr;
+        }
+        emit this->sigRectFocusChanged(selectedItem);
+    } catch (std::exception const &err) {
+        std::cerr << "ATextEditArea::changeFocus : fail to change focus. " << err.what() << std::endl;
     }
 }

@@ -7,7 +7,6 @@ NetEditTab::NetEditTab(APIClient &client, ImageMode mode, bool autoReload)
 
 NetEditTab::~NetEditTab()
 {
-    delete _config;
 }
 
 void NetEditTab::netError(QString const &message)
@@ -19,7 +18,7 @@ void NetEditTab::netError(QString const &message)
 
 void NetEditTab::setConfig(ProjectConfig const &config)
 {
-    this->_config = new ProjectConfig(config);
+    this->_config = std::make_shared<ProjectConfig>(config);
 }
 
 void NetEditTab::unload()

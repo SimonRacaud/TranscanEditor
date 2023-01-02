@@ -1,17 +1,20 @@
 #include "EditPropertyTab.h"
-#include <QFormLayout>
+#include <QVBoxLayout>
 
 EditPropertyTab::EditPropertyTab(FuncNetCall &reloadFunc, QWidget *parent)
     : APropertyTab(reloadFunc, parent)
 {
     this->fillHelp();
     this->initProperties();
-    this->_reloadButton->setText("Translate");
+    this->_reloadButton->setText(tr("Translate"));
+
+    connect(_defaultStyleConfig, &ClusterStyleConfig::onUpdate, this, &EditPropertyTab::onUpdateGlobalClusterStyle);
+    connect(_selectedClusterConfig, &ClusterStyleConfig::onUpdate, this, &EditPropertyTab::onUpdateSelectedClusterStyle);
 }
 
 void EditPropertyTab::fillHelp()
 {
-    this->_help->setText(
+    this->_help->setText(tr(
                 "Edit:\n"
                 "\n"
                 "Actions:\n"
@@ -21,44 +24,56 @@ void EditPropertyTab::fillHelp()
                 "Controls:\n"
                 "- Click on a box to select it\n"
                 "- Double click to edit its content\n"
-                );
+                ));
 }
 
 void EditPropertyTab::initProperties()
 {
-    QFormLayout *formLayout = new QFormLayout;
-    this->_formContainer = new QWidget;
-    //
-    this->_colorSelectButton = new QPushButton("Select");
-    this->_colorSelectButton->setFixedWidth(EDITOR_PROP_FORM_WIDTH);
-    this->_fontSelector = new QFontComboBox;
-    this->_fontSelector->setFixedWidth(EDITOR_PROP_FORM_WIDTH);
-    this->_fontSizeSelector = new QSpinBox;
-    this->_fontSizeSelector->setFixedWidth(EDITOR_PROP_FORM_WIDTH);
-    this->_fontSizeSelector->setRange(1, EDITOR_PROP_MAX_FONT_SIZE);
-    this->_fontSizeSelector->setSingleStep(1);
-    this->_fontSizeSelector->setValue(EDITOR_PROP_DEF_FONT_SIZE);
-    this->_lineHeightSelector = new QSpinBox;
-    this->_lineHeightSelector->setFixedWidth(EDITOR_PROP_FORM_WIDTH);
-    this->_lineHeightSelector->setRange(1, 999);
-    this->_lineHeightSelector->setValue(EDITOR_PROP_DEF_LINE_HEIGHT);
-    //
-    formLayout->addRow(tr("Color:"), _colorSelectButton);
-    formLayout->addRow(tr("Font:"), _fontSelector);
-    formLayout->addRow(tr("Font size:"), _fontSizeSelector);
-    formLayout->addRow("Line height:", _lineHeightSelector);
-    //
-    this->_propertiesLayout->addWidget(_formContainer);
-    this->_formContainer->setLayout(formLayout);
-    this->hideProperties();
+    this->_defaultStyleConfig = new ClusterStyleConfig(tr("Default configuration:"));
+    this->_selectedClusterConfig = new ClusterStyleConfig(tr("Selected box:"));
+
+    this->_propertiesLayout->addWidget(_defaultStyleConfig);
+    this->_propertiesLayout->addWidget(_selectedClusterConfig);
+
+    this->_defaultStyleConfig->setEnabled(false); // Not received any config object yet
+    this->_selectedClusterConfig->hide();
 }
 
-void EditPropertyTab::showProperties()
+void EditPropertyTab::updateProjectConfig(ProjectConfig const &config)
 {
-    this->_formContainer->setVisible(true);
+    this->_defaultStyleConfig->setEnabled(true); // Unlock
+    this->_defaultStyleConfig->setConfig(config.renderConf);
 }
 
-void EditPropertyTab::hideProperties()
+/* SLOTS */
+
+void EditPropertyTab::onFocusCluster(RenderConfig const &style)
 {
-    this->_formContainer->setVisible(false);
+    this->_selectedClusterConfig->show();
+    this->_selectedClusterConfig->setConfig(style);
+}
+
+void EditPropertyTab::onUnfocusCluster()
+{
+    this->_selectedClusterConfig->hide();
+}
+
+/*Privates Slots*/
+
+void EditPropertyTab::onUpdateSelectedClusterStyle()
+{
+    // flush update
+    emit this->sigUpdateClusterStyle(_selectedClusterConfig->getConfig());
+}
+
+void EditPropertyTab::onUpdateGlobalClusterStyle()
+{
+    // flush update
+    RenderConfig const &config = _defaultStyleConfig->getConfig();
+    emit this->sigUpdateAllClusterStyle(config);
+    if (this->_selectedClusterConfig->isEnabled()) {
+        // The selected cluster will have its config updated.
+        // So update the widget values shown as well.
+        _selectedClusterConfig->setConfig(config);
+    }
 }

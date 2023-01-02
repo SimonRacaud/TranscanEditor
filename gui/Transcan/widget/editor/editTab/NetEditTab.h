@@ -40,7 +40,7 @@ signals:
 protected:
     APIClient &_api;
     const bool _autoReload;
-    const ProjectConfig *_config{nullptr};
+    shared_ptr<ProjectConfig> _config;
 };
 
 #endif // NETEDITTAB_H

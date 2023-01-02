@@ -12,6 +12,7 @@ SOURCES += \
 	main.cpp \
         model/Page.cpp \
         widget/editor/editTab/NetEditTab.cpp \
+    widget/editor/propertyTab/edit/ClusterStyleConfig.cpp \
         window/MainWindow.cpp \
         window/ViewerWindow.cpp \
         page/editor/EditorView.cpp \
@@ -38,6 +39,7 @@ HEADERS += \
     include/ServiceItem.h \
     model/Page.h \
     widget/editor/editTab/NetEditTab.h \
+    widget/editor/propertyTab/edit/ClusterStyleConfig.h \
     window/MainWindow.h \
     window/ViewerWindow.h \
     include/environment.h \

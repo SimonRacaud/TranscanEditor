@@ -119,10 +119,10 @@ BlockCluster BlockCluster::deserialize(QJsonObject const &obj, vector<shared_ptr
     }
     //
     b.cleanBox = obj["cleanBox"].toBool(true);
-    b.color = QColor(obj["color"].toInteger(0));
-    b.lineHeight = obj["lineHeight"].toDouble(DEF_EDIT_LINE_HEIGHT);
-    b.strokeWidth = obj["strokeWidth"].toInt(DEF_EDIT_STROKE_WIDTH);
-    b.font = QFont(obj["font"].toString(), 20/* temp */, b.strokeWidth);
+    b.style.color = QColor(obj["color"].toInteger(0));
+    b.style.lineHeight = obj["lineHeight"].toDouble(DEF_EDIT_LINE_HEIGHT);
+    b.style.strokeWidth = obj["strokeWidth"].toInt(DEF_EDIT_STROKE_WIDTH);
+    b.style.font = QFont(obj["font"].toString(), 20/* temp */, b.style.strokeWidth);
     b.translation = obj["translation"].toString();
     b.sentence = obj["sentence"].toString();
     b.polygon = deserializePolygon(obj["polygon"]);
@@ -152,13 +152,13 @@ QJsonObject BlockCluster::serialize() const
     }
     obj["blocks"] = blocksArray;
     obj["cleanBox"] = this->cleanBox;
-    obj["color"] = QJsonValue((qint64)this->color.rgba64());
-    obj["font"] = this->font.family();
+    obj["color"] = QJsonValue((qint64)this->style.color.rgba64());
+    obj["font"] = this->style.font.family();
     obj["translation"] = this->translation;
-    obj["lineHeight"] = this->lineHeight;
+    obj["lineHeight"] = (qint64)this->style.lineHeight;
     obj["polygon"] = serializePolygon(this->polygon);
     obj["sentence"] = this->sentence;
-    obj["strokeWidth"] = this->strokeWidth;
+    obj["strokeWidth"] = (qint64)this->style.strokeWidth;
     return obj;
 }
 

@@ -1,6 +1,7 @@
 #include "APropertyTab.h"
 #include <QMessageBox>
 #include <iostream>
+#include <QScrollBar>
 
 APropertyTab::APropertyTab(FuncNetCall &reloadFunc, QWidget *parent)
     : QWidget{parent}, _netCallback(reloadFunc)
@@ -23,6 +24,7 @@ APropertyTab::APropertyTab(FuncNetCall &reloadFunc, QWidget *parent)
     this->_propertiesLayout = new QVBoxLayout(propertiesContainer);
     this->_propertiesLayout->setAlignment(Qt::AlignmentFlag::AlignTop);
     this->_propScollArea = new QScrollArea;
+    this->_propScollArea->horizontalScrollBar()->setEnabled(false);
     this->_propScollArea->setStyleSheet("QScrollArea { border: none; }");
     this->_propScollArea->setWidgetResizable(true);
     this->_propScollArea->setWidget(propertiesContainer);

@@ -65,7 +65,7 @@ QLabel {
     color: #000000;
 }
 
-.QFrame, QListView, QGroupBox::indicator {
+.QFrame, QListView, QGroupBox::indicator, .ClusterStyleConfig {
     background: rgba(189, 189, 189, 0.1);
     border: 1px solid #BDBDBD;
     border-radius: 10px
@@ -179,5 +179,9 @@ APropertyTab QPushButton:!enabled {
 
 APropertyTab QLabel {
     font-size: 12px;
+}
+
+#EditorEditPropClusterStyleConfigTitle {
+    font-weight: 700;
 }
 

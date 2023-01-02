@@ -36,6 +36,12 @@ void EditorController::setupEvents()
     connect(_saveEditTab, &NetEditTab::allAPIRequestsCompleted, _savePropTab, &APropertyTab::unlockReloadButton);
 
     connect(_cleanPropTab, &CleanPropertyTab::sigReplacePage, _cleanEditTab, &CleanEditArea::slotReplacePage);
+
+    // Edit Tab : Text Style Update
+    connect(_editPropTab, &EditPropertyTab::sigUpdateClusterStyle, _editEditTab, &EditorEditArea::updateSelectedClusterStyle);
+    connect(_editPropTab, &EditPropertyTab::sigUpdateAllClusterStyle, _editEditTab, &EditorEditArea::updateAllClusterStyle);
+    connect(_editEditTab, &EditorEditArea::sigFocusEditRect, _editPropTab, &EditPropertyTab::onFocusCluster);
+    connect(_editEditTab, &EditorEditArea::sigUnfocusEditRect, _editPropTab, &EditPropertyTab::onUnfocusCluster);
 }
 
 void EditorController::keyPressEvent(QKeyEvent *event)
@@ -74,6 +80,8 @@ void EditorController::onStart(ProjectConfig const &config)
     this->_extractEditTab->loadPagesFromPath(_config->srcPath);
     // OCR API call
     this->_extractEditTab->loadAPI();
+    //
+    this->_editPropTab->updateProjectConfig(config);
 }
 
 void EditorController::netError(QString const &message)

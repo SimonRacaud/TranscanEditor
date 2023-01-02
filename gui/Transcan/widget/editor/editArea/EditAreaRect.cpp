@@ -10,7 +10,7 @@
 using namespace std;
 
 EditAreaRect::EditAreaRect(BlockCluster const &data, RectMode mode, int pageY)
-    : _mode(mode), _data(data), _text(_data.sentence), _pageY(pageY)
+    : QGraphicsProxyWidget(), _mode(mode), _data(data), _text(_data.sentence), _pageY(pageY), _uuid(QUuid::createUuid())
 {
     this->setFlag(ItemIsMovable, true);
     this->setFlag(ItemIsFocusable, true);
@@ -18,17 +18,19 @@ EditAreaRect::EditAreaRect(BlockCluster const &data, RectMode mode, int pageY)
     if (mode == RectMode::EDIT_TRAN) {
         this->_text = _data.translation;
     }
-    _textEdit = new QTextEdit(_text);
-    _textEdit->setFont(_data.font);
-    _textEdit->setTextColor(_data.color);
+    _textEdit = new QTextEdit;
+    _textEdit->setTextColor(_data.style.color);
+    _textEdit->setText(_text);
+    _textEdit->setFont(_data.style.font);
     _textEdit->setWordWrapMode(QTextOption::WordWrap);
     _textEdit->setStyleSheet("background-color: transparent; border: none");
-    this->centerText();
     this->_textEdit->setReadOnly(true);
     this->_textEdit->setFixedWidth(data.polygon.boundingRect().width());
     this->setWidget(_textEdit);
     this->setZValue(8);
     this->setPos(data.polygon.boundingRect().x(), data.polygon.boundingRect().y() + pageY);
+    this->centerText();
+    connect(_textEdit, &QTextEdit::currentCharFormatChanged, this, &EditAreaRect::centerText);
 }
 
 QRectF EditAreaRect::boundingRect() const
@@ -37,14 +39,19 @@ QRectF EditAreaRect::boundingRect() const
     return QRectF(0, 0, rect.width(), rect.height());
 }
 
+QUuid const &EditAreaRect::getUuid() const
+{
+    return _uuid;
+}
+
 void EditAreaRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     QRectF rect = this->boundingRect();
     QColor borderColor = (_focusEdit) ? Qt::red
-                                      : (hasFocus()
+                                      : (_focus
                                             ? Qt::blue
                                             : Qt::black);
-    QPen pen(borderColor, 2 /* Line width */, Qt::DashDotLine);
+    QPen pen(borderColor, 2 /* Line width */, Qt::PenStyle::DashDotDotLine);
 
     // Rectangle
     painter->setPen(pen);
@@ -55,8 +62,6 @@ void EditAreaRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     }
     painter->drawRect(rect);
 
-    QGraphicsProxyWidget::paint(painter,option,widget);
-
     // Resize Triangle
     QPainterPath path;
     path.moveTo(rect.width() - RESIZE_CURSOR_SIZE, rect.height());
@@ -65,18 +70,34 @@ void EditAreaRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     path.lineTo(rect.width() - RESIZE_CURSOR_SIZE, rect.height());
     painter->setBrush(Qt::black); // background color
     painter->drawPath(path);
+
+    QGraphicsProxyWidget::paint(painter,option,widget);
 }
 
-void EditAreaRect::setFont(QFont &font)
+void EditAreaRect::setStyle(RenderConfig const &style)
 {
-    _data.font = font;
-    _textEdit->setFont(_data.font);
+    this->_data.style = style;
+    auto font = style.font;
+    font.setWeight((QFont::Weight)(style.strokeWidth * 100)); // Range: 100-900
+    this->setFont(font);
+    this->setTextColor(style.color);
+    this->centerText();
 }
 
-void EditAreaRect::setTextColor(QColor color)
+void EditAreaRect::setFont(const QFont &font)
 {
-    _data.color = color;
+    _data.style.font = font;
+    _textEdit->setFont(_data.style.font);
+}
+
+void EditAreaRect::setTextColor(QColor const &color)
+{
+    _data.style.color = color;
     _textEdit->setTextColor(color);
+    // refresh Text format
+    QString const &txt = _textEdit->toPlainText();
+    _textEdit->setText(txt);
+    this->centerText();
 }
 
 void EditAreaRect::setLineHeight(int percentage)
@@ -90,13 +111,13 @@ void EditAreaRect::setLineHeight(int percentage)
                             QTextBlockFormat::ProportionalHeight);
     newFormat->setAlignment(Qt::AlignCenter);
     textCursor.setBlockFormat(*newFormat);
-    _data.lineHeight = percentage;
+    _data.style.lineHeight = percentage;
 }
 
 void EditAreaRect::setLineHeightAbs(int pixels)
 {
     QTextCursor textCursor = _textEdit->textCursor();
-    QTextBlockFormat newFormat = QTextBlockFormat();
+    QTextBlockFormat newFormat = textCursor.blockFormat();
 
     textCursor.clearSelection();
     textCursor.select(QTextCursor::Document);
@@ -123,6 +144,15 @@ bool EditAreaRect::isOnArea(QRectF const &area) const
     return rect.translated(this->pos()).intersects(area);
 }
 
+void EditAreaRect::removeFocus()
+{
+    this->setFlag(ItemIsMovable, true);
+    this->_textEdit->setReadOnly(true);
+    this->_focusEdit = false;
+    this->_focus = false;
+    update(); // refresh element
+}
+
 /** Private **/
 
 void EditAreaRect::resize(QPointF diff)
@@ -142,21 +172,28 @@ void EditAreaRect::resize(QPointF diff)
     }
 }
 
+void EditAreaRect::showEvent(QShowEvent *event)
+{
+    QGraphicsProxyWidget::showEvent(event);
+    this->centerText();
+}
+
 void EditAreaRect::centerText()
 {
-    float realLineHeight = _textEdit->textCursor().blockFormat().lineHeight();
-    float docHeight = _textEdit->document()->documentLayout()->documentSize().height();
-    int rectHeight = this->boundingRect().height();
-    int lineHeight;
-    int nbLine;
+    // TODO : center by adding top padding ??
+//    float realLineHeight = _textEdit->textCursor().blockFormat().lineHeight();
+//    float docHeight = _textEdit->document()->documentLayout()->documentSize().height();
+//    int rectHeight = this->boundingRect().height();
+//    int lineHeight;
+//    int nbLine;
 
-    if (realLineHeight == 0) {
-        nbLine = _textEdit->document()->lineCount();
-    } else {
-        nbLine = docHeight / realLineHeight;
-    }
-    lineHeight = (float)rectHeight / (float)(nbLine + 1);
-    this->setLineHeightAbs(lineHeight);
+//    if (realLineHeight == 0) {
+//        nbLine = _textEdit->document()->lineCount();
+//    } else {
+//        nbLine = docHeight / realLineHeight;
+//    }
+//    lineHeight = (float)rectHeight / (float)(nbLine + 1);
+    this->setLineHeightAbs(_data.style.lineHeight);
 }
 
 /** Protected **/
@@ -173,25 +210,17 @@ void EditAreaRect::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     this->_textEdit->setReadOnly(false);
 }
 
-/**
- * @brief Stop editing
- * @param event
- */
 void EditAreaRect::focusOutEvent(QFocusEvent *event)
 {
     QGraphicsProxyWidget::focusOutEvent(event);
-
-    this->setFlag(ItemIsMovable, true);
-    this->_textEdit->setReadOnly(true);
-    this->_focusEdit = false;
-    emit focusChanged(false, *this);
-    update(); // refresh element
+    emit focusChanged(false, this);
 }
 
 void EditAreaRect::focusInEvent(QFocusEvent *event)
 {
     QGraphicsProxyWidget::focusInEvent(event);
-    emit focusChanged(true, *this);
+    this->_focus = true;
+    emit focusChanged(true, this);
     update();
 }
 

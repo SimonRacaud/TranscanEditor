@@ -115,6 +115,7 @@ void ImageViewer::updatePage(OCRPage const &page)
     QImageReader newImgMeta(filePath);
     bool success = newImgMeta.canRead();
     if (!success) {
+        qDebug() << "ImageViewer::updatePage Fail to load " << filePath;
         throw std::runtime_error("ImageViewer::updatePage, failed to load new image.");
     }
     //
