@@ -10,14 +10,16 @@
 using namespace std;
 
 EditAreaRect::EditAreaRect(BlockCluster const &data, RectMode mode, int pageY)
-    : QGraphicsProxyWidget(), _mode(mode), _data(data), _text(_data.sentence), _pageY(pageY), _uuid(QUuid::createUuid())
+    : QGraphicsProxyWidget(),
+      _mode(mode),
+      _data(data),
+      _text((mode == RectMode::EDIT_SENT) ? _data.sentence : _data.translation),
+      _pageY(pageY),
+      _uuid(QUuid::createUuid())
 {
     this->setFlag(ItemIsMovable, true);
     this->setFlag(ItemIsFocusable, true);
 
-    if (mode == RectMode::EDIT_TRAN) {
-        this->_text = _data.translation;
-    }
     _textEdit = new QTextEdit;
     _textEdit->setTextColor(_data.style.color);
     _textEdit->setText(_text);
@@ -26,6 +28,7 @@ EditAreaRect::EditAreaRect(BlockCluster const &data, RectMode mode, int pageY)
     _textEdit->setStyleSheet("background-color: transparent; border: none");
     this->_textEdit->setReadOnly(true);
     this->_textEdit->setFixedWidth(data.polygon.boundingRect().width());
+    this->_textEdit->setFixedHeight(data.polygon.boundingRect().height());
     this->setWidget(_textEdit);
     this->setZValue(8);
     this->setPos(data.polygon.boundingRect().x(), data.polygon.boundingRect().y() + pageY);
@@ -56,7 +59,7 @@ void EditAreaRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     // Rectangle
     painter->setPen(pen);
     if (_mode == RectMode::EDIT_SENT) {
-        painter->setBrush(QColor(255, 255, 255, 180)); // background color
+        painter->setBrush(QColor(255, 255, 255, 222)); // background color
     } else {
         painter->setBrush(Qt::transparent); // background color
     }
@@ -134,7 +137,11 @@ BlockCluster EditAreaRect::getData()
     QPointF diff = this->pos() - this->_data.polygon.boundingRect().topLeft();
     cluster.polygon.translate(diff.x(), diff.y());
     cluster.polygon.translate(0, -_pageY); // Convert coord => relative to page top left corner
-    cluster.sentence = _textEdit->toPlainText();
+    if (_mode == RectMode::EDIT_SENT) {
+        cluster.sentence = _textEdit->toPlainText();
+    } else {
+        cluster.translation = _textEdit->toPlainText();
+    }
     return cluster;
 }
 
