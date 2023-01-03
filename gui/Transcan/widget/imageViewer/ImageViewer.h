@@ -70,6 +70,25 @@ public:
      */
     void scale(float scale);
 
+    /**
+     * @brief ImageViewer::setZoom
+     *  Set view zoom to a specific percentage
+     * @param percent [0.01-5] -> 1% to 500%
+     */
+    void setZoom(float percent);
+
+    /**
+     * @brief ImageViewer::getZoom : Return the current zoom level
+     * @return [0.01-5] -> 1% to 500%
+     */
+    float getZoom() const;
+
+    /**
+     * @brief emitScrollPosition : Force signals verticalScrollValueChanged
+     *  & horizontalScrollValueChanged emittion
+     */
+    void emitScrollPosition();
+
 protected slots:
     void refreshImageListSlot();
 
@@ -96,7 +115,7 @@ private:
     QLabel *_loadingWidget;
     bool _loading{false};
 
-    float _scale{1.0}; // Scale of the images
+    float _zoom{1.0}; // Scale of the images
     int _timePreviousResize{0};
 
     size_t _imageWidth{0};

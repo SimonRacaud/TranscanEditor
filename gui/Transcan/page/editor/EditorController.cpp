@@ -50,13 +50,15 @@ void EditorController::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key::Key_Plus || event->key() == Qt::Key::Key_ZoomIn) {
         auto *editor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
 
-        editor->scale(1.0 + ZOOM_SHIFT);
-        _sourcePages->scale(1.0 + ZOOM_SHIFT);
+        float zoom = editor->getZoom();
+        editor->setZoom(zoom + ZOOM_SHIFT);
+        _sourcePages->setZoom(zoom + ZOOM_SHIFT);
     } else if (event->key() == Qt::Key::Key_Minus || event->key() == Qt::Key::Key_ZoomOut) {
         auto *editor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
 
-        editor->scale(1.0 - ZOOM_SHIFT);
-        _sourcePages->scale(1.0 - ZOOM_SHIFT);
+        float zoom = editor->getZoom();
+        editor->setZoom(zoom - ZOOM_SHIFT);
+        _sourcePages->setZoom(zoom - ZOOM_SHIFT);
     } else {
         EditorView::keyPressEvent(event);
     }
@@ -128,6 +130,8 @@ void EditorController::setTab(EditorTab tab)
     // Load new tab
     IEditTab *newEditTab = dynamic_cast<IEditTab *>(newEditor);
     newEditTab->load(pages); // Load new tab
+    newEditor->setZoom(_sourcePages->getZoom()); // Update Tab zoom
+    _sourcePages->emitScrollPosition();
 }
 
 void EditorController::showSourcePageTab(bool enable)

@@ -196,6 +196,34 @@ void ImageViewer::scale(float scale)
     this->_view->scale(scale, scale);
 }
 
+void ImageViewer::setZoom(float percent)
+{
+    int viewWidth = this->_view->width();
+
+    if (percent < 0.01 || percent > 5.0) {
+        return; // Abort
+    }
+    if (this->_view->verticalScrollBar()->isEnabled()) {
+        viewWidth -= this->_view->verticalScrollBar()->width();
+    }
+    if (!viewWidth)
+        return;
+    float targetWidth = (float)viewWidth * percent;
+    float currentWidth = (float)viewWidth * _zoom;
+    if (!currentWidth)
+        return;
+    float newScale = targetWidth / currentWidth;
+    if (!newScale)
+        return;
+    this->scale(newScale);
+    this->_zoom = percent;
+}
+
+float ImageViewer::getZoom() const
+{
+    return _zoom;
+}
+
 /** INTERNAL **/
 
 void ImageViewer::resizeEvent(QResizeEvent *event)
@@ -217,6 +245,12 @@ void ImageViewer::clearView()
     this->_pageGroup = nullptr;
     this->_pixmapList.clear();
     this->_scene->clear();
+}
+
+void ImageViewer::emitScrollPosition()
+{
+    emit this->horizontalScrollValueChanged(this->_view->horizontalScrollBar()->value());
+    emit this->verticalScrollValueChanged(this->_view->verticalScrollBar()->value());
 }
 
 /** SLOTS **/
