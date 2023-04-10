@@ -6,6 +6,7 @@
 #include <QGraphicsLayout>
 #include <QGraphicsSceneMouseEvent>
 #include <QAbstractTextDocumentLayout>
+#include <QScrollBar>
 
 using namespace std;
 
@@ -26,14 +27,18 @@ EditAreaRect::EditAreaRect(BlockCluster const &data, RectMode mode, int pageY)
     _textEdit->setFont(_data.style.font);
     _textEdit->setWordWrapMode(QTextOption::WordWrap);
     _textEdit->setStyleSheet("background-color: transparent; border: none");
+    _textEdit->setContentsMargins(0, 0, 0, 0);
+    _textEdit->verticalScrollBar()->hide();
+    _textEdit->horizontalScrollBar()->hide();
     this->_textEdit->setReadOnly(true);
     this->_textEdit->setFixedWidth(data.polygon.boundingRect().width());
     this->_textEdit->setFixedHeight(data.polygon.boundingRect().height());
     this->setWidget(_textEdit);
     this->setZValue(8);
     this->setPos(data.polygon.boundingRect().x(), data.polygon.boundingRect().y() + pageY);
-    this->centerText();
-    connect(_textEdit, &QTextEdit::currentCharFormatChanged, this, &EditAreaRect::centerText);
+    this->_textEdit->setAlignment(Qt::AlignCenter);
+    this->formatText();
+
 }
 
 QRectF EditAreaRect::boundingRect() const
@@ -65,6 +70,8 @@ void EditAreaRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     }
     painter->drawRect(rect);
 
+    QGraphicsProxyWidget::paint(painter,option,widget);
+
     // Resize Triangle
     QPainterPath path;
     path.moveTo(rect.width() - RESIZE_CURSOR_SIZE, rect.height());
@@ -73,8 +80,6 @@ void EditAreaRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     path.lineTo(rect.width() - RESIZE_CURSOR_SIZE, rect.height());
     painter->setBrush(Qt::black); // background color
     painter->drawPath(path);
-
-    QGraphicsProxyWidget::paint(painter,option,widget);
 }
 
 void EditAreaRect::setStyle(RenderConfig const &style)
@@ -84,7 +89,8 @@ void EditAreaRect::setStyle(RenderConfig const &style)
     font.setWeight((QFont::Weight)(style.strokeWidth * 100)); // Range: 100-900
     this->setFont(font);
     this->setTextColor(style.color);
-    this->centerText();
+    this->setLineHeightAbs(_data.style.lineHeight);
+    this->formatText();
 }
 
 void EditAreaRect::setFont(const QFont &font)
@@ -100,7 +106,7 @@ void EditAreaRect::setTextColor(QColor const &color)
     // refresh Text format
     QString const &txt = _textEdit->toPlainText();
     _textEdit->setText(txt);
-    this->centerText();
+    this->formatText();
 }
 
 void EditAreaRect::setLineHeight(int percentage)
@@ -175,32 +181,88 @@ void EditAreaRect::resize(QPointF diff)
 
         this->_textEdit->setFixedWidth(currentRect.width());
         this->_textEdit->setFixedHeight(currentRect.height());
-        this->centerText();
+        this->formatText();
     }
 }
 
 void EditAreaRect::showEvent(QShowEvent *event)
 {
     QGraphicsProxyWidget::showEvent(event);
-    this->centerText();
+    this->formatText();
 }
 
-void EditAreaRect::centerText()
+int EditAreaRect::computeOptimalFontSize(int *heightMargin) const
 {
-    // TODO : center by adding top padding ??
-//    float realLineHeight = _textEdit->textCursor().blockFormat().lineHeight();
-//    float docHeight = _textEdit->document()->documentLayout()->documentSize().height();
-//    int rectHeight = this->boundingRect().height();
-//    int lineHeight;
-//    int nbLine;
+    const int MAX_FONTSIZE = 100;
+    int fontSize = 1;
+    const QRegularExpression regExpr("[\\s\\t]");
+    const QSizeF &rect = QSizeF(_textEdit->document()->size().width(), _textEdit->size().height());
+    int marginHeight = 0;
 
-//    if (realLineHeight == 0) {
-//        nbLine = _textEdit->document()->lineCount();
-//    } else {
-//        nbLine = docHeight / realLineHeight;
-//    }
-//    lineHeight = (float)rectHeight / (float)(nbLine + 1);
-    this->setLineHeightAbs(_data.style.lineHeight);
+    // Compute size of text for a font size => check it fit.
+    // Then computer bigger size. Stop when the text don't fit anymore.
+    while (fontSize < MAX_FONTSIZE/* Computing time limit */) {
+        const QFont font = QFont(_data.style.font.families(), fontSize, (int)_data.style.strokeWidth);
+        const QStringList &wordList = _textEdit->toPlainText().split(regExpr, Qt::SkipEmptyParts);
+        const QFontMetrics fm(font);
+        const int spaceWidth = fm.horizontalAdvance(" ");
+        int fontHeight = fm.height();
+        unsigned int lineWidth = 0;
+        unsigned int nbLine = 1;
+
+        if ((unsigned int)fontHeight < _data.style.lineHeight) {
+            fontHeight = _data.style.lineHeight;
+        }
+        for (QString const &word : wordList) {
+            bool containLineBreak = word.contains('\n');
+            int wordWidth = fm.horizontalAdvance(word);
+
+            if (wordWidth >= rect.width()) {
+                *heightMargin = 0;
+                return fontSize - 1; // If one word is larger than the rect size.
+            } else if (lineWidth + wordWidth + spaceWidth > rect.width() || containLineBreak) {
+                nbLine++;
+                lineWidth = wordWidth + spaceWidth;
+            } else {
+                lineWidth += wordWidth + spaceWidth;
+            }
+        }
+        const unsigned int blockHeight = nbLine * fontHeight;
+        if (blockHeight >= rect.height() - 5 /* error margin */) {
+            *heightMargin = marginHeight;
+            return fontSize - 1; // Font size too large, select the previous one.
+        }
+        marginHeight = rect.height() - blockHeight;
+        fontSize++;
+    }
+    return MAX_FONTSIZE;
+}
+
+void EditAreaRect::formatText()
+{
+    int heightMargin = 0;
+
+    // Fill rect by modifying the font size
+    int fontSize = this->computeOptimalFontSize(&heightMargin);
+    _data.style.font = QFont(_data.style.font.families(), fontSize, (int)_data.style.strokeWidth);
+    this->_textEdit->setFont(_data.style.font);
+
+    // Center text vertically by adding top margin.
+    // TODO
+
+//     // Center text by modifying the ligne height
+//     float realLineHeight = _textEdit->textCursor().blockFormat().lineHeight();
+//     float docHeight = _textEdit->document()->documentLayout()->documentSize().height();
+//     int rectHeight = this->boundingRect().height();
+//     int nbLine;
+
+//     if (realLineHeight == 0) {
+//         nbLine = _textEdit->document()->lineCount();
+//     } else {
+//         nbLine = docHeight / realLineHeight;
+//     }
+//     int lineHeight = (float)rectHeight / (float)(nbLine + 1);
+//     this->setLineHeightAbs(lineHeight); // _data.style.lineHeight
 }
 
 /** Protected **/
@@ -289,6 +351,6 @@ void EditAreaRect::keyPressEvent(QKeyEvent *event)
 {
     QGraphicsProxyWidget::keyPressEvent(event);
     if (_focusEdit) {
-        this->centerText();
+        this->formatText();
     }
 }

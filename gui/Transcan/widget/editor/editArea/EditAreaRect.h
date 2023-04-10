@@ -83,11 +83,18 @@ private:
 
     virtual void showEvent(QShowEvent *event) override;
 
+    /**
+     * @brief computeOptimalFontSize : Computer the maximum font size for the
+     *  _text to fit inside the boundingRect.
+     * @return
+     */
+    int computeOptimalFontSize(int *heightMargin) const;
+
 private slots:
     /**
      * @brief centerText : Center text vertically by modifying the line height.
      */
-    void centerText();    
+    void formatText();
 
 protected:
     virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
