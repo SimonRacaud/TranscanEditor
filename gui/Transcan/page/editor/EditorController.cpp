@@ -47,13 +47,15 @@ void EditorController::setupEvents()
 
 void EditorController::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key::Key_Plus || event->key() == Qt::Key::Key_ZoomIn) {
+    if ((event->key() == Qt::Key::Key_Plus && event->modifiers() == Qt::ControlModifier)
+            || event->key() == Qt::Key::Key_ZoomIn) {
         auto *editor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
 
         float zoom = editor->getZoom();
         editor->setZoom(zoom + ZOOM_SHIFT);
         _sourcePages->setZoom(zoom + ZOOM_SHIFT);
-    } else if (event->key() == Qt::Key::Key_Minus || event->key() == Qt::Key::Key_ZoomOut) {
+    } else if ((event->key() == Qt::Key::Key_Minus && event->modifiers() == Qt::ControlModifier)
+               || event->key() == Qt::Key::Key_ZoomOut) {
         auto *editor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
 
         float zoom = editor->getZoom();
