@@ -153,5 +153,5 @@ def __make_sentence(block_list: Sequence[OCRBlock]) -> str:
                 buffer = buffer[:-1]
             else:
                 buffer += ' '
-        buffer += text
+        buffer += text.replace("\n", "") # Remove all new line
     return buffer
