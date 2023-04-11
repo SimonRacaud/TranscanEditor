@@ -89,11 +89,11 @@ void APIClient::sendRequest(QString const& target, QByteArray const &body,
 
     QObject::connect(reply, &QNetworkReply::finished, [reply, callback, errFunc, this, target]() {
         this->_pendingReplies.removeOne(reply);
+        QByteArray const &rawData = reply->readAll();
         if (reply->error() != QNetworkReply::NoError){
-            qDebug() << "Network Error: " << reply->errorString() << reply->error();
+            qDebug() << "Network Error: " << reply->errorString() << reply->error() << " Body: " << rawData;
             errFunc(reply->errorString());
         } else {
-            QByteArray const &rawData = reply->readAll();
             qDebug() << "Network reply received for target : " << target << ".";
             QJsonDocument doc = QJsonDocument::fromJson(rawData);
             QJsonObject body = doc.object();

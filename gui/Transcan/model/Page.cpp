@@ -152,13 +152,14 @@ QJsonObject BlockCluster::serialize() const
     }
     obj["blocks"] = blocksArray;
     obj["cleanBox"] = this->cleanBox;
-    obj["color"] = QJsonValue((qint64)this->style.color.rgba64());
-    obj["font"] = this->style.font.family();
     obj["translation"] = this->translation;
-    obj["lineHeight"] = (qint64)this->style.lineHeight;
     obj["polygon"] = serializePolygon(this->polygon);
     obj["sentence"] = this->sentence;
-    obj["strokeWidth"] = (qint64)this->style.strokeWidth;
+
+    const QJsonObject &styleObj = this->style.serialize();
+    for (auto it = styleObj.constBegin(); it != styleObj.constEnd(); it++) {
+        obj.insert(it.key(), it.value());
+    }
     return obj;
 }
 
