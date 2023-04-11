@@ -95,7 +95,9 @@ void EditAreaRect::setStyle(RenderConfig const &style)
 {
     this->_data.style = style;
     auto font = style.font;
-    font.setWeight((QFont::Weight)(style.strokeWidth * 100)); // Range: 100-900
+    if (style.strokeWidth > 9 || !style.strokeWidth)
+        throw std::invalid_argument("EditAreaRect::setStyle Invalid bold value");
+    font.setWeight(weightChoices[style.strokeWidth - 1]); // Range: 100-900
     this->setFont(font);
     this->setTextColor(style.color);
     this->setLineHeightAbs(_data.style.lineHeight);
@@ -209,10 +211,13 @@ int EditAreaRect::computeOptimalFontSize(int *heightMargin, QString const &text)
     const QSizeF &rect = QSizeF(_textEdit->document()->size().width(), _textEdit->size().height());
     int marginHeight = 0;
 
+    if (_data.style.strokeWidth > 9 || !_data.style.strokeWidth)
+        throw std::runtime_error("EditAreaRect::formatText invalid font weight");
     // Compute size of text for a font size => check it fit.
     // Then computer bigger size. Stop when the text don't fit anymore.
     while (fontSize < MAX_FONTSIZE/* Computing time limit */) {
-        const QFont font = QFont(_data.style.font.families(), fontSize, (int)_data.style.strokeWidth);
+        QFont font = QFont(_data.style.font.families(), fontSize);
+        font.setWeight(weightChoices[_data.style.strokeWidth - 1]);
         const QStringList &wordList = text.split(regExpr, Qt::SkipEmptyParts);
         const QFontMetrics fm(font);
         const int spaceWidth = fm.horizontalAdvance(" ");
@@ -258,7 +263,10 @@ void EditAreaRect::formatText()
         text = _textEdit->placeholderText();
     }
     int fontSize = this->computeOptimalFontSize(&heightMargin, text);
-    _data.style.font = QFont(_data.style.font.families(), fontSize, (int)_data.style.strokeWidth);
+    _data.style.font = QFont(_data.style.font.families(), fontSize);
+    if (_data.style.strokeWidth > 9 || !_data.style.strokeWidth)
+        throw std::runtime_error("EditAreaRect::formatText invalid font weight");
+    _data.style.font.setWeight(weightChoices[_data.style.strokeWidth - 1]);
     this->_textEdit->setFont(_data.style.font);
 
     // Center text vertically by adding top margin.

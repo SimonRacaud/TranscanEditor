@@ -77,9 +77,12 @@ const QList<QString> SUPPORTED_EXTENSION_SUFFIX = {
 #define DEF_EDITAREA_SIZE 100, 50 // Editor
 
 #define DEF_EDIT_LINE_HEIGHT 30 // Edition/render config
-#define DEF_EDIT_STROKE_WIDTH 3
+#define DEF_EDIT_STROKE_WIDTH 4 // Normal
 #define DEF_EDIT_FONT "Arial"
 #define DEF_EDIT_COLOR QColor(Qt::black)
+
+#include <QFont>
+static const QFont::Weight weightChoices[] = {QFont::Thin, QFont::ExtraLight, QFont::Light, QFont::Normal, QFont::Medium, QFont::DemiBold, QFont::Bold, QFont::ExtraBold, QFont::Black};
 
 // Editor page zoom key shortcut
 #define ZOOM_SHIFT 0.05 // scale shift

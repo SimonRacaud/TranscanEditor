@@ -122,7 +122,11 @@ BlockCluster BlockCluster::deserialize(QJsonObject const &obj, vector<shared_ptr
     b.style.color = QColor(obj["color"].toInteger(0));
     b.style.lineHeight = obj["lineHeight"].toDouble(DEF_EDIT_LINE_HEIGHT);
     b.style.strokeWidth = obj["strokeWidth"].toInt(DEF_EDIT_STROKE_WIDTH);
-    b.style.font = QFont(obj["font"].toString(), 20/* temp */, b.style.strokeWidth);
+    b.style.font = QFont(obj["font"].toString());
+    if (b.style.strokeWidth > 9 || !b.style.strokeWidth) {
+        throw std::invalid_argument("Cluster deserialize, invalid stroke width");
+    }
+    b.style.font.setWeight(weightChoices[b.style.strokeWidth - 1]);
     b.translation = obj["translation"].toString();
     b.sentence = obj["sentence"].toString();
     b.polygon = deserializePolygon(obj["polygon"]);
