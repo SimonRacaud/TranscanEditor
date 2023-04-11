@@ -86,6 +86,9 @@ def process_clean():
     try:
         inputJson = request.json
         input = OCRPage.deserialize(inputJson)
+    except APIError as err:
+        print("Error {}".format(err.message))
+        raise InvalidJson("Invalid body")
     except BaseException as err:
         #traceback.print_exception(*sys.exc_info())
         print("Error {}".format(err))
