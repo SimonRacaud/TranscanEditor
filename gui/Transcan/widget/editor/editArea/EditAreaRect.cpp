@@ -38,7 +38,11 @@ EditAreaRect::EditAreaRect(BlockCluster const &data, RectMode mode, int pageY)
     this->setPos(data.polygon.boundingRect().x(), data.polygon.boundingRect().y() + pageY);
     this->_textEdit->setAlignment(Qt::AlignCenter);
     this->formatText();
+    this->_textEdit->setPlaceholderText("text...");
 
+    // Hide scroll bar
+    _textEdit->horizontalScrollBar()->setStyleSheet("QScrollBar {height:0px;}");
+    _textEdit->verticalScrollBar()->setStyleSheet("QScrollBar {width:0px;}");
 }
 
 QRectF EditAreaRect::boundingRect() const
@@ -54,6 +58,11 @@ QUuid const &EditAreaRect::getUuid() const
 
 void EditAreaRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    if (!_showBoxView) {
+        // Show only text
+        QGraphicsProxyWidget::paint(painter,option,widget);
+        return;
+    }
     QRectF rect = this->boundingRect();
     QColor borderColor = (_focusEdit) ? Qt::red
                                       : (_focus
@@ -163,6 +172,7 @@ void EditAreaRect::removeFocus()
     this->_textEdit->setReadOnly(true);
     this->_focusEdit = false;
     this->_focus = false;
+    this->clearFocus();
     update(); // refresh element
 }
 
@@ -191,7 +201,7 @@ void EditAreaRect::showEvent(QShowEvent *event)
     this->formatText();
 }
 
-int EditAreaRect::computeOptimalFontSize(int *heightMargin) const
+int EditAreaRect::computeOptimalFontSize(int *heightMargin, QString const &text) const
 {
     const int MAX_FONTSIZE = 100;
     int fontSize = 1;
@@ -203,7 +213,7 @@ int EditAreaRect::computeOptimalFontSize(int *heightMargin) const
     // Then computer bigger size. Stop when the text don't fit anymore.
     while (fontSize < MAX_FONTSIZE/* Computing time limit */) {
         const QFont font = QFont(_data.style.font.families(), fontSize, (int)_data.style.strokeWidth);
-        const QStringList &wordList = _textEdit->toPlainText().split(regExpr, Qt::SkipEmptyParts);
+        const QStringList &wordList = text.split(regExpr, Qt::SkipEmptyParts);
         const QFontMetrics fm(font);
         const int spaceWidth = fm.horizontalAdvance(" ");
         int fontHeight = fm.height();
@@ -243,7 +253,11 @@ void EditAreaRect::formatText()
     int heightMargin = 0;
 
     // Fill rect by modifying the font size
-    int fontSize = this->computeOptimalFontSize(&heightMargin);
+    QString text = _textEdit->toPlainText();
+    if (text.isEmpty()) {
+        text = _textEdit->placeholderText();
+    }
+    int fontSize = this->computeOptimalFontSize(&heightMargin, text);
     _data.style.font = QFont(_data.style.font.families(), fontSize, (int)_data.style.strokeWidth);
     this->_textEdit->setFont(_data.style.font);
 
@@ -263,6 +277,12 @@ void EditAreaRect::formatText()
 //     }
 //     int lineHeight = (float)rectHeight / (float)(nbLine + 1);
 //     this->setLineHeightAbs(lineHeight); // _data.style.lineHeight
+}
+
+void EditAreaRect::enableBoxView(bool enable)
+{
+    this->_showBoxView = enable;
+    this->update();
 }
 
 /** Protected **/

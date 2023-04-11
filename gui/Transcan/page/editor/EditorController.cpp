@@ -101,8 +101,10 @@ void EditorController::setTab(EditorTab tab)
 
     // Tab change, data flow
     IEditTab *prevEditTab = dynamic_cast<IEditTab *>(editor);
-    std::vector<OCRPage> pages = editor->getPages();
     prevEditTab->unload(); // Unload previous tab
+    // Nota: important to unload table before getting the pages for the Edit tab.
+    // ...since the renderImagePath attribute will get updated
+    std::vector<OCRPage> pages = editor->getPages();
 
     // Disconnect previous event flow
     disconnect(prop, &APropertyTab::nextStep, nullptr, nullptr);

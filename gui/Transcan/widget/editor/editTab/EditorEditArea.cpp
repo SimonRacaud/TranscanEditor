@@ -23,6 +23,13 @@ void EditorEditArea::loadAPI()
     }
 }
 
+void EditorEditArea::unload()
+{
+    ATextEditArea::unload();
+
+    this->renderSceneToFiles();
+}
+
 /** SLOTS **/
 
 void EditorEditArea::updateAllClusterStyle(RenderConfig const &style)
@@ -60,4 +67,32 @@ void EditorEditArea::onRectFocusChange(EditAreaRect *rect)
     } else {
         emit sigUnfocusEditRect();
     }
+}
+
+void EditorEditArea::renderSceneToFiles()
+{
+    this->enableEditBoxesRect(false); // Hide boxes borders
+    _scene->clearSelection();                                                  // Selections would also render to the file
+    QList<QGraphicsItem *> pageItems = _pageGroup->childItems();
+    size_t idx = 0;
+    for (QGraphicsItem const *item : pageItems) {
+        QImage image(item->boundingRect().size().toSize(), QImage::Format_ARGB32);  // Create the image with the exact size of the shrunk scene
+        image.fill(Qt::transparent);                                              // Start all pixels transparent
+        QPainter painter(&image);
+        _scene->setSceneRect(item->sceneBoundingRect());
+        _scene->render(&painter);
+        const QString &filename = QString::fromStdString("render_page_" + std::to_string(idx + 1) + ".png");
+        this->_pages[idx].renderImagePath = this->_config->destPath + "/" + filename;
+        image.save(this->_pages[idx].renderImagePath);
+        qDebug() << "(info) Save page " << idx << " to " << this->_pages[idx].renderImagePath;
+        idx++;
+    }
+    _scene->setSceneRect(_scene->itemsBoundingRect());                          // Re-shrink the scene to it's bounding contents
+}
+
+void EditorEditArea::enableEditBoxesRect(bool enable)
+{
+    this->foreachEditAreaRect([enable](EditAreaRect &rect) {
+        rect.enableBoxView(enable);
+    });
 }

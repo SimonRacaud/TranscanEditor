@@ -71,6 +71,12 @@ public:
      */
     QUuid const &getUuid() const;
 
+    /**
+     * @brief enableBoxView : Show or Hide box border and corner triangle
+     * @param enable
+     */
+    void enableBoxView(bool enable = true);
+
 signals:
     void focusChanged(bool state, EditAreaRect *rect);
 
@@ -88,7 +94,7 @@ private:
      *  _text to fit inside the boundingRect.
      * @return
      */
-    int computeOptimalFontSize(int *heightMargin) const;
+    int computeOptimalFontSize(int *heightMargin, QString const &text) const;
 
 private slots:
     /**
@@ -119,6 +125,7 @@ private:
     bool _focusEdit{false};
     bool _focus{false};
     bool _isResizing{false};
+    bool _showBoxView{true};
 };
 
 #endif // RECTAREAITEM_H

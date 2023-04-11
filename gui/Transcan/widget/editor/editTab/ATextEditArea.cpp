@@ -67,14 +67,7 @@ void ATextEditArea::removeRect()
 vector<BlockCluster> ATextEditArea::getClusters() const
 {
     vector<BlockCluster> result;
-//    QList<QGraphicsItem *> items = this->_scene->items();
 
-//    for ( QGraphicsItem *item : items) {
-//        EditAreaRect *rect = qgraphicsitem_cast<EditAreaRect *>(item);
-//        if (rect) {
-//            result.push_back(rect->getData());
-//        }
-//    }
     return result;
 }
 
@@ -121,6 +114,18 @@ void ATextEditArea::unload()
 }
 
 /** PROTECTED **/
+
+void ATextEditArea::foreachEditAreaRect(std::function<void(EditAreaRect &)> const &fun)
+{
+    QList<QGraphicsItem *> items = this->_scene->items();
+
+    for ( QGraphicsItem *item : items) {
+        EditAreaRect *rect = dynamic_cast<EditAreaRect *>(item);
+        if (rect) {
+            fun(*rect);
+        }
+    }
+}
 
 void ATextEditArea::keyPressEvent(QKeyEvent *event)
 {

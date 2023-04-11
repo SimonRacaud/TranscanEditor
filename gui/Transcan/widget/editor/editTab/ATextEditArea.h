@@ -50,6 +50,8 @@ protected:
 
     EditAreaRect &getRectFromId(QUuid const &id);
 
+    void foreachEditAreaRect(std::function<void(EditAreaRect &)> const &);
+
 protected slots:
     void changeFocus(bool focused, EditAreaRect *rect);
 
