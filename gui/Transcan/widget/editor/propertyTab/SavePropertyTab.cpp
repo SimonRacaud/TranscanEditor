@@ -9,8 +9,8 @@ SavePropertyTab::SavePropertyTab(FuncNetCall &reloadFunc, QWidget *parent)
 {
     this->fillHelp();
     this->initProperties();
-    this->_nextButton->setText("Home Page");
-    this->_reloadButton->setText("Render again");
+    this->_nextButton->setEnabled(false);
+    this->_reloadButton->hide();
 
     disconnect(_nextButton, &QPushButton::clicked, nullptr, nullptr);
     connect(_nextButton, &QPushButton::clicked, []() {
@@ -41,21 +41,22 @@ void SavePropertyTab::initProperties()
 {
     QVBoxLayout *destSelectLayout = new QVBoxLayout;
     this->_destinationTitle = new QLabel("Destination:");
+    this->_destinationTitle->setObjectName("PropertyTitle");
     this->_destinationTitle->setAlignment(Qt::AlignmentFlag::AlignHCenter);
     this->_selectedPath = new QLabel("<>");
     this->_selectedPath->setAlignment(Qt::AlignmentFlag::AlignHCenter);
     _selectedPath->setWordWrap(true);
     this->_selectedPath->setMaximumWidth(EDITOR_PROP_FORM_WIDTH);
-    this->_selectDirectoryButton = new QPushButton("Select directory");
+    this->_selectDirectoryButton = new QPushButton("Change directory");
     destSelectLayout->addWidget(_destinationTitle);
     destSelectLayout->addWidget(_selectedPath);
     destSelectLayout->addWidget(_selectDirectoryButton);
     destSelectLayout->setSpacing(10);
     //
-    this->_exportButton = new QPushButton("Export");
+    this->_exportButton = new QPushButton("Export again");
+    destSelectLayout->addWidget(_exportButton);
 
     this->_propertiesLayout->addLayout(destSelectLayout);
-    this->_propertiesLayout->addWidget(_exportButton);
     this->_propertiesLayout->setSpacing(50);
 }
 

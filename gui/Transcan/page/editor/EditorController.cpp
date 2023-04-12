@@ -21,13 +21,6 @@ EditorController::~EditorController()
 
 void EditorController::setupEvents()
 {
-    QObject::connect(_showSourceButton, &QPushButton::toggled, this, &EditorController::showSourceButtonClickedSlot);
-    QObject::connect(_extractButton, &QPushButton::clicked, this, &EditorController::extractButtonClickedSlot);
-    QObject::connect(_cleanButton, &QPushButton::clicked, this, &EditorController::cleanButtonClickedSlot);
-    QObject::connect(_editButton, &QPushButton::clicked, this, &EditorController::editButtonClickedSlot);
-    QObject::connect(_saveButton, &QPushButton::clicked, this, &EditorController::saveButtonClickedSlot);
-    QObject::connect(_exitButton, &QPushButton::clicked, this, &EditorController::exitButtonClickedSlot);
-
     connect(_cleanEditTab, &NetEditTab::allAPIRequestsCompleted, _cleanPropTab, &APropertyTab::unlockReloadButton);
     connect(_editEditTab, &NetEditTab::allAPIRequestsCompleted, _editPropTab, &APropertyTab::unlockReloadButton);
     connect(_extractEditTab, &NetEditTab::allAPIRequestsCompleted, _extractPropTab, &APropertyTab::unlockReloadButton);
@@ -43,18 +36,26 @@ void EditorController::setupEvents()
     // Save Tab
     connect(_savePropTab, &SavePropertyTab::sigUpdateProjectDestinationPath, _saveEditTab, &SaveEditArea::onUpdateProjectDestinationPath);
     connect(_savePropTab, &SavePropertyTab::sigExport, _saveEditTab, &SaveEditArea::onExport);
+
+    // Header
+    connect(_header, &EditorHeader::sigChangeTab, this, &EditorController::setTab);
+    connect(_header, &EditorHeader::sigShowPageSourceTab, this, &EditorController::showSourcePageTab);
+
+    connect(this, &EditorView::sigChangeTab, this, &EditorController::setTab);
 }
 
 void EditorController::keyPressEvent(QKeyEvent *event)
 {
-    if ((event->key() == Qt::Key::Key_Plus && event->modifiers() == Qt::ControlModifier)
+    if ((event->key() == Qt::Key::Key_Plus
+         && (event->modifiers() == Qt::ControlModifier || event->modifiers() == Qt::KeypadModifier))
             || event->key() == Qt::Key::Key_ZoomIn) {
         auto *editor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
 
         float zoom = editor->getZoom();
         editor->setZoom(zoom + ZOOM_SHIFT);
         _sourcePages->setZoom(zoom + ZOOM_SHIFT);
-    } else if ((event->key() == Qt::Key::Key_Minus && event->modifiers() == Qt::ControlModifier)
+    } else if ((event->key() == Qt::Key::Key_Minus
+                && (event->modifiers() == Qt::ControlModifier || event->modifiers() == Qt::KeypadModifier))
                || event->key() == Qt::Key::Key_ZoomOut) {
         auto *editor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
 
@@ -125,7 +126,7 @@ void EditorController::setTab(EditorTab tab)
             ? EditorTab::EXTRACT : (EditorTab)((int)tab + 1);
         this->setTab(next);
     });
-    this->setSelectionTabHeader();
+    this->_header->setSelectionTabHeader(tab);
     connect(newEditor, &ImageViewer::horizontalScrollValueChanged, _sourcePages, &ImageViewer::setHorizontalScrollPosition);
     connect(newEditor, &ImageViewer::verticalScrollValueChanged, _sourcePages, &ImageViewer::setVerticalScrollPosition);
     connect(_sourcePages, &ImageViewer::horizontalScrollValueChanged, newEditor, &ImageViewer::setHorizontalScrollPosition);
@@ -141,34 +142,5 @@ void EditorController::setTab(EditorTab tab)
 void EditorController::showSourcePageTab(bool enable)
 {
     this->_sourcePages->setHidden(!enable);
-    this->_showSourceButton->setChecked(enable);
-}
-
-/** SLOTS **/
-
-void EditorController::showSourceButtonClickedSlot(bool checked)
-{
-    // show/hide source document tab
-    this->showSourcePageTab(checked);
-}
-void EditorController::extractButtonClickedSlot(bool)
-{
-    this->setTab(EditorTab::EXTRACT);
-}
-void EditorController::cleanButtonClickedSlot(bool)
-{
-    this->setTab(EditorTab::CLEAN);
-}
-void EditorController::editButtonClickedSlot(bool)
-{
-    this->setTab(EditorTab::EDIT);
-}
-void EditorController::saveButtonClickedSlot(bool)
-{
-    this->setTab(EditorTab::SAVE);
-}
-void EditorController::exitButtonClickedSlot(bool)
-{
-    // Go back to home page
-    mainWindow->setPage(Page::HOME);
+    this->_header->setShowSourceButtonState(enable);
 }

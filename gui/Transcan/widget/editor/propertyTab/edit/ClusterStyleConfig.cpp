@@ -7,7 +7,7 @@
 ClusterStyleConfig::ClusterStyleConfig(QString const &title) : QFrame()
 {
     QLabel *titleWidget = new QLabel(title);
-    titleWidget->setObjectName("EditorEditPropClusterStyleConfigTitle");
+    titleWidget->setObjectName("PropertyTitle");
     _inLineHeight = new QSpinBox();
     _inLineHeight->setMaximum(100);
     _inLineHeight->setMinimum(1);

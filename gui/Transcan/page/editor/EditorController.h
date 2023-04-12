@@ -32,14 +32,6 @@ private:
 protected:
     virtual void keyPressEvent(QKeyEvent *event) override;
 
-private slots:
-    void showSourceButtonClickedSlot(bool checked);
-    void extractButtonClickedSlot(bool checked);
-    void cleanButtonClickedSlot(bool checked);
-    void editButtonClickedSlot(bool checked);
-    void saveButtonClickedSlot(bool checked);
-    void exitButtonClickedSlot(bool checked);
-
 private:
     EditorTab _lastTab; // Last tab accessed.
     shared_ptr<ProjectConfig> _config;

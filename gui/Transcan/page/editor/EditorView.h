@@ -5,7 +5,6 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QStackedWidget>
-#include <QtSvgWidgets/QSvgWidget>
 
 #include "widget/imageViewer/ImageViewer.h"
 
@@ -20,42 +19,24 @@
 #include "widget/editor/editTab/SaveEditArea.h"
 
 #include "include/environment.h"
+#include "widget/editor/header/EditorHeader.h"
 
 class EditorView : public QWidget
 {
     Q_OBJECT
 public:
     explicit EditorView(APIClient &api, QWidget *parent = nullptr);
-
-    enum class EditorTab {
-        EXTRACT = 0,
-        CLEAN = 1,
-        EDIT = 2,
-        SAVE = 3,
-        LAST_VALUE // Nothing after this
-    };
-
 protected:
-    /**
-     * @brief Disable current tab button
-     */
-    void setSelectionTabHeader();
+
+signals:
+    void sigChangeTab(EditorTab tab);
 
 private:
     void setupHeader();
 
 protected:
     QVBoxLayout *_rootLayout;
-    // Header
-    QPushButton *_showSourceButton;
-    QPushButton *_extractButton;
-    QPushButton *_cleanButton;
-    QPushButton *_editButton;
-    QPushButton *_saveButton;
-    QPushButton *_exitButton;
-    QSvgWidget *_separator1;
-    QSvgWidget *_separator2;
-    QSvgWidget *_separator3;
+    EditorHeader *_header;
 
     // Body
     //      Property tabs

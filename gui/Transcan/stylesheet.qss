@@ -20,7 +20,7 @@ QPushButton {
 QPushButton:pressed {
     background-color: #0088ff;
 }
-QPushButton:hover:!pressed { 
+QPushButton:hover:!pressed {
     background-color: #009cff;
 }
 
@@ -50,7 +50,7 @@ QComboBox::down-arrow:on { /* shift the arrow when popup is open */
     top: 1px;
     left: 1px;
 }
-QComboBox:disabled { 
+QComboBox:disabled {
     background-color: #e6e6e6;
     color: #bbbbbb;
 }
@@ -91,7 +91,7 @@ QListView::item {
 }
 QListView::item:selected {
     border: none;
-    background:rgba(238, 238, 238, 0.1);
+    background: rgba(238, 238, 238, 0.1);
 }
 
 /* Home Page */
@@ -140,9 +140,9 @@ QLabel#TitleProject, #TitleViewer {
 
 /* Editor */
 
-#EditorHeaderContainer {
-    background: #354052;
-    border-bottom: 1px solid #E2E2E2;
+#EditorHeader {
+    /*background-color: #354052;*/
+    /*border-bottom: 1px solid #E2E2E2;*/
     height: 50px;
 }
 
@@ -181,7 +181,7 @@ APropertyTab QLabel {
     font-size: 12px;
 }
 
-#EditorEditPropClusterStyleConfigTitle {
+#PropertyTitle {
     font-weight: 700;
 }
 
