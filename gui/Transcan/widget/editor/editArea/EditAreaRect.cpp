@@ -208,8 +208,9 @@ int EditAreaRect::computeOptimalFontSize(int *heightMargin, QString const &text)
     const int MAX_FONTSIZE = 100;
     int fontSize = 1;
     const QRegularExpression regExpr("[\\s\\t]");
-    const QSizeF &rect = QSizeF(_textEdit->document()->size().width(), _textEdit->size().height());
+    const QSize &rect = _textEdit->size();
     int marginHeight = 0;
+    const QStringList &wordList = text.split(regExpr, Qt::SkipEmptyParts);
 
     if (_data.style.strokeWidth > 9 || !_data.style.strokeWidth)
         throw std::runtime_error("EditAreaRect::formatText invalid font weight");
@@ -218,7 +219,6 @@ int EditAreaRect::computeOptimalFontSize(int *heightMargin, QString const &text)
     while (fontSize < MAX_FONTSIZE/* Computing time limit */) {
         QFont font = QFont(_data.style.font.families(), fontSize);
         font.setWeight(weightChoices[_data.style.strokeWidth - 1]);
-        const QStringList &wordList = text.split(regExpr, Qt::SkipEmptyParts);
         const QFontMetrics fm(font);
         const int spaceWidth = fm.horizontalAdvance(" ");
         int fontHeight = fm.height();
@@ -231,7 +231,6 @@ int EditAreaRect::computeOptimalFontSize(int *heightMargin, QString const &text)
         for (QString const &word : wordList) {
             bool containLineBreak = word.contains('\n');
             int wordWidth = fm.horizontalAdvance(word);
-
             if (wordWidth >= rect.width()) {
                 *heightMargin = 0;
                 return fontSize - 1; // If one word is larger than the rect size.
@@ -243,7 +242,7 @@ int EditAreaRect::computeOptimalFontSize(int *heightMargin, QString const &text)
             }
         }
         const unsigned int blockHeight = nbLine * fontHeight;
-        if (blockHeight >= rect.height() - 5 /* error margin */) {
+        if (blockHeight >= (unsigned int)rect.height() - 10 /* error margin */) {
             *heightMargin = marginHeight;
             return fontSize - 1; // Font size too large, select the previous one.
         }
