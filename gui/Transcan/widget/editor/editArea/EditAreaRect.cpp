@@ -7,6 +7,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QAbstractTextDocumentLayout>
 #include <QScrollBar>
+#include <QTextFrame>
 
 using namespace std;
 
@@ -79,7 +80,7 @@ void EditAreaRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     }
     painter->drawRect(rect);
 
-    QGraphicsProxyWidget::paint(painter,option,widget);
+    QGraphicsProxyWidget::paint(painter,option, widget);
 
     // Resize Triangle
     QPainterPath path;
@@ -232,7 +233,7 @@ int EditAreaRect::computeOptimalFontSize(int *heightMargin, QString const &text)
             bool containLineBreak = word.contains('\n');
             int wordWidth = fm.horizontalAdvance(word);
             if (wordWidth >= rect.width()) {
-                *heightMargin = 0;
+                *heightMargin = marginHeight;
                 return fontSize - 1; // If one word is larger than the rect size.
             } else if (lineWidth + wordWidth + spaceWidth > rect.width() || containLineBreak) {
                 nbLine++;
@@ -243,7 +244,7 @@ int EditAreaRect::computeOptimalFontSize(int *heightMargin, QString const &text)
         }
         const unsigned int blockHeight = nbLine * fontHeight;
         if (blockHeight >= (unsigned int)rect.height() - 10 /* error margin */) {
-            *heightMargin = marginHeight;
+            *heightMargin = 0; // No need, the text will take the full height in that case
             return fontSize - 1; // Font size too large, select the previous one.
         }
         marginHeight = rect.height() - blockHeight;
@@ -269,7 +270,10 @@ void EditAreaRect::formatText()
     this->_textEdit->setFont(_data.style.font);
 
     // Center text vertically by adding top margin.
-    // TODO
+    const int topMargin = heightMargin / 2;
+    auto format = this->_textEdit->document()->rootFrame()->frameFormat();
+    format.setTopMargin(topMargin);
+    this->_textEdit->document()->rootFrame()->setFrameFormat(format);
 
 //     // Center text by modifying the ligne height
 //     float realLineHeight = _textEdit->textCursor().blockFormat().lineHeight();
