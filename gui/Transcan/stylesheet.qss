@@ -185,3 +185,6 @@ APropertyTab QLabel {
     font-weight: 700;
 }
 
+#SavePropTabDestPath {
+    color: rgb(80, 80, 80);
+}

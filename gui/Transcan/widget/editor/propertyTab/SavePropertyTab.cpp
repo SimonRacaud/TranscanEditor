@@ -45,6 +45,7 @@ void SavePropertyTab::initProperties()
     this->_destinationTitle->setAlignment(Qt::AlignmentFlag::AlignHCenter);
     this->_selectedPath = new QLabel("<>");
     this->_selectedPath->setAlignment(Qt::AlignmentFlag::AlignHCenter);
+    _selectedPath->setObjectName("SavePropTabDestPath");
     _selectedPath->setWordWrap(true);
     this->_selectedPath->setMaximumWidth(EDITOR_PROP_FORM_WIDTH);
     this->_selectDirectoryButton = new QPushButton("Change directory");
@@ -54,6 +55,7 @@ void SavePropertyTab::initProperties()
     destSelectLayout->setSpacing(10);
     //
     this->_exportButton = new QPushButton("Export again");
+    this->_exportButton->setEnabled(false);
     destSelectLayout->addWidget(_exportButton);
 
     this->_propertiesLayout->addLayout(destSelectLayout);
@@ -74,5 +76,6 @@ void SavePropertyTab::onClickSelectDestinationPath()
     if (!folderPath.isEmpty()) {
         emit this->sigUpdateProjectDestinationPath(folderPath);
         this->setProjectDestinationPath(folderPath);
+        this->_exportButton->setEnabled(true);
     }
 }
