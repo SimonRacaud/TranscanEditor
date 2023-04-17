@@ -1,16 +1,16 @@
-#ifndef SELECTAREARECT_H
-#define SELECTAREARECT_H
+#ifndef SELECTAREABOX_H
+#define SELECTAREABOX_H
 
 #include <QGraphicsObject>
 #include <QObject>
 
 #include "model/Page.h"
 
-class SelectAreaRect : public QGraphicsObject
+class SelectAreaBox : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    SelectAreaRect(BlockCluster const &data, int pageY);
+    SelectAreaBox(BlockCluster const &data, int pageY);
 
     virtual void paint(
             QPainter *painter,
@@ -39,4 +39,4 @@ private:
     const int _pageY;
 };
 
-#endif // SELECTAREARECT_H
+#endif // SELECTAREABOX_H

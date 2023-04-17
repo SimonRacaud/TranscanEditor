@@ -1,4 +1,4 @@
-#include "CleanEditArea.h"
+#include "CleanEditTab.h"
 #include <functional>
 #include <QScrollBar>
 #include <QMouseEvent>
@@ -6,15 +6,15 @@
 
 using namespace std;
 
-CleanEditArea::CleanEditArea(APIClient &client)
+CleanEditTab::CleanEditTab(APIClient &client)
     : NetEditTab(client, CLEAN, true)
 {
-    connect(_view, &PageGraphicsView::onDoubleClick, this, &CleanEditArea::doubleClickEvent);
+    connect(_view, &PageGraphicsView::onDoubleClick, this, &CleanEditTab::doubleClickEvent);
 }
 
 /** PUBLIC **/
 
-void CleanEditArea::setPages(vector<OCRPage> const &pages)
+void CleanEditTab::setPages(vector<OCRPage> const &pages)
 {
     ImageViewer::setPages(pages); // Load pages
     // Create clusters' select boxes
@@ -28,13 +28,13 @@ void CleanEditArea::setPages(vector<OCRPage> const &pages)
 
 }
 
-std::vector<BlockCluster> CleanEditArea::getClusters() const
+std::vector<BlockCluster> CleanEditTab::getClusters() const
 {
     std::vector<BlockCluster> result;
     QList<QGraphicsItem *> items = this->_scene->items();
 
     for (QGraphicsItem *item : items) {
-        SelectAreaRect *rect = qgraphicsitem_cast<SelectAreaRect*>(item);
+        SelectAreaBox *rect = qgraphicsitem_cast<SelectAreaBox*>(item);
         if (rect && rect->isSelected()) {
             result.push_back(rect->getData());
         }
@@ -42,7 +42,7 @@ std::vector<BlockCluster> CleanEditArea::getClusters() const
     return result;
 }
 
-OCRPage CleanEditArea::getPage(size_t index)
+OCRPage CleanEditTab::getPage(size_t index)
 {
     QList<QGraphicsItem *> pageItems = this->_pageGroup->childItems();
     if (index >= (size_t)pageItems.size()) {
@@ -52,7 +52,7 @@ OCRPage CleanEditArea::getPage(size_t index)
 
     page.clusters.clear();
     for (QGraphicsItem *item : this->_scene->items()) {
-        SelectAreaRect *rect = dynamic_cast<SelectAreaRect*>(item);
+        SelectAreaBox *rect = dynamic_cast<SelectAreaBox*>(item);
         if (rect) {
             QGraphicsItem *pageItem = pageItems[index]; // Get page image widget
             if (rect->isOnArea(pageItem->sceneBoundingRect())) {
@@ -63,7 +63,7 @@ OCRPage CleanEditArea::getPage(size_t index)
     return page;
 }
 
-void CleanEditArea::loadAPI()
+void CleanEditTab::loadAPI()
 {
     this->setLoadingState(true);
 
@@ -71,13 +71,13 @@ void CleanEditArea::loadAPI()
         OCRPage const &page = this->getPage(i);
         NetCallback success = bind(&IEditTab::loadPage, this, std::placeholders::_1);
         NetErrCallback error = bind(&NetEditTab::netError, this, std::placeholders::_1);
-        this->_api.sendToClean(page, success, error); // TODO : to improve
+        this->_api.sendToClean(page, success, error); // TODO : to improve - network
     }
 }
 
 /** SLOTS **/
 
-void CleanEditArea::slotReplacePage(QString const &filePath)
+void CleanEditTab::slotReplacePage(QString const &filePath)
 {
     // Detect the current page
     QPoint viewCenter = this->_view->rect().center();
@@ -100,14 +100,14 @@ void CleanEditArea::slotReplacePage(QString const &filePath)
 
 /** PRIVATE **/
 
-void CleanEditArea::createBlock(BlockCluster const &cluster, int pagePosY)
+void CleanEditTab::createBlock(BlockCluster const &cluster, int pagePosY)
 {
-    auto *rect = new SelectAreaRect(cluster, pagePosY);
+    auto *rect = new SelectAreaBox(cluster, pagePosY);
 
     this->_scene->addItem(rect);
 }
 
-void CleanEditArea::replacePageAtCoord(QPointF const &position)
+void CleanEditTab::replacePageAtCoord(QPointF const &position)
 {
     int targetPageIndex = this->getPageIndexAtCoord(position);
     if (targetPageIndex == -1) {
@@ -120,15 +120,15 @@ void CleanEditArea::replacePageAtCoord(QPointF const &position)
     }
 }
 
- void CleanEditArea::doubleClickEvent(QMouseEvent *event)
+ void CleanEditTab::doubleClickEvent(QMouseEvent *event)
  {
     const QPointF &coord = event->position();
     bool isOnRect = false;
 
-    // Check of coord position is located on a SelectAreaRect.
+    // Check of coord position is located on a SelectAreaBox.
     // We only want to trigger an action if the click is directly located on a page.
     for (QGraphicsItem *item : this->_scene->items()) {
-        SelectAreaRect *rect = dynamic_cast<SelectAreaRect*>(item);
+        SelectAreaBox *rect = dynamic_cast<SelectAreaBox*>(item);
         if (rect) {
             if (rect->sceneBoundingRect().contains(coord)) {
                 isOnRect = true;
@@ -141,7 +141,7 @@ void CleanEditArea::replacePageAtCoord(QPointF const &position)
     }
  }
 
-int CleanEditArea::getPageIndexAtCoord(QPointF const &coord) const
+int CleanEditTab::getPageIndexAtCoord(QPointF const &coord) const
 {
     QList<QGraphicsItem *> pageItems = this->_pageGroup->childItems();
     int pageIndex = -1;

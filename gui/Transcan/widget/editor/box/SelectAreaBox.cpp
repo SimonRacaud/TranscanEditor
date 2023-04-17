@@ -1,8 +1,8 @@
-#include "SelectAreaRect.h"
+#include "SelectAreaBox.h"
 
 #include <QPainter>
 
-SelectAreaRect::SelectAreaRect(BlockCluster const &cluster, int pageY)
+SelectAreaBox::SelectAreaBox(BlockCluster const &cluster, int pageY)
     : _data(cluster), _selected(_data.cleanBox), _pageY(pageY)
 {
     this->setZValue(8);
@@ -10,7 +10,7 @@ SelectAreaRect::SelectAreaRect(BlockCluster const &cluster, int pageY)
 
 /** Public **/
 
-void SelectAreaRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
+void SelectAreaBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     QRectF rect = this->boundingRect();
     QColor borderColor = (_selected) ? Qt::black : Qt::red;
@@ -25,31 +25,31 @@ void SelectAreaRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *, 
     painter->drawRect(rect);
 }
 
-QRectF SelectAreaRect::boundingRect() const
+QRectF SelectAreaBox::boundingRect() const
 {
     const QRectF rect = _data.polygon.boundingRect();
     return rect.translated(0, _pageY);
 }
 
-bool SelectAreaRect::isSelected() const
+bool SelectAreaBox::isSelected() const
 {
     return _selected;
 }
 
-BlockCluster SelectAreaRect::getData() const
+BlockCluster SelectAreaBox::getData() const
 {
     BlockCluster cluster = _data;
     return cluster;
 }
 
-bool SelectAreaRect::isOnArea(QRectF area) const
+bool SelectAreaBox::isOnArea(QRectF area) const
 {
     return area.contains(this->boundingRect());
 }
 
 /** Protected **/
 
-void SelectAreaRect::mousePressEvent(QGraphicsSceneMouseEvent *)
+void SelectAreaBox::mousePressEvent(QGraphicsSceneMouseEvent *)
 {
     _selected = !_selected;
     update();

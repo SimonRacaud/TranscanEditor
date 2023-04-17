@@ -1,14 +1,14 @@
-#ifndef CLEANEDITAREA_H
-#define CLEANEDITAREA_H
+#ifndef CLEANEDITTAB_H
+#define CLEANEDITTAB_H
 
 #include "NetEditTab.h"
-#include "widget/editor/editArea/SelectAreaRect.h"
+#include "widget/editor/box/SelectAreaBox.h"
 
-class CleanEditArea : public NetEditTab
+class CleanEditTab : public NetEditTab
 {
     Q_OBJECT
 public:
-    CleanEditArea(APIClient &client);
+    CleanEditTab(APIClient &client);
 
     virtual void setPages(std::vector<OCRPage> const &pages) override;
 
@@ -18,7 +18,7 @@ public:
     std::vector<BlockCluster> getClusters() const;
 
     /**
-     * @brief getPage Export SelectAreaRect list as a list of OCRBlock
+     * @brief getPage Export SelectAreaBox list as a list of OCRBlock
      * @param index
      * @return
      */
@@ -61,4 +61,4 @@ private:
 private:
 };
 
-#endif // CLEANEDITAREA_H
+#endif // CLEANEDITTAB_H

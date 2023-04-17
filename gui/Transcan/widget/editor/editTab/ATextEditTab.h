@@ -1,15 +1,15 @@
-#ifndef ATEXTEDITAREA_H
-#define ATEXTEDITAREA_H
+#ifndef ATEXTEDITTAB_H
+#define ATEXTEDITTAB_H
 
 #include "include/environment.h"
-#include "widget/editor/editArea/EditAreaRect.h"
+#include "widget/editor/box/TextEditBox.h"
 #include "NetEditTab.h"
 
-class ATextEditArea : public NetEditTab
+class ATextEditTab : public NetEditTab
 {
     Q_OBJECT
 public:
-    ATextEditArea(APIClient &client, ImageMode modeImg, RectMode mode, bool autoReload);
+    ATextEditTab(APIClient &client, ImageMode modeImg, RectMode mode, bool autoReload);
 
     virtual void setPages(std::vector<OCRPage> const &pages) override;
 
@@ -20,7 +20,7 @@ public:
     std::vector<BlockCluster> getClusters() const;
 
     /**
-     * @brief getPage Convert local EditAreaRect list to BlockClusters
+     * @brief getPage Convert local TextEditBox list to BlockClusters
      * @param index Index of the page to export
      * @return
      */
@@ -48,12 +48,12 @@ protected:
 
     void setPagesEditAreas(std::vector<OCRPage> const &pages);
 
-    EditAreaRect &getRectFromId(QUuid const &id);
+    TextEditBox &getRectFromId(QUuid const &id);
 
-    void foreachEditAreaRect(std::function<void(EditAreaRect &)> const &);
+    void foreachTextEditBox(std::function<void(TextEditBox &)> const &);
 
 protected slots:
-    void changeFocus(bool focused, EditAreaRect *rect);
+    void changeFocus(bool focused, TextEditBox *rect);
 
 signals:
     /**
@@ -62,7 +62,7 @@ signals:
      *  - lose focus when another rect is focussed or on click on the EditArea
      * @param rect
      */
-    void sigRectFocusChanged(EditAreaRect *rect);
+    void sigRectFocusChanged(TextEditBox *rect);
 
 private:
     RectMode _mode;
@@ -73,4 +73,4 @@ protected:
 
 };
 
-#endif // ATEXTEDITAREA_H
+#endif // ATEXTEDITTAB_H

@@ -1,24 +1,24 @@
-#include "ATextEditArea.h"
+#include "ATextEditTab.h"
 
 #include <QScrollBar>
 
 using namespace std;
 
-ATextEditArea::ATextEditArea(APIClient &client, ImageMode modeImg, RectMode mode, bool autoReload)
+ATextEditTab::ATextEditTab(APIClient &client, ImageMode modeImg, RectMode mode, bool autoReload)
     : NetEditTab(client, modeImg, autoReload), _mode(mode)
 {
-    connect(_view, &PageGraphicsView::onDoubleClick, this, &ATextEditArea::doubleClickEvent);
+    connect(_view, &PageGraphicsView::onDoubleClick, this, &ATextEditTab::doubleClickEvent);
 }
 
 /** PUBLIC **/
 
-void ATextEditArea::setPages(vector<OCRPage> const &pages)
+void ATextEditTab::setPages(vector<OCRPage> const &pages)
 {
     ImageViewer::setPages(pages); // Display page images
     this->setPagesEditAreas(pages);
 }
 
-void ATextEditArea::createAreaRectAtCoord(QPointF const &coord)
+void ATextEditTab::createAreaRectAtCoord(QPointF const &coord)
 {
     const QPoint size(DEF_EDITAREA_SIZE);
     const QPoint origin(coord.x() - (size.x() / 2), coord.y() - (size.y() / 2));
@@ -43,52 +43,52 @@ void ATextEditArea::createAreaRectAtCoord(QPointF const &coord)
     }
 }
 
-void ATextEditArea::removeRect()
+void ATextEditTab::removeRect()
 {
     if (_selectedItemId.isNull())
         return; // No rect selected
     try {
-        EditAreaRect &selectedItem = this->getRectFromId(_selectedItemId);
+        TextEditBox &selectedItem = this->getRectFromId(_selectedItemId);
         QList<QGraphicsItem *> items = this->_scene->items();
         int index = items.indexOf(selectedItem.topLevelItem());
-        disconnect(&selectedItem, &EditAreaRect::focusChanged, this, &ATextEditArea::changeFocus);
+        disconnect(&selectedItem, &TextEditBox::focusChanged, this, &ATextEditTab::changeFocus);
         if (index == -1) { // not found
-            std::cerr << "ATextEditArea::removeRect Unable to find element." << std::endl;
+            std::cerr << "ATextEditTab::removeRect Unable to find element." << std::endl;
             return; // Abort
         }
         this->_scene->removeItem(&selectedItem);
         delete &selectedItem;
         this->changeFocus(false, nullptr); // Remove focus
     } catch (std::exception const &err) {
-        std::cerr << "ATextEditArea::removeRect : fail to remove element. " << err.what() << std::endl;
+        std::cerr << "ATextEditTab::removeRect : fail to remove element. " << err.what() << std::endl;
     }
 }
 
-vector<BlockCluster> ATextEditArea::getClusters() const
+vector<BlockCluster> ATextEditTab::getClusters() const
 {
     vector<BlockCluster> result;
 
     return result;
 }
 
-OCRPage ATextEditArea::getPage(size_t index)
+OCRPage ATextEditTab::getPage(size_t index)
 {
     if (index >= (size_t)_pages.size()) {
-        throw std::invalid_argument("ATextEditArea::getPage, invalid index");
+        throw std::invalid_argument("ATextEditTab::getPage, invalid index");
     }
     OCRPage page = ImageViewer::getPage(index);
 
     page.clusters.clear();
     QList<QGraphicsItem *> pageItems = _pageGroup->childItems();
     if ((size_t)pageItems.size() <= index) {
-        throw std::runtime_error("ATextEditArea::getPage, invalid _pageGroup size");
+        throw std::runtime_error("ATextEditTab::getPage, invalid _pageGroup size");
     }
     QGraphicsItem *pageItem = pageItems[index]; // Page image widget
     QRectF pageRect = pageItem->sceneBoundingRect();
     for (QGraphicsItem *item : _scene->items()) {
-        EditAreaRect *rect = dynamic_cast<EditAreaRect *>(item);
+        TextEditBox *rect = dynamic_cast<TextEditBox *>(item);
         if (!rect)
-            continue; // Not a EditAreaRect
+            continue; // Not a TextEditBox
         if (rect->isOnArea(pageRect)) {
             page.clusters.push_back(rect->getData());
         }
@@ -96,18 +96,18 @@ OCRPage ATextEditArea::getPage(size_t index)
     return page;
 }
 
-void ATextEditArea::clearRects()
+void ATextEditTab::clearRects()
 {
     this->_scene->clear();
 }
 
-void ATextEditArea::loadAPI()
+void ATextEditTab::loadAPI()
 {
     // Unfocus current rect
     this->changeFocus(false, nullptr);
 }
 
-void ATextEditArea::unload()
+void ATextEditTab::unload()
 {
     NetEditTab::unload();
     this->changeFocus(false, nullptr); // Reset previous focus
@@ -115,28 +115,28 @@ void ATextEditArea::unload()
 
 /** PROTECTED **/
 
-void ATextEditArea::foreachEditAreaRect(std::function<void(EditAreaRect &)> const &fun)
+void ATextEditTab::foreachTextEditBox(std::function<void(TextEditBox &)> const &fun)
 {
     QList<QGraphicsItem *> items = this->_scene->items();
 
     for ( QGraphicsItem *item : items) {
-        EditAreaRect *rect = dynamic_cast<EditAreaRect *>(item);
+        TextEditBox *rect = dynamic_cast<TextEditBox *>(item);
         if (rect) {
             fun(*rect);
         }
     }
 }
 
-void ATextEditArea::keyPressEvent(QKeyEvent *event)
+void ATextEditTab::keyPressEvent(QKeyEvent *event)
 {
     ImageViewer::keyPressEvent(event);
     if (event->key() == Qt::Key_Delete) {
-        // remove currently selected EditAreaRect
+        // remove currently selected TextEditBox
         this->removeRect();
     }
 }
 
-void ATextEditArea::mousePressEvent(QMouseEvent *)
+void ATextEditTab::mousePressEvent(QMouseEvent *)
 {
     if (!_selectedItemId.isNull() && _focusedRectLostFocus == true) {
             _focusedRectLostFocus = false;
@@ -144,7 +144,7 @@ void ATextEditArea::mousePressEvent(QMouseEvent *)
     }
 }
 
-void ATextEditArea::doubleClickEvent(QMouseEvent *event)
+void ATextEditTab::doubleClickEvent(QMouseEvent *event)
 {
     if (!_selectedItemId.isNull()) {
         return; // Editing existing rect. Not creating one.
@@ -155,34 +155,34 @@ void ATextEditArea::doubleClickEvent(QMouseEvent *event)
     this->createAreaRectAtCoord(scenePos);
 }
 
-EditAreaRect &ATextEditArea::getRectFromId(QUuid const &id)
+TextEditBox &ATextEditTab::getRectFromId(QUuid const &id)
 {
     QList<QGraphicsItem *> list = this->_scene->items();
 
     for (QGraphicsItem *item : list) {
-        EditAreaRect *rect = dynamic_cast<EditAreaRect *>(item);
+        TextEditBox *rect = dynamic_cast<TextEditBox *>(item);
         if (rect && rect->getUuid() == id) {
             return *rect;
         }
     }
-    throw std::invalid_argument("ATextEditArea::getRectFromId : "+id.toString().toStdString()+" not found.");
+    throw std::invalid_argument("ATextEditTab::getRectFromId : "+id.toString().toStdString()+" not found.");
 }
 
-void ATextEditArea::createAreaRect(BlockCluster const &data, int pagePosY)
+void ATextEditTab::createAreaRect(BlockCluster const &data, int pagePosY)
 {
-    auto *rect = new EditAreaRect(data, _mode, pagePosY);
+    auto *rect = new TextEditBox(data, _mode, pagePosY);
 
     this->_scene->addItem(rect);
-    connect(rect, &EditAreaRect::focusChanged, this, &ATextEditArea::changeFocus);
+    connect(rect, &TextEditBox::focusChanged, this, &ATextEditTab::changeFocus);
 }
 
-void ATextEditArea::setPagesEditAreas(vector<OCRPage> const &pages)
+void ATextEditTab::setPagesEditAreas(vector<OCRPage> const &pages)
 {
     QList<QGraphicsItem *> pageItems = _pageGroup->childItems();
     for (OCRPage const &page : pages) {
         for (BlockCluster const &cluster : page.clusters) {
             if (page.index >= pageItems.size()) {
-                throw std::invalid_argument("ATextEditArea::setPagesEditAreas, corrupted page index.");
+                throw std::invalid_argument("ATextEditTab::setPagesEditAreas, corrupted page index.");
             }
             QGraphicsItem *pageItem = pageItems[page.index]; // Page image widget
 
@@ -196,10 +196,10 @@ void ATextEditArea::setPagesEditAreas(vector<OCRPage> const &pages)
 
 /** SLOTS **/
 
-void ATextEditArea::changeFocus(bool focused, EditAreaRect *rect)
+void ATextEditTab::changeFocus(bool focused, TextEditBox *rect)
 {
     try {
-        EditAreaRect *selectedItem = (!_selectedItemId.isNull()) ? &this->getRectFromId(_selectedItemId) : nullptr;
+        TextEditBox *selectedItem = (!_selectedItemId.isNull()) ? &this->getRectFromId(_selectedItemId) : nullptr;
 
         if (selectedItem && selectedItem != rect) {
            selectedItem->removeFocus();
@@ -217,7 +217,7 @@ void ATextEditArea::changeFocus(bool focused, EditAreaRect *rect)
         }
         emit this->sigRectFocusChanged(selectedItem);
     } catch (std::exception const &err) {
-        std::cerr << "ATextEditArea::changeFocus : fail to change focus. " << err.what() << std::endl;
+        std::cerr << "ATextEditTab::changeFocus : fail to change focus. " << err.what() << std::endl;
         // Remove current focus:
         _selectedItemId = QUuid();
         emit this->sigRectFocusChanged(nullptr);

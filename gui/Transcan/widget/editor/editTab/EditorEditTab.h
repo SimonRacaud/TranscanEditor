@@ -1,13 +1,13 @@
-#ifndef EDITOREDITAREA_H
-#define EDITOREDITAREA_H
+#ifndef EDITOREDITTAB_H
+#define EDITOREDITTAB_H
 
-#include "ATextEditArea.h"
+#include "ATextEditTab.h"
 
-class EditorEditArea : public ATextEditArea
+class EditorEditTab : public ATextEditTab
 {
     Q_OBJECT
 public:
-    EditorEditArea(APIClient &client);
+    EditorEditTab(APIClient &client);
 
     virtual void loadAPI() override;
 
@@ -18,7 +18,7 @@ public slots:
     void updateSelectedClusterStyle(RenderConfig const &style);
 
 private:
-    void onRectFocusChange(EditAreaRect *rect);
+    void onRectFocusChange(TextEditBox *rect);
 
     void renderSceneToFiles();
 
@@ -33,4 +33,4 @@ signals:
     void sigUnfocusEditRect();
 };
 
-#endif // EDITOREDITAREA_H
+#endif // EDITOREDITTAB_H

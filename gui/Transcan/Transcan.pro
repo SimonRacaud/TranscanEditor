@@ -11,7 +11,13 @@ CONFIG += c++17
 SOURCES += \
 	main.cpp \
         model/Page.cpp \
+    widget/editor/box/TextEditBox.cpp \
+    widget/editor/editTab/ATextEditTab.cpp \
+    widget/editor/editTab/CleanEditTab.cpp \
+    widget/editor/editTab/EditorEditTab.cpp \
+    widget/editor/editTab/ExtractionEditTab.cpp \
         widget/editor/editTab/NetEditTab.cpp \
+    widget/editor/editTab/SaveEditTab.cpp \
     widget/editor/header/EditorHeader.cpp \
     widget/editor/propertyTab/edit/ClusterStyleConfig.cpp \
         window/MainWindow.cpp \
@@ -24,13 +30,7 @@ SOURCES += \
         widget/editor/propertyTab/CleanPropertyTab.cpp \
         widget/editor/propertyTab/EditPropertyTab.cpp \
         widget/editor/propertyTab/SavePropertyTab.cpp \
-        widget/editor/editTab/ExtractionEditArea.cpp \
-        widget/editor/editArea/EditAreaRect.cpp \
-        widget/editor/editArea/SelectAreaRect.cpp \
-        widget/editor/editTab/ATextEditArea.cpp \
-        widget/editor/editTab/EditorEditArea.cpp \
-        widget/editor/editTab/CleanEditArea.cpp \
-        widget/editor/editTab/SaveEditArea.cpp \
+        widget/editor/box/SelectAreaBox.cpp \
         widget/imageViewer/ImageViewer.cpp \
         widget/imageViewer/PageGraphicsView.cpp \
         net/APIClient.cpp \
@@ -39,7 +39,13 @@ SOURCES += \
 HEADERS += \
     include/ServiceItem.h \
     model/Page.h \
+    widget/editor/box/TextEditBox.h \
+    widget/editor/editTab/ATextEditTab.h \
+    widget/editor/editTab/CleanEditTab.h \
+    widget/editor/editTab/EditorEditTab.h \
+    widget/editor/editTab/ExtractionEditTab.h \
     widget/editor/editTab/NetEditTab.h \
+    widget/editor/editTab/SaveEditTab.h \
     widget/editor/header/EditorHeader.h \
     widget/editor/propertyTab/edit/ClusterStyleConfig.h \
     window/MainWindow.h \
@@ -55,13 +61,7 @@ HEADERS += \
     widget/editor/propertyTab/CleanPropertyTab.h \
     widget/editor/propertyTab/EditPropertyTab.h \
     widget/editor/propertyTab/SavePropertyTab.h \
-    widget/editor/editTab/ExtractionEditArea.h \
-    widget/editor/editArea/EditAreaRect.h \
-    widget/editor/editArea/SelectAreaRect.h \
-    widget/editor/editTab/ATextEditArea.h \
-    widget/editor/editTab/EditorEditArea.h \
-    widget/editor/editTab/CleanEditArea.h \
-    widget/editor/editTab/SaveEditArea.h \
+    widget/editor/box/SelectAreaBox.h \
     include/IEditTab.h \
     widget/imageViewer/ImageViewer.h \
     widget/imageViewer/PageGraphicsView.h \

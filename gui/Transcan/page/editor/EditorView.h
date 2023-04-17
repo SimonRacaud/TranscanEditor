@@ -13,10 +13,10 @@
 #include "widget/editor/propertyTab/ExtractionPropertyTab.h"
 #include "widget/editor/propertyTab/SavePropertyTab.h"
 
-#include "widget/editor/editTab/ExtractionEditArea.h"
-#include "widget/editor/editTab/CleanEditArea.h"
-#include "widget/editor/editTab/EditorEditArea.h"
-#include "widget/editor/editTab/SaveEditArea.h"
+#include "widget/editor/editTab/ExtractionEditTab.h"
+#include "widget/editor/editTab/CleanEditTab.h"
+#include "widget/editor/editTab/EditorEditTab.h"
+#include "widget/editor/editTab/SaveEditTab.h"
 
 #include "include/environment.h"
 #include "widget/editor/header/EditorHeader.h"
@@ -46,10 +46,10 @@ protected:
     SavePropertyTab *_savePropTab;
 
     //      Editors
-    ExtractionEditArea *_extractEditTab;
-    CleanEditArea *_cleanEditTab;
-    EditorEditArea *_editEditTab;
-    SaveEditArea *_saveEditTab;
+    ExtractionEditTab *_extractEditTab;
+    CleanEditTab *_cleanEditTab;
+    EditorEditTab *_editEditTab;
+    SaveEditTab *_saveEditTab;
     //      Stacks
     QStackedWidget *_stackEdit;
     QStackedWidget *_stackProp;

@@ -3,7 +3,7 @@
 #include "widget/editor/propertyTab/CleanPropertyTab.h"
 #include "widget/editor/propertyTab/EditPropertyTab.h"
 #include "widget/editor/propertyTab/SavePropertyTab.h"
-#include "widget/editor/editTab/ExtractionEditArea.h"
+#include "widget/editor/editTab/ExtractionEditTab.h"
 
 #include <QHBoxLayout>
 #include <QtSvgWidgets/QSvgWidget>
@@ -18,16 +18,16 @@ EditorView::EditorView(APIClient &api, QWidget *parent)
     // HEADER
     this->_header = new EditorHeader;
     // BODY
-    this->_extractEditTab = new ExtractionEditArea(api);
-    this->_cleanEditTab = new CleanEditArea(api);
-    this->_editEditTab = new EditorEditArea(api);
-    this->_saveEditTab = new SaveEditArea(api);
+    this->_extractEditTab = new ExtractionEditTab(api);
+    this->_cleanEditTab = new CleanEditTab(api);
+    this->_editEditTab = new EditorEditTab(api);
+    this->_saveEditTab = new SaveEditTab(api);
 
-    FuncNetCall func = bind(&CleanEditArea::loadAPI, _cleanEditTab);
+    FuncNetCall func = bind(&CleanEditTab::loadAPI, _cleanEditTab);
     this->_cleanPropTab = new CleanPropertyTab(func);
-    func = bind(&EditorEditArea::loadAPI, _editEditTab);
+    func = bind(&EditorEditTab::loadAPI, _editEditTab);
     this->_editPropTab = new EditPropertyTab(func);
-    func = bind(&ExtractionEditArea::loadAPI, _extractEditTab);
+    func = bind(&ExtractionEditTab::loadAPI, _extractEditTab);
     this->_extractPropTab = new ExtractionPropertyTab(func);
     func = [](){}; // Do nothing
     this->_savePropTab = new SavePropertyTab(func);

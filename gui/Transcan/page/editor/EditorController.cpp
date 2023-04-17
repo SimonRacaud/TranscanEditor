@@ -26,16 +26,16 @@ void EditorController::setupEvents()
     connect(_extractEditTab, &NetEditTab::allAPIRequestsCompleted, _extractPropTab, &APropertyTab::unlockReloadButton);
     connect(_saveEditTab, &NetEditTab::allAPIRequestsCompleted, _savePropTab, &APropertyTab::unlockReloadButton);
 
-    connect(_cleanPropTab, &CleanPropertyTab::sigReplacePage, _cleanEditTab, &CleanEditArea::slotReplacePage);
+    connect(_cleanPropTab, &CleanPropertyTab::sigReplacePage, _cleanEditTab, &CleanEditTab::slotReplacePage);
 
     // Edit Tab : Text Style Update
-    connect(_editPropTab, &EditPropertyTab::sigUpdateClusterStyle, _editEditTab, &EditorEditArea::updateSelectedClusterStyle);
-    connect(_editPropTab, &EditPropertyTab::sigUpdateAllClusterStyle, _editEditTab, &EditorEditArea::updateAllClusterStyle);
-    connect(_editEditTab, &EditorEditArea::sigFocusEditRect, _editPropTab, &EditPropertyTab::onFocusCluster);
-    connect(_editEditTab, &EditorEditArea::sigUnfocusEditRect, _editPropTab, &EditPropertyTab::onUnfocusCluster);
+    connect(_editPropTab, &EditPropertyTab::sigUpdateClusterStyle, _editEditTab, &EditorEditTab::updateSelectedClusterStyle);
+    connect(_editPropTab, &EditPropertyTab::sigUpdateAllClusterStyle, _editEditTab, &EditorEditTab::updateAllClusterStyle);
+    connect(_editEditTab, &EditorEditTab::sigFocusEditRect, _editPropTab, &EditPropertyTab::onFocusCluster);
+    connect(_editEditTab, &EditorEditTab::sigUnfocusEditRect, _editPropTab, &EditPropertyTab::onUnfocusCluster);
     // Save Tab
-    connect(_savePropTab, &SavePropertyTab::sigUpdateProjectDestinationPath, _saveEditTab, &SaveEditArea::onUpdateProjectDestinationPath);
-    connect(_savePropTab, &SavePropertyTab::sigExport, _saveEditTab, &SaveEditArea::onExport);
+    connect(_savePropTab, &SavePropertyTab::sigUpdateProjectDestinationPath, _saveEditTab, &SaveEditTab::onUpdateProjectDestinationPath);
+    connect(_savePropTab, &SavePropertyTab::sigExport, _saveEditTab, &SaveEditTab::onExport);
 
     // Header
     connect(_header, &EditorHeader::sigChangeTab, this, &EditorController::setTab);

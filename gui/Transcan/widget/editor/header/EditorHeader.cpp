@@ -6,7 +6,7 @@
 
 extern MainWindow *mainWindow;
 
-EditorHeader::EditorHeader(QWidget *parent)
+EditorHeader::EditorHeader(QWidget *)
     : QWidget{}, _showSourceButton(new QPushButton), _extractButton(new QPushButton),
       _cleanButton(new QPushButton), _editButton(new QPushButton), _saveButton(new QPushButton),
       _exitButton(new QPushButton)

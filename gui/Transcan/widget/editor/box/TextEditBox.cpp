@@ -1,4 +1,4 @@
-#include "EditAreaRect.h"
+#include "TextEditBox.h"
 #include "qwidget.h"
 #include <QPainter>
 #include <algorithm>
@@ -11,7 +11,7 @@
 
 using namespace std;
 
-EditAreaRect::EditAreaRect(BlockCluster const &data, RectMode mode, int pageY)
+TextEditBox::TextEditBox(BlockCluster const &data, RectMode mode, int pageY)
     : QGraphicsProxyWidget(),
       _mode(mode),
       _data(data),
@@ -46,18 +46,18 @@ EditAreaRect::EditAreaRect(BlockCluster const &data, RectMode mode, int pageY)
     _textEdit->verticalScrollBar()->setStyleSheet("QScrollBar {width:0px;}");
 }
 
-QRectF EditAreaRect::boundingRect() const
+QRectF TextEditBox::boundingRect() const
 {
     const QRectF rect = _data.polygon.boundingRect();
     return QRectF(0, 0, rect.width(), rect.height());
 }
 
-QUuid const &EditAreaRect::getUuid() const
+QUuid const &TextEditBox::getUuid() const
 {
     return _uuid;
 }
 
-void EditAreaRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void TextEditBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     if (!_showBoxView) {
         // Show only text
@@ -92,12 +92,12 @@ void EditAreaRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     painter->drawPath(path);
 }
 
-void EditAreaRect::setStyle(RenderConfig const &style)
+void TextEditBox::setStyle(RenderConfig const &style)
 {
     this->_data.style = style;
     auto font = style.font;
     if (style.strokeWidth > 9 || !style.strokeWidth)
-        throw std::invalid_argument("EditAreaRect::setStyle Invalid bold value");
+        throw std::invalid_argument("TextEditBox::setStyle Invalid bold value");
     font.setWeight(weightChoices[style.strokeWidth - 1]); // Range: 100-900
     this->setFont(font);
     this->setTextColor(style.color);
@@ -105,13 +105,13 @@ void EditAreaRect::setStyle(RenderConfig const &style)
     this->formatText();
 }
 
-void EditAreaRect::setFont(const QFont &font)
+void TextEditBox::setFont(const QFont &font)
 {
     _data.style.font = font;
     _textEdit->setFont(_data.style.font);
 }
 
-void EditAreaRect::setTextColor(QColor const &color)
+void TextEditBox::setTextColor(QColor const &color)
 {
     _data.style.color = color;
     _textEdit->setTextColor(color);
@@ -121,7 +121,7 @@ void EditAreaRect::setTextColor(QColor const &color)
     this->formatText();
 }
 
-void EditAreaRect::setLineHeight(int percentage)
+void TextEditBox::setLineHeight(int percentage)
 {
     QTextCursor textCursor = _textEdit->textCursor();
     QTextBlockFormat *newFormat = new QTextBlockFormat();
@@ -135,7 +135,7 @@ void EditAreaRect::setLineHeight(int percentage)
     _data.style.lineHeight = percentage;
 }
 
-void EditAreaRect::setLineHeightAbs(int pixels)
+void TextEditBox::setLineHeightAbs(int pixels)
 {
     QTextCursor textCursor = _textEdit->textCursor();
     QTextBlockFormat newFormat = textCursor.blockFormat();
@@ -148,7 +148,7 @@ void EditAreaRect::setLineHeightAbs(int pixels)
     textCursor.setBlockFormat(newFormat);
 }
 
-BlockCluster EditAreaRect::getData()
+BlockCluster TextEditBox::getData()
 {
     BlockCluster cluster = _data;
     // Update position
@@ -163,13 +163,13 @@ BlockCluster EditAreaRect::getData()
     return cluster;
 }
 
-bool EditAreaRect::isOnArea(QRectF const &area) const
+bool TextEditBox::isOnArea(QRectF const &area) const
 {
     const QRectF &rect = this->boundingRect();
     return rect.translated(this->pos()).intersects(area);
 }
 
-void EditAreaRect::removeFocus()
+void TextEditBox::removeFocus()
 {
     this->setFlag(ItemIsMovable, true);
     this->_textEdit->setReadOnly(true);
@@ -181,7 +181,7 @@ void EditAreaRect::removeFocus()
 
 /** Private **/
 
-void EditAreaRect::resize(QPointF diff)
+void TextEditBox::resize(QPointF diff)
 {
     const QRectF &rect = this->boundingRect();
     const QRectF &currentRect = rect.adjusted(0, 0, diff.x(), diff.y()); // Rect after resize
@@ -198,13 +198,13 @@ void EditAreaRect::resize(QPointF diff)
     }
 }
 
-void EditAreaRect::showEvent(QShowEvent *event)
+void TextEditBox::showEvent(QShowEvent *event)
 {
     QGraphicsProxyWidget::showEvent(event);
     this->formatText();
 }
 
-int EditAreaRect::computeOptimalFontSize(int *heightMargin, QString const &text) const
+int TextEditBox::computeOptimalFontSize(int *heightMargin, QString const &text) const
 {
     const int MAX_FONTSIZE = 100;
     int fontSize = 1;
@@ -214,7 +214,7 @@ int EditAreaRect::computeOptimalFontSize(int *heightMargin, QString const &text)
     const QStringList &wordList = text.split(regExpr, Qt::SkipEmptyParts);
 
     if (_data.style.strokeWidth > 9 || !_data.style.strokeWidth)
-        throw std::runtime_error("EditAreaRect::formatText invalid font weight");
+        throw std::runtime_error("TextEditBox::formatText invalid font weight");
     // Compute size of text for a font size => check it fit.
     // Then computer bigger size. Stop when the text don't fit anymore.
     while (fontSize < MAX_FONTSIZE/* Computing time limit */) {
@@ -235,7 +235,7 @@ int EditAreaRect::computeOptimalFontSize(int *heightMargin, QString const &text)
             if (wordWidth >= rect.width()) {
                 *heightMargin = marginHeight;
                 return fontSize - 1; // If one word is larger than the rect size.
-            } else if (lineWidth + wordWidth + spaceWidth > rect.width() || containLineBreak) {
+            } else if (lineWidth + wordWidth + spaceWidth > (unsigned int)rect.width() || containLineBreak) {
                 nbLine++;
                 lineWidth = wordWidth + spaceWidth;
             } else {
@@ -253,7 +253,7 @@ int EditAreaRect::computeOptimalFontSize(int *heightMargin, QString const &text)
     return MAX_FONTSIZE;
 }
 
-void EditAreaRect::formatText()
+void TextEditBox::formatText()
 {
     int heightMargin = 0;
 
@@ -265,7 +265,7 @@ void EditAreaRect::formatText()
     int fontSize = this->computeOptimalFontSize(&heightMargin, text);
     _data.style.font = QFont(_data.style.font.families(), fontSize);
     if (_data.style.strokeWidth > 9 || !_data.style.strokeWidth)
-        throw std::runtime_error("EditAreaRect::formatText invalid font weight");
+        throw std::runtime_error("TextEditBox::formatText invalid font weight");
     _data.style.font.setWeight(weightChoices[_data.style.strokeWidth - 1]);
     this->_textEdit->setFont(_data.style.font);
 
@@ -290,7 +290,7 @@ void EditAreaRect::formatText()
 //     this->setLineHeightAbs(lineHeight); // _data.style.lineHeight
 }
 
-void EditAreaRect::enableBoxView(bool enable)
+void TextEditBox::enableBoxView(bool enable)
 {
     this->_showBoxView = enable;
     this->update();
@@ -302,7 +302,7 @@ void EditAreaRect::enableBoxView(bool enable)
  * @brief Start editing
  * @param event
  */
-void EditAreaRect::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+void TextEditBox::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsObject::mouseDoubleClickEvent(event);
     this->setFlag(ItemIsMovable, false);
@@ -310,13 +310,13 @@ void EditAreaRect::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     this->_textEdit->setReadOnly(false);
 }
 
-void EditAreaRect::focusOutEvent(QFocusEvent *event)
+void TextEditBox::focusOutEvent(QFocusEvent *event)
 {
     QGraphicsProxyWidget::focusOutEvent(event);
     emit focusChanged(false, this);
 }
 
-void EditAreaRect::focusInEvent(QFocusEvent *event)
+void TextEditBox::focusInEvent(QFocusEvent *event)
 {
     QGraphicsProxyWidget::focusInEvent(event);
     this->_focus = true;
@@ -324,7 +324,7 @@ void EditAreaRect::focusInEvent(QFocusEvent *event)
     update();
 }
 
-void EditAreaRect::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void TextEditBox::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     if (_isResizing) {
         const QPointF pos = event->scenePos();
@@ -349,7 +349,7 @@ void EditAreaRect::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 //    }
 }
 
-void EditAreaRect::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void TextEditBox::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     const QPointF pos = event->pos();
 
@@ -366,7 +366,7 @@ void EditAreaRect::mousePressEvent(QGraphicsSceneMouseEvent *event)
    }
 }
 
-void EditAreaRect::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void TextEditBox::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     if (_isResizing) {
         _isResizing = false;
@@ -378,7 +378,7 @@ void EditAreaRect::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
-void EditAreaRect::keyPressEvent(QKeyEvent *event)
+void TextEditBox::keyPressEvent(QKeyEvent *event)
 {
     QGraphicsProxyWidget::keyPressEvent(event);
     if (_focusEdit) {

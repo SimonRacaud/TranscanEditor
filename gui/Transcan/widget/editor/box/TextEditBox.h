@@ -1,5 +1,5 @@
-#ifndef RECTAREAITEM_H
-#define RECTAREAITEM_H
+#ifndef TEXT_EDIT_BOX_H
+#define TEXT_EDIT_BOX_H
 
 #include <QGraphicsProxyWidget>
 #include <QTextEdit>
@@ -15,17 +15,17 @@ enum class RectMode {
     EDIT_TRAN, // edit translation
 };
 
-class EditAreaRect : public QGraphicsProxyWidget
+class TextEditBox : public QGraphicsProxyWidget
 {
     Q_OBJECT
 public:
     /**
-     * @brief EditAreaRect
+     * @brief TextEditBox
      * @param data
      * @param mode
      * @param pageY : Position on Y axis of the page in the scene
      */
-    EditAreaRect(BlockCluster const &data, RectMode mode, int pageY);
+    TextEditBox(BlockCluster const &data, RectMode mode, int pageY);
 
     QRectF boundingRect() const override;
 
@@ -78,7 +78,7 @@ public:
     void enableBoxView(bool enable = true);
 
 signals:
-    void focusChanged(bool state, EditAreaRect *rect);
+    void focusChanged(bool state, TextEditBox *rect);
 
 private:
     /**
@@ -128,4 +128,4 @@ private:
     bool _showBoxView{true};
 };
 
-#endif // RECTAREAITEM_H
+#endif // TEXT_EDIT_BOX_H

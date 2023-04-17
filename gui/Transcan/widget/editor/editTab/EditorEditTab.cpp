@@ -1,19 +1,19 @@
-#include "EditorEditArea.h"
+#include "EditorEditTab.h"
 #include <functional>
 
 using namespace std;
 
-EditorEditArea::EditorEditArea(APIClient &client)
-    : ATextEditArea(client, CLEAN, RectMode::EDIT_TRAN, false)
+EditorEditTab::EditorEditTab(APIClient &client)
+    : ATextEditTab(client, CLEAN, RectMode::EDIT_TRAN, false)
 {
-    connect(this, &EditorEditArea::sigRectFocusChanged, this, &EditorEditArea::onRectFocusChange);
+    connect(this, &EditorEditTab::sigRectFocusChanged, this, &EditorEditTab::onRectFocusChange);
 }
 
-void EditorEditArea::loadAPI()
+void EditorEditTab::loadAPI()
 {
-    ATextEditArea::loadAPI();
+    ATextEditTab::loadAPI();
     if (this->_config == nullptr) {
-        throw std::runtime_error("EditorEditArea::load null project config.");
+        throw std::runtime_error("EditorEditTab::load null project config.");
     }
     this->setLoadingState(true);
     for (OCRPage const &page: _pages) {
@@ -23,21 +23,21 @@ void EditorEditArea::loadAPI()
     }
 }
 
-void EditorEditArea::unload()
+void EditorEditTab::unload()
 {
-    ATextEditArea::unload();
+    ATextEditTab::unload();
 
     this->renderSceneToFiles();
 }
 
 /** SLOTS **/
 
-void EditorEditArea::updateAllClusterStyle(RenderConfig const &style)
+void EditorEditTab::updateAllClusterStyle(RenderConfig const &style)
 {
     QList<QGraphicsItem *> items = this->_scene->items();
 
     for (QGraphicsItem *item : items) {
-        EditAreaRect *rect = dynamic_cast<EditAreaRect *>(item);
+        TextEditBox *rect = dynamic_cast<TextEditBox *>(item);
         if (rect) {
             rect->setStyle(style);
         }
@@ -45,22 +45,22 @@ void EditorEditArea::updateAllClusterStyle(RenderConfig const &style)
     this->_config->renderConf = style;
 }
 
-void EditorEditArea::updateSelectedClusterStyle(RenderConfig const &style)
+void EditorEditTab::updateSelectedClusterStyle(RenderConfig const &style)
 {
     try {
-        EditAreaRect *rect = (!_selectedItemId.isNull()) ? &this->getRectFromId(_selectedItemId)
+        TextEditBox *rect = (!_selectedItemId.isNull()) ? &this->getRectFromId(_selectedItemId)
                                                          : nullptr;
         if (rect) {
             rect->setStyle(style);
         }
     } catch (std::exception const &err) {
-        std::cerr << "EditorEditArea::updateSelectedClusterStyle : Fail. " << err.what() << std::endl;
+        std::cerr << "EditorEditTab::updateSelectedClusterStyle : Fail. " << err.what() << std::endl;
     }
 }
 
 /** PRIVATE **/
 
-void EditorEditArea::onRectFocusChange(EditAreaRect *rect)
+void EditorEditTab::onRectFocusChange(TextEditBox *rect)
 {
     if (rect) {
         emit sigFocusEditRect(rect->getData().style);
@@ -69,7 +69,7 @@ void EditorEditArea::onRectFocusChange(EditAreaRect *rect)
     }
 }
 
-void EditorEditArea::renderSceneToFiles()
+void EditorEditTab::renderSceneToFiles()
 {
     this->enableEditBoxesRect(false); // Hide boxes borders
     _scene->clearSelection();                                                  // Selections would also render to the file
@@ -90,9 +90,9 @@ void EditorEditArea::renderSceneToFiles()
     _scene->setSceneRect(_scene->itemsBoundingRect());                          // Re-shrink the scene to it's bounding contents
 }
 
-void EditorEditArea::enableEditBoxesRect(bool enable)
+void EditorEditTab::enableEditBoxesRect(bool enable)
 {
-    this->foreachEditAreaRect([enable](EditAreaRect &rect) {
+    this->foreachTextEditBox([enable](TextEditBox &rect) {
         rect.enableBoxView(enable);
     });
 }

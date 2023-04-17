@@ -1,13 +1,13 @@
-#ifndef SAVEEDITAREA_H
-#define SAVEEDITAREA_H
+#ifndef SAVEEDITTAB_H
+#define SAVEEDITTAB_H
 
 #include "NetEditTab.h"
 
-class SaveEditArea : public NetEditTab
+class SaveEditTab : public NetEditTab
 {
     Q_OBJECT
 public:
-    SaveEditArea(APIClient &client);
+    SaveEditTab(APIClient &client);
 
     virtual void loadAPI() override;
 
@@ -18,4 +18,4 @@ public slots:
 private:
 };
 
-#endif // SAVEEDITAREA_H
+#endif // SAVEEDITTAB_H
