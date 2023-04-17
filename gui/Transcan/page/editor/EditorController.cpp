@@ -42,32 +42,46 @@ void EditorController::setupEvents()
     connect(_header, &EditorHeader::sigShowPageSourceTab, this, &EditorController::showSourcePageTab);
 
     connect(this, &EditorView::sigChangeTab, this, &EditorController::setTab);
+
+    // Base PropertyTab
+    /// Zoom:
+    connect(_extractPropTab, &APropertyTab::sigChangeZoom, this, &EditorController::setZoom);
+    connect(_cleanPropTab, &APropertyTab::sigChangeZoom, this, &EditorController::setZoom);
+    connect(_editPropTab, &APropertyTab::sigChangeZoom, this, &EditorController::setZoom);
+    connect(_savePropTab, &APropertyTab::sigChangeZoom, this, &EditorController::setZoom);
 }
 
 void EditorController::keyPressEvent(QKeyEvent *event)
 {
+    /// ZOOM in image viewers
     if ((event->key() == Qt::Key::Key_Plus
          && (event->modifiers() == Qt::ControlModifier || event->modifiers() == Qt::KeypadModifier))
             || event->key() == Qt::Key::Key_ZoomIn) {
         auto *editor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
-
         float zoom = editor->getZoom();
-        editor->setZoom(zoom + ZOOM_SHIFT);
-        _sourcePages->setZoom(zoom + ZOOM_SHIFT);
+        this->setZoom(zoom + ZOOM_SHIFT);
     } else if ((event->key() == Qt::Key::Key_Minus
                 && (event->modifiers() == Qt::ControlModifier || event->modifiers() == Qt::KeypadModifier))
                || event->key() == Qt::Key::Key_ZoomOut) {
         auto *editor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
-
         float zoom = editor->getZoom();
-        editor->setZoom(zoom - ZOOM_SHIFT);
-        _sourcePages->setZoom(zoom - ZOOM_SHIFT);
+        this->setZoom(zoom - ZOOM_SHIFT);
     } else {
         EditorView::keyPressEvent(event);
     }
 }
 
 /** Public **/
+
+void EditorController::setZoom(float value)
+{
+    auto *editor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
+    auto *propertyTab = dynamic_cast<APropertyTab *>(_stackProp->currentWidget());
+
+    propertyTab->setZoom(value);
+    editor->setZoom(value);
+    _sourcePages->setZoom(value);
+}
 
 void EditorController::onStart(ProjectConfig const &config)
 {
@@ -131,6 +145,8 @@ void EditorController::setTab(EditorTab tab)
     connect(newEditor, &ImageViewer::verticalScrollValueChanged, _sourcePages, &ImageViewer::setVerticalScrollPosition);
     connect(_sourcePages, &ImageViewer::horizontalScrollValueChanged, newEditor, &ImageViewer::setHorizontalScrollPosition);
     connect(_sourcePages, &ImageViewer::verticalScrollValueChanged, newEditor, &ImageViewer::setVerticalScrollPosition);
+    //
+    prop->setZoom(_sourcePages->getZoom());
 
     // Load new tab
     IEditTab *newEditTab = dynamic_cast<IEditTab *>(newEditor);

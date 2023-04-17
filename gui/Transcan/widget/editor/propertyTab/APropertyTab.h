@@ -8,6 +8,7 @@
 #include <QScrollArea>
 
 #include "include/environment.h"
+#include "widget/misc/ZoomWidget.h"
 
 using FuncNetCall = std::function<void()>;
 
@@ -24,6 +25,7 @@ public:
 
 public slots:
     void unlockReloadButton();
+    void setZoom(float value);
 
 protected:
     virtual void fillHelp() = 0;
@@ -31,6 +33,7 @@ protected:
 
 signals:
     void nextStep();
+    void sigChangeZoom(float value);
 
 private:
     FuncNetCall _netCallback;
@@ -43,6 +46,7 @@ protected:
     QPushButton *_nextButton;
     QLabel *_help;
     QVBoxLayout *_propertiesLayout;
+    ZoomWidget *_zoomWidget;
 };
 
 #endif // APROPERTYTAB_H

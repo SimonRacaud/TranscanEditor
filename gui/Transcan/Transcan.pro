@@ -19,6 +19,7 @@ SOURCES += \
         widget/editor/editTab/NetEditTab.cpp \
     widget/editor/editTab/SaveEditTab.cpp \
     widget/editor/header/EditorHeader.cpp \
+    widget/misc/ZoomWidget.cpp \
     widget/editor/propertyTab/edit/ClusterStyleConfig.cpp \
         window/MainWindow.cpp \
         window/ViewerWindow.cpp \
@@ -47,6 +48,7 @@ HEADERS += \
     widget/editor/editTab/NetEditTab.h \
     widget/editor/editTab/SaveEditTab.h \
     widget/editor/header/EditorHeader.h \
+    widget/misc/ZoomWidget.h \
     widget/editor/propertyTab/edit/ClusterStyleConfig.h \
     window/MainWindow.h \
     window/ViewerWindow.h \

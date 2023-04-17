@@ -26,6 +26,13 @@ public:
 
     void showSourcePageTab(bool enable);
 
+public slots:
+    /**
+     * @brief setZoom : Set Editor pages viewer zoom
+     * @param value
+     */
+    void setZoom(float value);
+
 private:
     void setupEvents();
 

@@ -10,6 +10,12 @@ APropertyTab::APropertyTab(FuncNetCall &reloadFunc, QWidget *parent)
     QVBoxLayout *upperLayout = new QVBoxLayout;
     QVBoxLayout *lowerLayout = new QVBoxLayout;
 
+    // Zoom
+    _zoomWidget = new ZoomWidget(0);
+    rootLayout->addWidget(_zoomWidget);
+    connect(_zoomWidget, &ZoomWidget::sigZoomChanged, [this](float value){
+        emit this->sigChangeZoom(value);
+    });
     // Upper section (properties)
     this->_title = new QLabel();
     this->_title->setObjectName("EditorPropTitle");
@@ -75,10 +81,15 @@ APropertyTab::APropertyTab(FuncNetCall &reloadFunc, QWidget *parent)
                 std::cerr << "Fail to reload. " << err.what();
             }
         }
-    });
+    });    
 }
 
 void APropertyTab::unlockReloadButton()
 {
     this->_reloadButton->setEnabled(true);
 }
+
+ void APropertyTab::setZoom(float value)
+ {
+     this->_zoomWidget->setZoom(value);
+ }

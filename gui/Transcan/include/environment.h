@@ -86,6 +86,8 @@ static const QFont::Weight weightChoices[] = {QFont::Thin, QFont::ExtraLight, QF
 
 // Editor page zoom key shortcut
 #define ZOOM_SHIFT 0.05 // scale shift
+#define ZOOM_MIN_INT 1
+#define ZOOM_MAX_INT 500
 
 enum class EditorTab {
     EXTRACT = 0,
