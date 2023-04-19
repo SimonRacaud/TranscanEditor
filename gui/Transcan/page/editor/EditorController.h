@@ -33,6 +33,12 @@ public slots:
      */
     void setZoom(float value);
 
+    /**
+     * @brief networkError : called when a network error occur with the CORE.
+     * @param message
+     */
+    void networkError(QString const &message);
+
 private:
     void setupEvents();
 

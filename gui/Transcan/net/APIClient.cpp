@@ -93,6 +93,7 @@ void APIClient::sendRequest(QString const& target, QByteArray const &body,
         if (reply->error() != QNetworkReply::NoError){
             qDebug() << "Network Error: " << reply->errorString() << reply->error() << " Body: " << rawData;
             errFunc(reply->errorString());
+            emit this->sigNetError(reply->errorString());
         } else {
             qDebug() << "Network reply received for target : " << target << ".";
             QJsonDocument doc = QJsonDocument::fromJson(rawData);

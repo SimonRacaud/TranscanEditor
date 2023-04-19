@@ -1,6 +1,8 @@
 #ifndef APICLIENT_H
 #define APICLIENT_H
 
+#include <QObject>
+
 #include "include/models.h"
 #include "model/Page.h"
 #include "include/environment.h"
@@ -12,8 +14,9 @@
 using NetCallback = std::function<void(OCRPage const& page)>;
 using NetErrCallback = std::function<void(QString const& errMsg)>;
 
-class APIClient
+class APIClient : public QObject
 {
+    Q_OBJECT
 public:
     APIClient(QString const &url = API_URL);
 
@@ -65,6 +68,9 @@ public:
      * @return Return True if there is one or more pending reply
      */
     bool pendingReply() const;
+
+signals:
+    void sigNetError(QString const &message);
 
 protected:
     /**

@@ -188,3 +188,10 @@ APropertyTab QLabel {
 #SavePropTabDestPath {
     color: rgb(80, 80, 80);
 }
+
+/*** Notification ***/
+
+#NotificationLabel {
+    font-size: 12px;
+    font-weight: bold;
+}

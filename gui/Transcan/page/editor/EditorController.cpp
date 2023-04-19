@@ -1,5 +1,6 @@
 #include "EditorController.h"
 #include "../../window/MainWindow.h"
+#include "widget/misc/Notification.h"
 
 #include <functional>
 #include <QMessageBox>
@@ -49,6 +50,8 @@ void EditorController::setupEvents()
     connect(_cleanPropTab, &APropertyTab::sigChangeZoom, this, &EditorController::setZoom);
     connect(_editPropTab, &APropertyTab::sigChangeZoom, this, &EditorController::setZoom);
     connect(_savePropTab, &APropertyTab::sigChangeZoom, this, &EditorController::setZoom);
+    // Network
+    connect(&_api, &APIClient::sigNetError, this, &EditorController::networkError);
 }
 
 void EditorController::keyPressEvent(QKeyEvent *event)
@@ -81,6 +84,16 @@ void EditorController::setZoom(float value)
     propertyTab->setZoom(value);
     editor->setZoom(value);
     _sourcePages->setZoom(value);
+}
+
+void EditorController::networkError(QString const &message)
+{
+    static bool firstCall = true;
+    std::cerr << "Network error : " << message.toStdString() << std::endl;
+    if (firstCall) {
+        firstCall = false;
+        Notification::Build("Error: Unable to communicate with the core daemon.", this);
+    }
 }
 
 void EditorController::onStart(ProjectConfig const &config)

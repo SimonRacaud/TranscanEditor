@@ -97,4 +97,9 @@ enum class EditorTab {
     LAST_VALUE // Nothing after this
 };
 
+// Notification
+#define NOTIF_TRANSIT_TIME 1000 // ms
+#define NOTIF_SHOW_TIME 3000 // ms
+#define NOTIF_POS QPoint(20, 20)
+
 #endif // ENVIRONMENT_H

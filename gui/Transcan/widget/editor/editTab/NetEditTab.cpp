@@ -9,11 +9,9 @@ NetEditTab::~NetEditTab()
 {
 }
 
-void NetEditTab::netError(QString const &message)
+void NetEditTab::netError(QString const &)
 {
-    std::cerr << "Network error : " << message.toStdString() << std::endl;
     this->setLoadingState(false);
-    // TODO : show GUI popup
 }
 
 void NetEditTab::setConfig(shared_ptr<ProjectConfig> config)
