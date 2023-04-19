@@ -75,7 +75,12 @@ void ImageViewer::setPages(vector<OCRPage> const &pages)
                 throw std::invalid_argument("ImageViewer::setPages Failed to load image "+path.toStdString());
             }
         }
-        this->_pixmapList.append(img);
+        this->_pixmapList.append(img);        
+        maxImgWidth = qMax(maxImgWidth, (size_t)img.width());
+    }
+    for (QPixmap &img : _pixmapList) {
+        img = img.scaledToWidth(maxImgWidth);
+        //
         QGraphicsDropShadowEffect* effect = new QGraphicsDropShadowEffect();
         effect->setBlurRadius(EDITOR_PAGE_SHADOW_RADIUS);
         effect->setXOffset(0);
@@ -85,7 +90,6 @@ void ImageViewer::setPages(vector<OCRPage> const &pages)
         item->setPos(0, offsetY);
         pageItems.push_back(item->topLevelItem());
         offsetY += img.height();
-        maxImgWidth = qMax(maxImgWidth, (size_t)img.width());
     }
     if (_imageWidth == 0 && offsetY > 0/* The images were found */) {
         // First images loaded. Not an update of a previous display.
