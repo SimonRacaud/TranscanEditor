@@ -18,7 +18,7 @@ ClusterStyleConfig::ClusterStyleConfig(QString const &title) : QFrame()
     _inStrokeWidth->setMinimum(1);
     _inStrokeWidth->setSingleStep(1);
 
-    _inFont = new QFontComboBox();
+    _inFont = new FontSelect();
 
     _selectColorButton = new QPushButton(tr("Select"));
     _colorSelect = new QColorDialog();
@@ -39,7 +39,7 @@ ClusterStyleConfig::ClusterStyleConfig(QString const &title) : QFrame()
 
     connect(_inStrokeWidth, &QSpinBox::valueChanged, [this](){ emit this->onUpdate(); });
     connect(_colorSelect, &QDialog::finished, [this](){ emit this->onUpdate(); });
-    connect(_inFont, &QFontComboBox::currentIndexChanged, [this](){ emit this->onUpdate(); });
+    connect(_inFont, &FontSelect::currentIndexChanged, [this](){ emit this->onUpdate(); });
     connect(_inLineHeight, &QSpinBox::valueChanged, [this](){ emit this->onUpdate(); });
 }
 
@@ -74,14 +74,15 @@ void ClusterStyleConfig::connectEvents()
 {
     connect(_inStrokeWidth, &QSpinBox::valueChanged, [this](){ emit this->onUpdate(); });
     connect(_colorSelect, &QDialog::finished, [this](){ emit this->onUpdate(); });
-    connect(_inFont, &QFontComboBox::currentIndexChanged, [this](){ emit this->onUpdate(); });
+    connect(_inFont, &FontSelect::currentIndexChanged, [this](){ emit this->onUpdate(); });
     connect(_inLineHeight, &QSpinBox::valueChanged, [this](){ emit this->onUpdate(); });
 }
+
 void ClusterStyleConfig::disconnectEvents()
 {
     disconnect(_inStrokeWidth, &QSpinBox::valueChanged, nullptr, nullptr);
     disconnect(_colorSelect, &QDialog::finished, nullptr, nullptr);
-    disconnect(_inFont, &QFontComboBox::currentIndexChanged, nullptr, nullptr);
+    disconnect(_inFont, &FontSelect::currentIndexChanged, nullptr, nullptr);
     disconnect(_inLineHeight, &QSpinBox::valueChanged, nullptr, nullptr);
 }
 

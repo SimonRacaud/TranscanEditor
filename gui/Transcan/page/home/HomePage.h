@@ -5,6 +5,7 @@
 #include <QStringListModel>
 
 #include "include/environment.h"
+#include "widget/misc/FontSelect.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class HomePage; }
@@ -41,6 +42,7 @@ signals:
 
 private:
     Ui::HomePage *ui;
+    FontSelect *_fontSelector;
 
     QStringListModel *previousProjectListModel = nullptr;
     QStringList previousProjectList;

@@ -10,6 +10,8 @@ HomePage::HomePage(QWidget *parent)
     : QWidget{parent}, ui(new Ui::HomePage)
 {
     ui->setupUi(this);
+    _fontSelector = new FontSelect;
+    ui->fontSelectLayout->addWidget(_fontSelector);
     // Previous Project List
     this->previousProjectListModel = new QStringListModel(this);
     this->previousProjectListModel->setStringList(this->previousProjectList);
@@ -22,6 +24,7 @@ HomePage::HomePage(QWidget *parent)
     this->destDirectory = "/home/simon/scanTranslator/data/result";
     this->ui->ocrComboBox->setCurrentIndex(1); // AWS
     this->ui->transComboBox->setCurrentIndex(1); // GOOGLE
+    _fontSelector->setCurrentFont(QFont("Arial"));
 }
 
 HomePage::~HomePage()
@@ -116,7 +119,7 @@ void HomePage::on_submitButton_clicked()
     const int translationServiceIndex = this->ui->transComboBox->currentIndex();
     const QString &srcLang = (translationServiceIndex) ? this->ui->transSrcComboBox->currentText() : nullptr;
     const QString &destLang = (translationServiceIndex) ? this->ui->transDestComboBox->currentText() : nullptr;
-    const QFont &font = this->ui->fontComboBox->currentFont();
+    const QFont &font = _fontSelector->currentFont();
     //
     ProjectConfig config(
                 srcDirectory,

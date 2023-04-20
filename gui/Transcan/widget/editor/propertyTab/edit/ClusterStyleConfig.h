@@ -9,6 +9,7 @@
 
 #include "model/Page.h"
 #include "include/models.h"
+#include "widget/misc/FontSelect.h"
 
 class ClusterStyleConfig : public QFrame
 {
@@ -48,7 +49,7 @@ private:
 
     QSpinBox *_inLineHeight;
     QSpinBox *_inStrokeWidth;
-    QFontComboBox *_inFont;
+    FontSelect *_inFont;
     QPushButton *_selectColorButton;
     QColorDialog *_colorSelect;
 };

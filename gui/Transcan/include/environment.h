@@ -38,7 +38,6 @@ const QList<QString> SUPPORTED_EXTENSION_SUFFIX = {
 };
 #define IMG_SELECT_FILTER "Images (*.png *.jpeg *.jpg)"
 
-
 #define API_URL "http://127.0.0.1:5000"
 
 // Style
@@ -70,6 +69,8 @@ const QList<QString> SUPPORTED_EXTENSION_SUFFIX = {
 // Asset
 
 #define IMG_LOADING ":/asset/img/loading.gif"
+#define FONT_DIR_REG ":/asset/font/regular/"
+#define FONT_DIR_SFX ":/asset/font/sfx/"
 
 // Config
 

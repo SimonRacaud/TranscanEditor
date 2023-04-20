@@ -11,6 +11,7 @@ CONFIG += c++17
 SOURCES += \
 	main.cpp \
         model/Page.cpp \
+    utility/FontManager.cpp \
     widget/editor/box/TextEditBox.cpp \
     widget/editor/editTab/ATextEditTab.cpp \
     widget/editor/editTab/CleanEditTab.cpp \
@@ -19,6 +20,7 @@ SOURCES += \
         widget/editor/editTab/NetEditTab.cpp \
     widget/editor/editTab/SaveEditTab.cpp \
     widget/editor/header/EditorHeader.cpp \
+    widget/misc/FontSelect.cpp \
     widget/misc/Notification.cpp \
     widget/misc/ZoomWidget.cpp \
     widget/editor/propertyTab/edit/ClusterStyleConfig.cpp \
@@ -40,7 +42,9 @@ SOURCES += \
 
 HEADERS += \
     include/ServiceItem.h \
+    include/resource_font.h \
     model/Page.h \
+    utility/FontManager.h \
     widget/editor/box/TextEditBox.h \
     widget/editor/editTab/ATextEditTab.h \
     widget/editor/editTab/CleanEditTab.h \
@@ -49,6 +53,7 @@ HEADERS += \
     widget/editor/editTab/NetEditTab.h \
     widget/editor/editTab/SaveEditTab.h \
     widget/editor/header/EditorHeader.h \
+    widget/misc/FontSelect.h \
     widget/misc/Notification.h \
     widget/misc/ZoomWidget.h \
     widget/editor/propertyTab/edit/ClusterStyleConfig.h \
