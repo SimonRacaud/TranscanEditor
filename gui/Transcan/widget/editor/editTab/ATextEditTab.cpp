@@ -15,6 +15,7 @@ ATextEditTab::ATextEditTab(APIClient &client, ImageMode modeImg, RectMode mode, 
 void ATextEditTab::setPages(vector<OCRPage> const &pages)
 {
     ImageViewer::setPages(pages); // Display page images
+    // Create all TextEditBox on the scene. Depending on the page's clusters
     this->setPagesEditAreas(pages);
 }
 

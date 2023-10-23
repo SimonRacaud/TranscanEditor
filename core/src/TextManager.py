@@ -20,13 +20,14 @@ class TextManager:
                 - Text total height
         """
         if text == "":
-            return ImageFont.load_default(), [], 0
+            return ImageFont.load_default(), [], 0 # Nothing to do
         try:
             scale, lines, text_height = cls.__get_optimal_font_scale(text, areaSize, font_path, text_padding)
             return ImageFont.truetype(font_path, size=scale), lines, text_height
         except OSError as err:
             print("(FontManager) Warning: fail to load font", font_path, "Using default.", err)
-            raise ArgumentError(None, message="Fail to load font "+font_path)
+            return ImageFont.load(font_path)
+            #raise ArgumentError(None, message="Fail to load font "+font_path)
     
     @staticmethod
     def __get_optimal_font_scale(text: str, areaSize: Vector2I, font_path: str, text_padding: int) -> Tuple[int, List[str], int]:
