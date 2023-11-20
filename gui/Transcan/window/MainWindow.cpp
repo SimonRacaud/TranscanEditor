@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 #include <QGridLayout>
+#include <QMessageBox>
 #include "include/models.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _stack(nullptr), _homePage(nullptr), _viewer(nullptr)
@@ -37,7 +38,13 @@ void MainWindow::showViewer(QString const &dirPath)
 
 void MainWindow::setConfig(ProjectConfig const &config)
 {
-    this->_editor->onStart(config);
+    try {
+        this->_editor->onStart(config);
+    } catch (std::exception const &err) {
+        qDebug("MainWindow::setConfig exception : %s\n", err.what());
+        QMessageBox::critical(this, tr("An error occured"), tr("Unable to load project"));
+        this->setPage(Page::HOME);
+    }
 }
 
 void MainWindow::setPage(Page page)
