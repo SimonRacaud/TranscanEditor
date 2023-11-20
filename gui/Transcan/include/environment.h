@@ -79,7 +79,7 @@ const QList<QString> SUPPORTED_EXTENSION_SUFFIX = {
 
 #define DEF_EDIT_LINE_HEIGHT 30 // Edition/render config
 #define DEF_EDIT_STROKE_WIDTH 4 // Normal
-#define DEF_EDIT_FONT "Arial"
+#define DEF_EDIT_FONT "Wild Words"
 #define DEF_EDIT_COLOR QColor(Qt::black)
 
 #include <QFont>

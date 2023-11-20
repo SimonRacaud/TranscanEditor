@@ -26,7 +26,6 @@ HomePage::HomePage(QWidget *parent)
     this->destDirectory = "/home/simon/scanTranslator/data/result";
     this->ui->ocrComboBox->setCurrentIndex(1); // AWS
     this->ui->transComboBox->setCurrentIndex(1); // GOOGLE
-    _fontSelector->setCurrentFont(QFont("Arial"));
 }
 
 HomePage::~HomePage()

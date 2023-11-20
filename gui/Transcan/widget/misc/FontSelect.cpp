@@ -24,6 +24,11 @@ FontSelect::FontSelect(QWidget *parent)
     this->setLayout(lay);
     this->setObjectName("FontSelectWidget");
     this->_openIndicator->setObjectName("FontSelectWidgetOpenChar");
+
+    this->_fontList = new FontSelectList(this);
+    connect(_fontList, &FontSelectList::sigSelectFont, this, &FontSelect::selectFont);
+    connect(_fontList, &FontSelectList::sigClosed, this, &FontSelect::close);
+    this->selectFont(DEF_EDIT_FONT);
 }
 
 void FontSelect::open()

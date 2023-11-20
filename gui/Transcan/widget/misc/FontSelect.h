@@ -79,7 +79,7 @@ private:
      */
     virtual void paintEvent(QPaintEvent* event);
 
-private slots:
+public slots:
     void selectFont(QString const &family);
 
 signals:
