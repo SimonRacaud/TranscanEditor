@@ -1,4 +1,5 @@
 #include "ImageViewer.h"
+#include "utils/FileUtils.h"
 
 #include <QHBoxLayout>
 #include <QScrollBar>
@@ -56,31 +57,30 @@ void ImageViewer::setPages(vector<OCRPage> const &pages)
     this->clearView(); // Remove current pages
 
     QList<QGraphicsItem *> pageItems;
-    for (const OCRPage &page : pages) {
+    QList<QPixmap> imageList;
+    // Load images from filesystem:
+    for (OCRPage &page : _pages) {
         QPixmap img;
-        QString path;
-        if (_mode == SOURCE) {
-            path = page.imagePath;
-        } else if (_mode == CLEAN) {
-            path = page.cleanImagePath;
-        } else {
-            path = page.renderImagePath;
-        }
+        QString path = this->_getPathFromMode(page);
         bool loaded = img.load(path);
         if (!loaded) { // Failed to load image
-            if (_mode != SOURCE) {
-                loaded = img.load(page.imagePath); // Load source image instead
+            if (_mode != SOURCE && _mode != NONE) {
+                // In the case that the cleaned image has not been received yet
+                loaded = img.load(page.sourceImagePath); // Load source image instead
             }
-            if (_mode == SOURCE || !loaded) {
-                throw std::invalid_argument("ImageViewer::setPages Failed to load image "+path.toStdString());
+            if (!loaded) {
+                throw std::invalid_argument("ImageViewer::setPages Failed to load image :"+path.toStdString());
             }
         }
-        this->_pixmapList.append(img);        
         maxImgWidth = qMax(maxImgWidth, (size_t)img.width());
+        imageList.append(img);
     }
-    for (QPixmap &img : _pixmapList) {
-        img = img.scaledToWidth(maxImgWidth);
-        //
+    // Scale images and add them to the UI (scene):
+    for (QPixmap &img : imageList) {
+        if (_mode == NONE) { // Not needed in other modes
+            img = img.scaledToWidth(maxImgWidth);
+        }
+        // Show page in GUI:
         QGraphicsDropShadowEffect* effect = new QGraphicsDropShadowEffect();
         effect->setBlurRadius(EDITOR_PAGE_SHADOW_RADIUS);
         effect->setXOffset(0);
@@ -89,8 +89,10 @@ void ImageViewer::setPages(vector<OCRPage> const &pages)
         item->setGraphicsEffect(effect);
         item->setPos(0, offsetY);
         pageItems.push_back(item->topLevelItem());
+        // Compute view height:
         offsetY += img.height();
     }
+    // Update UI scene rect to fit the pages:
     if (_imageWidth == 0 && offsetY > 0/* The images were found */) {
         // First images loaded. Not an update of a previous display.
         _imageWidth = maxImgWidth;
@@ -99,23 +101,34 @@ void ImageViewer::setPages(vector<OCRPage> const &pages)
     this->_pageGroup = this->_scene->createItemGroup(pageItems);
 }
 
+QString ImageViewer::_getPathFromMode(OCRPage const &page) const
+{
+    if (_mode == SOURCE) {
+        return page.sourceImagePath;
+    } else if (_mode == CLEAN) {
+        return page.cleanImagePath;
+    } else if (_mode == RENDER) {
+        return page.renderImagePath;
+    } else {
+        return page.imagePath;
+    }
+}
+
+void ImageViewer::foreachPage(std::function<void(OCRPage &)> fun)
+{
+    std::for_each(_pages.begin(), _pages.end(), fun);
+}
+
 void ImageViewer::updatePage(OCRPage const &page)
 {
     unsigned int index = page.index;
 
     // Check page index
-    if (_pages.size() <= index || _pixmapList.size() <= index) {
+    if (_pages.size() <= index) {
         throw std::invalid_argument("ImageViewer::updatePage Invalid page index.");
     }
     // Check new image access
-    QString filePath;
-    if (_mode == SOURCE) {
-        filePath = page.imagePath;
-    } else if (_mode == CLEAN) {
-        filePath = page.cleanImagePath;
-    } else if (_mode == RENDER) {
-        filePath = page.renderImagePath;
-    }
+    QString filePath = this->_getPathFromMode(page);
     QImageReader newImgMeta(filePath);
     bool success = newImgMeta.canRead();
     if (!success) {
@@ -127,39 +140,24 @@ void ImageViewer::updatePage(OCRPage const &page)
     this->setPages(_pages); // Load pages again
 }
 
-void ImageViewer::loadPagesFromPath(QString const &path)
-{
+vector<OCRPage> ImageViewer::loadPagesFromPath(QString const &path)
+{   
     vector<OCRPage> pages;
-    this->clearView();
-
     try {
-        QDir dir(path);
-        QStringList filter;
-        QFileInfoList filelistinfo;
+        pages = FileUtils::loadPagesFromPath(path);
 
-        // Filter image files
-        for (size_t i = 0; i < (size_t)SUPPORTED_EXTENSION.size(); i++) {
-            filter << SUPPORTED_EXTENSION.at(i);
-        }
-        dir.setNameFilters(filter);
-        // Load images
-        filelistinfo = dir.entryInfoList();
-        foreach (const QFileInfo &fileinfo, filelistinfo) {
-            QString imageFile = fileinfo.absoluteFilePath();
-            OCRPage page;
-            page.imagePath = imageFile;
-            pages.push_back(page);
-        }
-        if (pages.size()) {
+        this->clearView();
+
+        if (pages.size() > 0) {
             this->setPages(pages);
         }
-    } catch (std::exception const &err) {
-        std::cerr << "Error: " << err.what() << std::endl;
-        throw std::invalid_argument("Unable to access source directory.");
+    } catch (std::runtime_error const &err) {
+        throw err;
     }
     if (pages.size() == 0) {
         throw std::invalid_argument("The source directory doesn't contain any valid image.");
     }
+    return pages;
 }
 
 std::vector<OCRPage> ImageViewer::getPages()
@@ -247,7 +245,6 @@ void ImageViewer::resizeEvent(QResizeEvent *event)
 void ImageViewer::clearView()
 {
     this->_pageGroup = nullptr;
-    this->_pixmapList.clear();
     this->_scene->clear();
 }
 
@@ -255,6 +252,14 @@ void ImageViewer::emitScrollPosition()
 {
     emit this->horizontalScrollValueChanged(this->_view->horizontalScrollBar()->value());
     emit this->verticalScrollValueChanged(this->_view->verticalScrollBar()->value());
+}
+
+QGraphicsItemGroup *ImageViewer::getPageGroup()
+{
+    if (!_pageGroup) {
+        throw std::runtime_error("ImageViewer::getPageGroup : Pages not loaded");
+    }
+    return _pageGroup;
 }
 
 /** SLOTS **/

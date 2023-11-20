@@ -17,12 +17,13 @@ class ImageViewer : public QWidget
 public:
     // Image to display from the OCRPage
     enum ImageMode {
-        SOURCE, // Show source image
-        CLEAN, // Show cleaned image
-        RENDER // Show rendered image
+        NONE,   // Show images directly from filesystem
+        SOURCE, // Show source image (local project)
+        CLEAN, // Show cleaned image (local project)
+        RENDER // Show rendered image (local project)
     };
 
-    explicit ImageViewer(ImageMode mode = SOURCE, QWidget *parent = nullptr);
+    explicit ImageViewer(ImageMode mode = NONE, QWidget *parent = nullptr);
 
     /**
      * @brief setPages Overwrite current pages with the ones given as parameter
@@ -41,8 +42,9 @@ public:
      * @brief loadPagesFromPath Read every supported images located in path directory
      *  and overwrite the current OCRPage list.
      * @param path Path of a local directory
+     * @return vector<OCRPage>
      */
-    void loadPagesFromPath(QString const& path);
+    vector<OCRPage> loadPagesFromPath(QString const& path);
 
     /**
      * @brief getPages Export current pages
@@ -89,6 +91,8 @@ public:
      */
     void emitScrollPosition();
 
+    void foreachPage(std::function<void(OCRPage &)> fun);
+
 protected slots:
     void refreshImageListSlot();
 
@@ -103,10 +107,19 @@ signals:
 protected:
     virtual void resizeEvent(QResizeEvent *event) override;
 
+    QGraphicsItemGroup *getPageGroup();
+
     /**
      * @brief clearView Clear pages widgets
      */
     void clearView();
+
+    /**
+     * @brief _getPathFromMode : Return the page's image location depending on the viewer's mode (Source, Clean or render)
+     * @param page
+     * @return target image path
+     */
+    QString _getPathFromMode(OCRPage const &page) const;
 
 private:
     ImageMode _mode;
@@ -119,13 +132,12 @@ private:
     int _timePreviousResize{0};
 
     size_t _imageWidth{0};
+    QGraphicsItemGroup *_pageGroup{nullptr}; // Group of page items
 
 protected:
-    QGraphicsItemGroup *_pageGroup{nullptr}; // Group of page items
     std::vector<OCRPage> _pages;
     PageGraphicsView *_view;
     QGraphicsScene *_scene;
-    QList<QPixmap> _pixmapList; // Original images buffer
 };
 
 #endif // IMAGEVIEWER_H

@@ -1,4 +1,5 @@
 #include "Page.h"
+#include "utils/FileUtils.h"
 
 #include "include/environment.h"
 #include <iostream>
@@ -188,8 +189,8 @@ OCRPage OCRPage::deserialize(QJsonObject &data)
         throw std::invalid_argument("invalid JSON, index");
     }
     page.index = index;
-    page.imagePath = data["srcImgPath"].toString("");
-    if (!FileUtils::checkImgFilePath(page.imagePath)) {
+    page.sourceImagePath = data["srcImgPath"].toString("");
+    if (!FileUtils::checkImgFilePath(page.sourceImagePath)) {
         throw std::invalid_argument("invalid JSON, source image");
     }
     page.cleanImagePath = data["cleanImgPath"].toString("#invalid");
@@ -222,7 +223,7 @@ QJsonObject OCRPage::serialize() const
     QJsonObject obj;
 
     obj["index"] = (qint64)this->index;
-    obj["srcImgPath"] = this->imagePath;
+    obj["srcImgPath"] = this->sourceImagePath;
     obj["cleanImgPath"] = this->cleanImagePath;
     obj["renderImgPath"] = this->renderImagePath;
 

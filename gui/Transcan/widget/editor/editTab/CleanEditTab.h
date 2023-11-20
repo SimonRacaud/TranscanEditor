@@ -56,7 +56,7 @@ private:
      * @param coord
      * @return -1 if no page at this coordinate.
      */
-    int getPageIndexAtCoord(QPointF const &coord) const;
+    int getPageIndexAtCoord(QPointF const &coord);
 
 private:
 };

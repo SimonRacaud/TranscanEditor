@@ -21,7 +21,7 @@ HomePage::HomePage(QWidget *parent)
     this->loadNewProjectFormContent();
 
     // TODO : DEBUG auto fill form
-    this->ui->projectName->setText("Debug");
+    this->ui->projectName->setText("TestProject");
     this->sourceDirectory = "/home/simon/scanTranslator/data/dataset/debug";
     this->destDirectory = "/home/simon/scanTranslator/data/result";
     this->ui->ocrComboBox->setCurrentIndex(1); // AWS

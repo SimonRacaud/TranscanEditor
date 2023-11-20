@@ -11,8 +11,6 @@
 #include <QJsonArray>
 
 #include "include/model/Utils.h"
-
-#include "utils/FileUtils.h"
 #include "include/models.h"
 
 using std::shared_ptr;
@@ -24,7 +22,7 @@ struct OCRBlock {
     QString text;
     Vector2i pivot;
     Vector2i size;
-    float angle;
+    float angle{0.0f};
 
     static shared_ptr<OCRBlock> deserialize(QJsonObject const &obj);
     QJsonObject serialize() const;
@@ -33,7 +31,7 @@ struct OCRBlock {
 struct BlockCluster {
     std::vector<shared_ptr<OCRBlock>> blocks;
     QString sentence;
-    bool cleanBox;
+    bool cleanBox{true};
     QPolygon polygon;
     QString translation;
     RenderConfig style;
@@ -41,13 +39,16 @@ struct BlockCluster {
     static BlockCluster deserialize(QJsonObject const &obj,
                                     vector<shared_ptr<OCRBlock>> &blocks);
     QJsonObject serialize() const;
+    void scale(int scale);
 };
 
 struct OCRPage {
-    unsigned int index;
-    QString imagePath;
-    QString cleanImagePath;
-    QString renderImagePath;
+    // main attributes:
+    unsigned int index{0};
+    QString imagePath; // Original image path
+    QString sourceImagePath; // Resized original image path
+    QString cleanImagePath; // Clean source image
+    QString renderImagePath; // Edited cleaned image
     std::vector<shared_ptr<OCRBlock>> blocks;
     std::vector<BlockCluster> clusters;
 

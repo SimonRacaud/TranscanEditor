@@ -20,7 +20,7 @@ void ExtractionEditTab::loadAPI()
         using std::placeholders::_1;
         NetCallback callback = bind(&IEditTab::loadPage, this, _1);
         NetErrCallback errCallback = bind(&ExtractionEditTab::netError, this, _1);
-        this->_api.sendToOCR((*_config), i, page.imagePath, callback, errCallback);
+        this->_api.sendToOCR((*_config), i, page.sourceImagePath, callback, errCallback);
         i++;
         // TODO : to improve (error management)
     }

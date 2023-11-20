@@ -18,7 +18,7 @@ void CleanEditTab::setPages(vector<OCRPage> const &pages)
 {
     ImageViewer::setPages(pages); // Load pages
     // Create clusters' select boxes
-    QList<QGraphicsItem *> pageItems = this->_pageGroup->childItems();
+    QList<QGraphicsItem *> pageItems = this->getPageGroup()->childItems();
     for (OCRPage const &page : pages) {
         const QGraphicsItem *pageItem = pageItems[page.index];
         for (BlockCluster const &cluster : page.clusters) {
@@ -44,7 +44,7 @@ std::vector<BlockCluster> CleanEditTab::getClusters() const
 
 OCRPage CleanEditTab::getPage(size_t index)
 {
-    QList<QGraphicsItem *> pageItems = this->_pageGroup->childItems();
+    QList<QGraphicsItem *> pageItems = this->getPageGroup()->childItems();
     if (index >= (size_t)pageItems.size()) {
         throw std::invalid_argument("CleanEditArea::getPage, invalid number of page item");
     }
@@ -141,9 +141,9 @@ void CleanEditTab::replacePageAtCoord(QPointF const &position)
     }
  }
 
-int CleanEditTab::getPageIndexAtCoord(QPointF const &coord) const
+int CleanEditTab::getPageIndexAtCoord(QPointF const &coord)
 {
-    QList<QGraphicsItem *> pageItems = this->_pageGroup->childItems();
+    QList<QGraphicsItem *> pageItems = this->getPageGroup()->childItems();
     int pageIndex = -1;
 
     for (qsizetype i = 0; i < pageItems.size(); i++) {

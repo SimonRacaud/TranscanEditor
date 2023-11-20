@@ -1,6 +1,7 @@
 #include "EditorController.h"
 #include "../../window/MainWindow.h"
 #include "widget/misc/Notification.h"
+#include "utils/FileUtils.h"
 
 #include <functional>
 #include <QMessageBox>
@@ -107,8 +108,17 @@ void EditorController::onStart(ProjectConfig const &config)
     this->setTab(EditorTab::EXTRACT); // Extraction step
     this->showSourcePageTab(true);
     // Load source images
-    this->_sourcePages->loadPagesFromPath(_config->srcPath);
-    this->_extractEditTab->loadPagesFromPath(_config->srcPath);
+    vector<OCRPage> pages = this->_sourcePages->loadPagesFromPath(_config->srcPath);
+    try {
+        FileUtils::createProjectDirectory(_config);
+    } catch (std::exception const &err) {
+        qDebug("FileUtils::createProjectDirectory ERROR : %s", err.what());
+        throw std::runtime_error("Unable to create project direcotry");
+    }
+    if (!FileUtils::initProjectSourceImages(pages, _config->destPath)) {
+        throw std::runtime_error("Failed to init project sources");
+    }
+    this->_extractEditTab->setPages(pages); // Load source images
     // OCR API call
     this->_extractEditTab->loadAPI();
     //

@@ -25,7 +25,7 @@ void ATextEditTab::createAreaRectAtCoord(QPointF const &coord)
     const QPoint origin(coord.x() - (size.x() / 2), coord.y() - (size.y() / 2));
 
     // Find page under coord coordinates
-    QList<QGraphicsItem *> pageItems = _pageGroup->childItems();
+    QList<QGraphicsItem *> pageItems = this->getPageGroup()->childItems();
     for (QGraphicsItem *pageItem : pageItems) {
         if (pageItem->sceneBoundingRect().contains(coord)) {
             const qreal pagePosY = pageItem->scenePos().y();
@@ -80,7 +80,7 @@ OCRPage ATextEditTab::getPage(size_t index)
     OCRPage page = ImageViewer::getPage(index);
 
     page.clusters.clear();
-    QList<QGraphicsItem *> pageItems = _pageGroup->childItems();
+    QList<QGraphicsItem *> pageItems = this->getPageGroup()->childItems();
     if ((size_t)pageItems.size() <= index) {
         throw std::runtime_error("ATextEditTab::getPage, invalid _pageGroup size");
     }
@@ -179,7 +179,7 @@ void ATextEditTab::createAreaRect(BlockCluster const &data, int pagePosY)
 
 void ATextEditTab::setPagesEditAreas(vector<OCRPage> const &pages)
 {
-    QList<QGraphicsItem *> pageItems = _pageGroup->childItems();
+    QList<QGraphicsItem *> pageItems = this->getPageGroup()->childItems();
     for (OCRPage const &page : pages) {
         for (BlockCluster const &cluster : page.clusters) {
             if (page.index >= pageItems.size()) {
