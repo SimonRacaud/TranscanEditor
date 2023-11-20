@@ -206,7 +206,7 @@ void TextEditBox::showEvent(QShowEvent *event)
 int TextEditBox::computeOptimalFontSize(int *heightMargin, QString const &) const
 {
     const int MAX_FONTSIZE = 100;
-    int fontSize = 2;
+    int fontSize = 1;
     int prevHeightMargin = 0;
 //    const QRegularExpression regExpr("[\\s\\t]");
 //    const QSize &rect = _textEdit->size();
@@ -217,7 +217,12 @@ int TextEditBox::computeOptimalFontSize(int *heightMargin, QString const &) cons
         throw std::runtime_error("TextEditBox::formatText invalid font weight");
     // Compute size of text for a font size => check it fit.
     // Then computer bigger size. Stop when the text don't fit anymore.
-    while (fontSize < MAX_FONTSIZE/* Computing time limit */) {
+    float low = 1.0; // minimal font size
+    float high = MAX_FONTSIZE;
+    while (low <= high) {
+        // Guess the middle number
+        fontSize = (low + (high - low) / 2.0);
+
         QFont font = QFont(_data.style.font.families(), fontSize);
         font.setWeight(weightChoices[_data.style.strokeWidth - 1]);
 
@@ -225,12 +230,16 @@ int TextEditBox::computeOptimalFontSize(int *heightMargin, QString const &) cons
         QSizeF textSize = this->_textEdit->document()->size();
         QSize widgetSize = this->_textEdit->size();
 
-        if ((int)textSize.height() > widgetSize.height()
-                || (int)textSize.width() > widgetSize.width()) {
-            *heightMargin = (float)prevHeightMargin / 2.0f;
-            return fontSize - 1;
+        bool tooTall = (int)textSize.height() > widgetSize.height();
+        bool tooLarge = (int)textSize.width() > widgetSize.width();
+        if (tooTall || tooLarge) {
+            // Target is in the lower half => trop grand
+            high = fontSize - 1;
+        } else {
+            // Target is in the higher half => trop petit
+            low = fontSize + 1;
+            prevHeightMargin = widgetSize.height() - (int)textSize.height();
         }
-        prevHeightMargin = widgetSize.height() - (int)textSize.height();
         fontSize++;
 //        const QFontMetrics fm(font);
 //        const int spaceWidth = fm.horizontalAdvance(" ");
@@ -265,7 +274,8 @@ int TextEditBox::computeOptimalFontSize(int *heightMargin, QString const &) cons
 //        marginHeight = rect.height() - blockHeight;
 //        fontSize++;
     }
-    return MAX_FONTSIZE;
+    *heightMargin = (float)prevHeightMargin / 2.0f;
+    return low - 1;
 }
 
 void TextEditBox::formatText()
