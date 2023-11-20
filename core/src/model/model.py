@@ -235,8 +235,8 @@ class OCRPage:
     src_path: str # Source image file path
     blocks: Sequence[OCRBlock]
     clusters: Sequence[BlockCluster] = None
-    clean_path: str = None # Clean image path
-    render_path: str = None # Render image path
+    clean_path: str = "" # Clean image path
+    render_path: str = "" # Render image path
     index: int = 0 # Page index
 
     def serialize(self):

@@ -68,8 +68,8 @@ def ocr():
         print("Error4: ", err)
         raise InternalError("Fail to generate block clusters")
     try:
-        page.clean_path = input.ocr_config.output_folder # Save output location
-        page.render_path = input.ocr_config.output_folder
+        page.clean_path = input.ocr_config.output_folder + "/clean" # Save output location
+        page.render_path = input.ocr_config.output_folder + "/result"
         pageOut = page.serialize()
         pageOut['index'] = input.index
     except BaseException as err:
