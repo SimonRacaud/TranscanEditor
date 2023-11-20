@@ -23,9 +23,7 @@ TextEditBox::TextEditBox(BlockCluster const &data, RectMode mode, int pageY)
     this->setFlag(ItemIsFocusable, true);
 
     _textEdit = new QTextEdit;
-    _textEdit->setTextColor(_data.style.color);
     _textEdit->setText(_text);
-    _textEdit->setFont(_data.style.font);
     _textEdit->setWordWrapMode(QTextOption::WordWrap);
     _textEdit->setStyleSheet("background-color: transparent; border: none");
     _textEdit->setContentsMargins(0, 0, 0, 0);
@@ -38,8 +36,8 @@ TextEditBox::TextEditBox(BlockCluster const &data, RectMode mode, int pageY)
     this->setZValue(8);
     this->setPos(data.polygon.boundingRect().x(), data.polygon.boundingRect().y() + pageY);
     this->_textEdit->setAlignment(Qt::AlignCenter);
-    this->formatText();
     this->_textEdit->setPlaceholderText("text...");
+    this->setStyle(data.style);
 
     // Hide scroll bar
     _textEdit->horizontalScrollBar()->setStyleSheet("QScrollBar {height:0px;}");
@@ -205,14 +203,15 @@ void TextEditBox::showEvent(QShowEvent *event)
     this->formatText();
 }
 
-int TextEditBox::computeOptimalFontSize(int *heightMargin, QString const &text) const
+int TextEditBox::computeOptimalFontSize(int *heightMargin, QString const &) const
 {
     const int MAX_FONTSIZE = 100;
-    int fontSize = 1;
-    const QRegularExpression regExpr("[\\s\\t]");
-    const QSize &rect = _textEdit->size();
-    int marginHeight = 0;
-    const QStringList &wordList = text.split(regExpr, Qt::SkipEmptyParts);
+    int fontSize = 2;
+    int prevHeightMargin = 0;
+//    const QRegularExpression regExpr("[\\s\\t]");
+//    const QSize &rect = _textEdit->size();
+//    int marginHeight = 0;
+//    const QStringList &wordList = text.split(regExpr, Qt::SkipEmptyParts);
 
     if (_data.style.strokeWidth > 9 || !_data.style.strokeWidth)
         throw std::runtime_error("TextEditBox::formatText invalid font weight");
@@ -221,35 +220,50 @@ int TextEditBox::computeOptimalFontSize(int *heightMargin, QString const &text) 
     while (fontSize < MAX_FONTSIZE/* Computing time limit */) {
         QFont font = QFont(_data.style.font.families(), fontSize);
         font.setWeight(weightChoices[_data.style.strokeWidth - 1]);
-        const QFontMetrics fm(font);
-        const int spaceWidth = fm.horizontalAdvance(" ");
-        int fontHeight = fm.height();
-        unsigned int lineWidth = 0;
-        unsigned int nbLine = 1;
 
-        if ((unsigned int)fontHeight < _data.style.lineHeight) {
-            fontHeight = _data.style.lineHeight;
+        this->_textEdit->setFont(font);
+        QSizeF textSize = this->_textEdit->document()->size();
+        QSize widgetSize = this->_textEdit->size();
+
+        if ((int)textSize.height() > widgetSize.height()
+                || (int)textSize.width() > widgetSize.width()) {
+            *heightMargin = (float)prevHeightMargin / 2.0f;
+            return fontSize - 1;
         }
-        for (QString const &word : wordList) {
-            bool containLineBreak = word.contains('\n');
-            int wordWidth = fm.horizontalAdvance(word);
-            if (wordWidth >= rect.width()) {
-                *heightMargin = marginHeight;
-                return fontSize - 1; // If one word is larger than the rect size.
-            } else if (lineWidth + wordWidth + spaceWidth > (unsigned int)rect.width() || containLineBreak) {
-                nbLine++;
-                lineWidth = wordWidth + spaceWidth;
-            } else {
-                lineWidth += wordWidth + spaceWidth;
-            }
-        }
-        const unsigned int blockHeight = nbLine * fontHeight;
-        if (blockHeight >= (unsigned int)rect.height() - 10 /* error margin */) {
-            *heightMargin = 0; // No need, the text will take the full height in that case
-            return fontSize - 1; // Font size too large, select the previous one.
-        }
-        marginHeight = rect.height() - blockHeight;
+        prevHeightMargin = widgetSize.height() - (int)textSize.height();
         fontSize++;
+//        const QFontMetrics fm(font);
+//        const int spaceWidth = fm.horizontalAdvance(" ");
+//        const int borderwidth = std::round((float)spaceWidth * 1.3f); // Aproximation
+//        int fontHeight = fm.height();
+//        unsigned int lineWidth = 0;
+//        unsigned int nbLine = 1;
+
+//        if ((unsigned int)fontHeight < _data.style.lineHeight) {
+//            fontHeight = _data.style.lineHeight;
+//        }
+
+//        for (QString const &word : wordList) {
+//            bool containLineBreak = word.contains('\n');
+//            int wordWidth = fm.horizontalAdvance(word);
+//            if (wordWidth >= rect.width()) {
+//                *heightMargin = marginHeight;
+//                return fontSize - 1; // If one word is larger than the rect size.
+//            } else if (lineWidth + wordWidth > (unsigned int)rect.width() - borderwidth || containLineBreak) {
+//                nbLine++;
+//                lineWidth = wordWidth;
+//            } else {
+//                lineWidth += wordWidth + spaceWidth;
+//            }
+//            //qDebug() << word << ", ";
+//        }
+//        const unsigned int blockHeight = nbLine * fontHeight;
+//        if (blockHeight >= (unsigned int)rect.height() - borderwidth /* error margin */) {
+//            *heightMargin = 0; // No need, the text will take the full height in that case
+//            return fontSize - 1; // Font size too large, select the previous one.
+//        }
+//        marginHeight = rect.height() - blockHeight;
+//        fontSize++;
     }
     return MAX_FONTSIZE;
 }
@@ -269,10 +283,9 @@ void TextEditBox::formatText()
         throw std::runtime_error("TextEditBox::formatText invalid font weight");
     _data.style.font.setWeight(weightChoices[_data.style.strokeWidth - 1]);
     this->_textEdit->setFont(_data.style.font);
-
     // Center text vertically by adding top margin.
-    const int topMargin = heightMargin / 2;
-    auto format = this->_textEdit->document()->rootFrame()->frameFormat();
+    const int topMargin = heightMargin;
+    QTextFrameFormat format = this->_textEdit->document()->rootFrame()->frameFormat();
     format.setTopMargin(topMargin);
     this->_textEdit->document()->rootFrame()->setFrameFormat(format);
 

@@ -77,7 +77,7 @@ const QList<QString> SUPPORTED_EXTENSION_SUFFIX = {
 #define DEF_LINE_HEIGHT 100 // Editor -> Text
 #define DEF_EDITAREA_SIZE 100, 50 // Editor
 
-#define DEF_EDIT_LINE_HEIGHT 30 // Edition/render config
+#define DEF_EDIT_LINE_HEIGHT 0 // Edition/render config
 #define DEF_EDIT_STROKE_WIDTH 4 // Normal
 #define DEF_EDIT_FONT "Wild Words"
 #define DEF_EDIT_COLOR QColor(Qt::black)

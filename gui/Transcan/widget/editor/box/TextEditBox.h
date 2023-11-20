@@ -7,7 +7,7 @@
 
 #include "model/Page.h"
 
-#define MIN_RECT_SIZE 40
+#define MIN_RECT_SIZE 20
 #define RESIZE_CURSOR_SIZE 15
 
 enum class RectMode {
