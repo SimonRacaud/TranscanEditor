@@ -151,10 +151,11 @@ void TextEditBox::setLineHeightAbs(int pixels)
 BlockCluster TextEditBox::getData()
 {
     BlockCluster cluster = _data;
-    // Update position
+    // Update cluster position with widget position:
     QPointF diff = this->pos() - this->_data.polygon.boundingRect().topLeft();
     cluster.polygon.translate(diff.x(), diff.y());
-    cluster.polygon.translate(0, -_pageY); // Convert coord => relative to page top left corner
+    // Convert coord => relative to page top left corner
+    cluster.polygon.translate(0, -_pageY);
     if (_mode == RectMode::EDIT_SENT) {
         cluster.sentence = _textEdit->toPlainText();
     } else {
