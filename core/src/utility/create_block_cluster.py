@@ -20,8 +20,14 @@ def create_block_cluster(page: OCRPage, search_range: int, search_step: int, sty
         pack.append(block)
         # Find lower neighbours:
         pack, block_buffer = __find_neighbour_points(point_target, block_buffer, block, pack, search_range, search_step)
-        page.clusters.append(__pack_boxes(pack, style))
+        blockCluster = __pack_boxes(pack, style)
+        if __is_sentence_pointless(blockCluster.sentence) == False:
+            page.clusters.append(blockCluster)
     return page
+
+def __is_sentence_pointless(sentence: str) -> bool:
+    """ If the sentence is empty of only contains special characters, then the cluster is pointless """
+    return not any(letter.isalnum() or letter == '!' or letter == '?' for letter in sentence) 
 
 def __find_neighbour_points(
     target_point: Vector2I, 
