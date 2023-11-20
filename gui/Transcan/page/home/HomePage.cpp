@@ -3,6 +3,7 @@
 #include <QFileDialog>
 #include "../../window/MainWindow.h"
 #include <memory.h>
+#include <QMessageBox>
 
 extern MainWindow *mainWindow;
 
@@ -20,6 +21,7 @@ HomePage::HomePage(QWidget *parent)
     this->loadNewProjectFormContent();
 
     // TODO : DEBUG auto fill form
+    this->ui->projectName->setText("Debug");
     this->sourceDirectory = "/home/simon/scanTranslator/data/dataset/debug";
     this->destDirectory = "/home/simon/scanTranslator/data/result";
     this->ui->ocrComboBox->setCurrentIndex(1); // AWS
@@ -120,8 +122,15 @@ void HomePage::on_submitButton_clicked()
     const QString &srcLang = (translationServiceIndex) ? this->ui->transSrcComboBox->currentText() : nullptr;
     const QString &destLang = (translationServiceIndex) ? this->ui->transDestComboBox->currentText() : nullptr;
     const QFont &font = _fontSelector->currentFont();
+    const QString &projectName = this->ui->projectName->text();
+
+    if (projectName.isEmpty()) {
+        QMessageBox::information(this, tr("Missing information"), tr("Project name required"));
+        return; // Abort
+    }
     //
     ProjectConfig config(
+                projectName,
                 srcDirectory,
                 destDirectory,
                 OCR_SERVICE_LIST[OCRServiceIndex].apiLabel,

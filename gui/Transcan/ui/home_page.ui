@@ -504,6 +504,16 @@ color: rgb(46, 52, 54);
               </property>
              </widget>
             </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="projectName"/>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="projectNameLabel">
+              <property name="text">
+               <string>Project name</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
          </layout>

@@ -42,6 +42,7 @@ public:
 
 class ProjectConfig {
 public:
+    QString projectName;
     QString srcPath;
     QString destPath;
     QString OCRService;
@@ -52,6 +53,7 @@ public:
 
 public:
     ProjectConfig(
+            QString const &projectName,
             QString const &srcPath,
             QString const &destPath,
             QString const &OCRService,
@@ -59,7 +61,8 @@ public:
             QString const &transSrc,
             QString const &transDest,
             QFont const &font
-            ) : srcPath(srcPath),
+            ) : projectName(projectName),
+                srcPath(srcPath),
                 destPath(destPath),
                 OCRService(OCRService),
                 transService(transService),
