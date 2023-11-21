@@ -72,14 +72,13 @@ class OCR_AWSRekognition(IOpticalCharacterRecognition):
                 result=[]
                 try:
                     result = OCRResultCacheManager.load_result(img_bytes, self.config.cache_path)
-                    done = True
-                    print("Info: OCRAmazonAWS::process_img OCR result loaded from cache")
+                    print("Info: OCR_AWSRekognition::process_img OCR result loaded from cache")
                 except FileNotFoundError:
                     result = self.__process_through_api(img, img_bytes)
                 ### Format data
                 return OCR_AWSRekognition.__format_page(result, img_path, image), image 
         except BaseException as err:
-            print("Error: OCRAmazonAWS::process_img -", err)
+            print("Error: OCR_AWSRekognition::process_img -", err)
             raise err
         
     def __process_through_api(self, img, img_bytes):
@@ -96,7 +95,7 @@ class OCR_AWSRekognition(IOpticalCharacterRecognition):
             response = self.client.detect_text(Image={'Bytes': imgBytes2})
             blocks = response['TextDetections']
             done = not OCR_AWSRekognition.__check_word_limit(blocks)
-            blocks = OCR_AWSRekognition.__filter_low_confidence_blocks(blocks)
+            blocks = OCR_AWSRekognition.filter_low_confidence_blocks(blocks)
             if not done:
                 # The API reached the limitation of 100 words, image split needed
                 imgSlice, deltaY = OCR_AWSRekognition.__split_image(img, blocks, deltaY)
@@ -111,8 +110,8 @@ class OCR_AWSRekognition(IOpticalCharacterRecognition):
         return result
     
     @staticmethod
-    def __filter_low_confidence_blocks(blocks):
-        return list(filter(lambda b : b['Confidence'] >= 40.0, blocks))
+    def filter_low_confidence_blocks(blocks):
+        return list(filter(lambda b : b['Confidence'] >= 40.0 if 'Confidence' in b else False, blocks))
 
     @staticmethod
     def __merge_result(blocks1, blocks2, deltaY: int, imgSliceHeight: int, imgSize):
@@ -125,7 +124,7 @@ class OCR_AWSRekognition(IOpticalCharacterRecognition):
         def filterResult(block):
             if block['Type'] == 'LINE':
                 bPoly = block['Geometry']['Polygon']
-                poly = OCR_AWSRekognition.__format_polygon(bPoly, imgSize[0], imgSize[1])
+                poly = OCR_AWSRekognition.format_polygon(bPoly, imgSize[0], imgSize[1])
                 for pt in poly:
                     if pt[1] > deltaY:
                         return False
@@ -176,8 +175,8 @@ class OCR_AWSRekognition(IOpticalCharacterRecognition):
         height = image.shape[0]
         for block in blocks:
             if block['Type'] == 'LINE':
-                polygon = OCR_AWSRekognition.__format_polygon(block['Geometry']['Polygon'], width, height)
-                #bounding_box = OCRAmazonAWS.__format_bounding_box(block['Geometry']['BoundingBox'], width, height)
+                polygon = OCR_AWSRekognition.format_polygon(block['Geometry']['Polygon'], width, height)
+                #bounding_box = OCR_AWSRekognition.__format_bounding_box(block['Geometry']['BoundingBox'], width, height)
                 text = block['DetectedText']
                 text = cyrillic_to_latin(text)
                 area, angle, pivot, size = extract_image_area(polygon, image, True) # TODO: to simplify ?
@@ -194,7 +193,7 @@ class OCR_AWSRekognition(IOpticalCharacterRecognition):
         }
     
     @staticmethod
-    def __format_polygon(poly, width, height):
+    def format_polygon(poly, width, height):
         points = []
         for pt in poly:
             points.append([

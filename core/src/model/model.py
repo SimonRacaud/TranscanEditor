@@ -14,6 +14,7 @@ from src.utility.exception import InvalidJson
 class OCRService(Enum):
     LOCAL_CRAFTTESSERACT = 'LOCAL_CRAFT_TESSERACT'
     AWS_REKOGNITION = 'AWS_REKOGNITION'
+    AWS_TEXTRACT = 'AWS_TEXTRACT'
 
     def __str__(self) -> str:
         return self.value

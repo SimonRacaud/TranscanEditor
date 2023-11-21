@@ -7,7 +7,8 @@
 
 const ServiceItem OCR_SERVICE_LIST[] = {
     ServiceItem("Local - Craft/Tesseract", "LOCAL_CRAFT_TESSERACT", false),
-    ServiceItem("AWS Rekognition", "AWS_REKOGNITION", true, "AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY variables are required.")
+    ServiceItem("AWS Rekognition", "AWS_REKOGNITION", true, "AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY variables are required."),
+    ServiceItem("AWS Textract", "AWS_TEXTRACT", true, "AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY variables are required.")
 };
 const QString SERVICE_DEFAULT_HELP = "The service require configuration variables";
 
