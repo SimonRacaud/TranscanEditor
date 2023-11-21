@@ -83,18 +83,20 @@ class OCRAmazonAWS(IOpticalCharacterRecognition):
             raise err
         
     def __process_through_api(self, img, img_bytes):
-        imgSlice=img
-        counter=0
-        done=False
-        maxIteration=4 # Max number of time an image can be split
-        deltaY=0 # Cursor on Y where the image has been split
         imgBytes2 = img_bytes
+        maxIteration = 4 # Max number of time an image can be split
+        imgSlice = img
+        done = False
+        counter = 0
+        result = []
+        deltaY = 0 # Cursor on Y where the image has been split
         while (not done) and (counter < maxIteration):
             print("(info) OCR : Image processing iteration ", counter)
             ## AWS network call
             response = self.client.detect_text(Image={'Bytes': imgBytes2})
             blocks = response['TextDetections']
             done = not OCRAmazonAWS.__check_word_limit(blocks)
+            blocks = OCRAmazonAWS.__filter_low_confidence_blocks(blocks)
             if not done:
                 # The API reached the limitation of 100 words, image split needed
                 imgSlice, deltaY = OCRAmazonAWS.__split_image(img, blocks, deltaY)
@@ -108,6 +110,10 @@ class OCRAmazonAWS(IOpticalCharacterRecognition):
             counter += 1
         return result
     
+    @staticmethod
+    def __filter_low_confidence_blocks(blocks):
+        return list(filter(lambda b : b['Confidence'] >= 40.0, blocks))
+
     @staticmethod
     def __merge_result(blocks1, blocks2, deltaY: int, imgSliceHeight: int, imgSize):
         """ Merge two API results """ 
