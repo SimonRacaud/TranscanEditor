@@ -1,5 +1,5 @@
 from typing import Sequence, Tuple
-from src.ocr.OCRAmazonAWS import OCRAmazonAWS
+from ocr.OCR_AWSRekognition import OCR_AWSRekognition
 from src.ocr.default.OCRCraftTesseract import OCRCraftTesseract
 from src.model.model import OCRConfig, OCRPage, OCRService
 
@@ -7,7 +7,7 @@ class OCRManager:
     def __init__(self, config: OCRConfig) -> None:
         ocr_class = {
             OCRService.LOCAL_CRAFTTESSERACT : OCRCraftTesseract,
-            OCRService.AWS_REKOGNITION : OCRAmazonAWS
+            OCRService.AWS_REKOGNITION : OCR_AWSRekognition
         }
         self.ocr = ocr_class[config.ocr_service](config)
         

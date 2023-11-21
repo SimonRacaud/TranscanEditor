@@ -20,7 +20,7 @@ from numpy import ndarray
 import threading
 
 
-class OCRAmazonAWS(IOpticalCharacterRecognition):
+class OCR_AWSRekognition(IOpticalCharacterRecognition):
     boto3_client_lock = threading.Lock()
 
     def __init__(self, config: OCRConfig) -> None:
@@ -40,7 +40,7 @@ class OCRAmazonAWS(IOpticalCharacterRecognition):
                 'mode': 'standard'
             }
         )
-        with OCRAmazonAWS.boto3_client_lock:
+        with OCR_AWSRekognition.boto3_client_lock:
             try:
                 self.client = AWSClient(
                     'rekognition',
@@ -77,7 +77,7 @@ class OCRAmazonAWS(IOpticalCharacterRecognition):
                 except FileNotFoundError:
                     result = self.__process_through_api(img, img_bytes)
                 ### Format data
-                return OCRAmazonAWS.__format_page(result, img_path, image), image 
+                return OCR_AWSRekognition.__format_page(result, img_path, image), image 
         except BaseException as err:
             print("Error: OCRAmazonAWS::process_img -", err)
             raise err
@@ -95,16 +95,16 @@ class OCRAmazonAWS(IOpticalCharacterRecognition):
             ## AWS network call
             response = self.client.detect_text(Image={'Bytes': imgBytes2})
             blocks = response['TextDetections']
-            done = not OCRAmazonAWS.__check_word_limit(blocks)
-            blocks = OCRAmazonAWS.__filter_low_confidence_blocks(blocks)
+            done = not OCR_AWSRekognition.__check_word_limit(blocks)
+            blocks = OCR_AWSRekognition.__filter_low_confidence_blocks(blocks)
             if not done:
                 # The API reached the limitation of 100 words, image split needed
-                imgSlice, deltaY = OCRAmazonAWS.__split_image(img, blocks, deltaY)
+                imgSlice, deltaY = OCR_AWSRekognition.__split_image(img, blocks, deltaY)
                 # Convert image slice to an array of bytes
                 imgBytes2 = io.BytesIO()
                 imgSlice.save(imgBytes2, format='PNG')
                 imgBytes2 = imgBytes2.getvalue()
-            result = OCRAmazonAWS.__merge_result(result, blocks, deltaY, imgSlice.size[1], img.size)
+            result = OCR_AWSRekognition.__merge_result(result, blocks, deltaY, imgSlice.size[1], img.size)
             if done:
                 OCRResultCacheManager.save_result(img_bytes, result, self.config.cache_path)
             counter += 1
@@ -125,7 +125,7 @@ class OCRAmazonAWS(IOpticalCharacterRecognition):
         def filterResult(block):
             if block['Type'] == 'LINE':
                 bPoly = block['Geometry']['Polygon']
-                poly = OCRAmazonAWS.__format_polygon(bPoly, imgSize[0], imgSize[1])
+                poly = OCR_AWSRekognition.__format_polygon(bPoly, imgSize[0], imgSize[1])
                 for pt in poly:
                     if pt[1] > deltaY:
                         return False
@@ -176,7 +176,7 @@ class OCRAmazonAWS(IOpticalCharacterRecognition):
         height = image.shape[0]
         for block in blocks:
             if block['Type'] == 'LINE':
-                polygon = OCRAmazonAWS.__format_polygon(block['Geometry']['Polygon'], width, height)
+                polygon = OCR_AWSRekognition.__format_polygon(block['Geometry']['Polygon'], width, height)
                 #bounding_box = OCRAmazonAWS.__format_bounding_box(block['Geometry']['BoundingBox'], width, height)
                 text = block['DetectedText']
                 text = cyrillic_to_latin(text)
