@@ -8,7 +8,7 @@ import os
 
 from src.utility.OCRResultCacheManager import OCRResultCacheManager
 from src.ocr.IOpticalCharacterRecognition import IOpticalCharacterRecognition
-from src.model.model import OCRConfig, OCRPage, Vector2I, OCRBlock
+from src.model.model import OCRConfig, OCRPage, Vector2I, OCRBlock, OCRService
 from src.utility.exception import InternalError
 from src.ocr.OCR_AWSRekognition import OCR_AWSRekognition
 from src.utility.cyrillic_to_latin import cyrillic_to_latin
@@ -70,17 +70,15 @@ class OCR_AWSTextract(IOpticalCharacterRecognition):
                 image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
                 result=[]
                 try:
-                    raise FileNotFoundError() # TODO: DEBUG
-                    result = OCRResultCacheManager.load_result(img_bytes, self.config.cache_path)
+                    result = OCRResultCacheManager.load_result(img_bytes, self.config.cache_path, OCRService.AWS_TEXTRACT)
                     print("Info: OCR_AWSTextract::process_img OCR result loaded from cache")
                 except FileNotFoundError:
                     ## AWS network call
                     response = self.client.detect_document_text(Document={'Bytes': img_bytes})
                     ##
                     result = response['Blocks']
-                    # https://docs.aws.amazon.com/textract/latest/dg/sync-calling.html
                     result = OCR_AWSRekognition.filter_low_confidence_blocks(result)
-                    #OCRResultCacheManager.save_result(img_bytes, result, self.config.cache_path) # TODO : module specific
+                    OCRResultCacheManager.save_result(img_bytes, result, self.config.cache_path, OCRService.AWS_TEXTRACT)
                 ### Format data
                 return OCR_AWSTextract.__format_page(result, img_path, image), image
         except BaseException as err:

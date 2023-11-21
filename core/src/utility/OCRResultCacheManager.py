@@ -2,14 +2,16 @@ import json
 import os
 import hashlib
 
+from src.model.model import OCRService
+
 class OCRResultCacheManager:
     @staticmethod
-    def load_result(image, cache_path: str):
+    def load_result(image, cache_path: str, service: OCRService):
         try:
             if not os.path.isdir(cache_path):
                 os.mkdir(cache_path)
             file_hash = hashlib.md5(image).hexdigest()
-            src_filepath = OCRResultCacheManager.__get_file_path(file_hash, cache_path)
+            src_filepath = OCRResultCacheManager.__get_file_path(file_hash, service, cache_path)
             with open(src_filepath, 'r') as file:
                 data = json.load(file)
                 return data
@@ -17,12 +19,13 @@ class OCRResultCacheManager:
             raise FileNotFoundError()
 
     @staticmethod
-    def save_result(image, data, cache_path: str):
+    def save_result(image, data, cache_path: str, service: OCRService):
         try:
             if not os.path.isdir(cache_path):
                 os.mkdir(cache_path)
             file_hash = hashlib.md5(image).hexdigest()
-            dest_filepath = OCRResultCacheManager.__get_file_path(file_hash, cache_path)
+
+            dest_filepath = OCRResultCacheManager.__get_file_path(file_hash, service, cache_path)
             json_object = json.dumps(data, indent = 4)
             with open(dest_filepath, 'w') as file:
                 file.write(json_object)
@@ -31,5 +34,5 @@ class OCRResultCacheManager:
             print("Warning: Fail to save ocr result in cache.", err)
 
     @staticmethod
-    def __get_file_path(file_hash, cache_path):
-        return cache_path + '/' + file_hash + '.json'
+    def __get_file_path(file_hash: str, service: OCRService, cache_path: str):
+        return cache_path + '/' + str(service) + '_' + file_hash + '.json'

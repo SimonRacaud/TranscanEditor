@@ -9,7 +9,7 @@ import os
 from src.utility.OCRResultCacheManager import OCRResultCacheManager
 from src.utility.extract_image_area import extract_image_area
 from src.ocr.IOpticalCharacterRecognition import IOpticalCharacterRecognition
-from src.model.model import OCRBlock, OCRConfig, OCRPage
+from src.model.model import OCRBlock, OCRConfig, OCRPage, OCRService
 from src.utility.cyrillic_to_latin import cyrillic_to_latin
 from src.utility.exception import InternalError
 
@@ -71,7 +71,7 @@ class OCR_AWSRekognition(IOpticalCharacterRecognition):
                 image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
                 result=[]
                 try:
-                    result = OCRResultCacheManager.load_result(img_bytes, self.config.cache_path)
+                    result = OCRResultCacheManager.load_result(img_bytes, self.config.cache_path, OCRService.AWS_REKOGNITION)
                     print("Info: OCR_AWSRekognition::process_img OCR result loaded from cache")
                 except FileNotFoundError:
                     result = self.__process_through_api(img, img_bytes)
@@ -105,7 +105,7 @@ class OCR_AWSRekognition(IOpticalCharacterRecognition):
                 imgBytes2 = imgBytes2.getvalue()
             result = OCR_AWSRekognition.__merge_result(result, blocks, deltaY, imgSlice.size[1], img.size)
             if done:
-                OCRResultCacheManager.save_result(img_bytes, result, self.config.cache_path)
+                OCRResultCacheManager.save_result(img_bytes, result, self.config.cache_path, OCRService.AWS_REKOGNITION)
             counter += 1
         return result
     
