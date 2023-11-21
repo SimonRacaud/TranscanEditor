@@ -4,6 +4,7 @@ import numpy as np
 
 from src.model.model import OCRPage, BlockCluster, OCRBlock, Vector2I, EditConfig
 from src.utility.mymath import middle_point, rotate_point
+from src.utility.collision import check_collide_point_poly
 
 def create_block_cluster(page: OCRPage, search_range: int, search_step: int, style: EditConfig) -> OCRPage:
     """ Create cluster of bounding boxes close from each others on the y axis """
@@ -44,7 +45,7 @@ def __find_neighbour_points(
             size = len(pack)
             # Search block matching the current point
             for bck in block_buffer:
-                if bck != block and __check_collide(bck.polygon, pt):
+                if bck != block and check_collide_point_poly(bck.polygon, pt):
                     pack.append(bck)
                     target_point = __get_init_point(bck.polygon)
                     block_buffer.remove(bck)
@@ -81,18 +82,6 @@ def __browse_line(point: Vector2I, delta_y, end_y) -> Vector2I:
         while point.y + delta_y <= end_y:
             point.y += delta_y
             yield point
-
-def __check_collide(poly, point) -> bool:
-    """ check point collision in polygon : Jordan curve theorem. """
-    poly_size = len(poly)
-    j = poly_size - 1
-    inside = False
-    for i in range(0, poly_size, 1):
-        if (poly[i][1] > point.y) != (poly[j][1] > point.y) and \
-            (point.x < (poly[j][0] - poly[i][0]) * (point.y - poly[i][1]) / (poly[j][1] - poly[i][1]) + poly[i][0]):
-            inside = not inside
-        j = i
-    return inside
 
 def __pack_boxes(block_list: Sequence[OCRBlock], style_config: EditConfig) -> BlockCluster:
     polygon = __get_cluster_rect(block_list)

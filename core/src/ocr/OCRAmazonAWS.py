@@ -69,20 +69,100 @@ class OCRAmazonAWS(IOpticalCharacterRecognition):
                 img = Image.open(io.BytesIO(img_bytes))
                 image = np.asarray(img)
                 image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-                ## AWS network call
+                result=[]
                 try:
-                    response = OCRResultCacheManager.load_result(img_bytes, self.config.cache_path)
+                    result = OCRResultCacheManager.load_result(img_bytes, self.config.cache_path)
+                    done = True
                     print("Info: OCRAmazonAWS::process_img OCR result loaded from cache")
                 except FileNotFoundError:
-                    response = self.client.detect_text(Image={'Bytes': img_bytes})
-                    OCRResultCacheManager.save_result(img_bytes, response, self.config.cache_path)
-                blocks = response['TextDetections']
+                    result = self.__process_through_api(img, img_bytes)
                 ### Format data
-                return OCRAmazonAWS.__format_page(blocks, img_path, image), image 
+                return OCRAmazonAWS.__format_page(result, img_path, image), image 
         except BaseException as err:
             print("Error: OCRAmazonAWS::process_img -", err)
             raise err
+        
+    def __process_through_api(self, img, img_bytes):
+        imgSlice=img
+        counter=0
+        done=False
+        maxIteration=4 # Max number of time an image can be split
+        deltaY=0 # Cursor on Y where the image has been split
+        imgBytes2 = img_bytes
+        while (not done) and (counter < maxIteration):
+            print("(info) OCR : Image processing iteration ", counter)
+            ## AWS network call
+            response = self.client.detect_text(Image={'Bytes': imgBytes2})
+            blocks = response['TextDetections']
+            done = not OCRAmazonAWS.__check_word_limit(blocks)
+            if not done:
+                # The API reached the limitation of 100 words, image split needed
+                imgSlice, deltaY = OCRAmazonAWS.__split_image(img, blocks, deltaY)
+                # Convert image slice to an array of bytes
+                imgBytes2 = io.BytesIO()
+                imgSlice.save(imgBytes2, format='PNG')
+                imgBytes2 = imgBytes2.getvalue()
+            result = OCRAmazonAWS.__merge_result(result, blocks, deltaY, imgSlice.size[1], img.size)
+            if done:
+                OCRResultCacheManager.save_result(img_bytes, result, self.config.cache_path)
+            counter += 1
+        return result
     
+    @staticmethod
+    def __merge_result(blocks1, blocks2, deltaY: int, imgSliceHeight: int, imgSize):
+        """ Merge two API results """ 
+        result=blocks1
+        
+        if blocks1 == []:
+            return blocks2
+        
+        def filterResult(block):
+            if block['Type'] == 'LINE':
+                bPoly = block['Geometry']['Polygon']
+                poly = OCRAmazonAWS.__format_polygon(bPoly, imgSize[0], imgSize[1])
+                for pt in poly:
+                    if pt[1] > deltaY:
+                        return False
+            else:
+                return False
+            return True
+        result = list(filter(filterResult, result))
+
+        for b in blocks2:
+            if b['Type'] == 'LINE':
+                bPoly = b['Geometry']['Polygon']
+                # move on Y (to make the coordinates relative to the main image, not the slice)
+                for i in range(0, len(bPoly)):
+                    bPoly[i]['Y'] = (bPoly[i]['Y'] * imgSliceHeight + deltaY) / imgSize[1]
+                #
+                result.append(b)
+        return result
+
+    @staticmethod
+    def __split_image(img,  blocks, deltaY: int):
+        width, height = img.size # Size of the whole image
+        # Get previous detection limit
+        maxY=0
+        for b in blocks:
+            if b['Type'] == 'LINE':
+                bbox = b['Geometry']['BoundingBox']
+                maxY = max(maxY, bbox['Top'])
+        maxY = int(maxY * height) # convert from fraction to absolute size
+        if maxY > 50:
+            maxY -= 50 # security margin
+        # Splitting image horizontally
+        subImg = img.crop((0, maxY, width, height))
+        return subImg, (maxY + deltaY)
+
+    @staticmethod
+    def __check_word_limit(blocks) -> bool:
+        """ AWS rekognition have a limit of 100 words per page """
+        counter=0
+        for b in blocks:
+            if b['Type'] == 'WORD':
+                counter += 1
+        return counter == 100
+
     @staticmethod
     def __format_page(blocks, img_path, image) -> OCRPage:
         textBlockList = []
@@ -91,12 +171,10 @@ class OCRAmazonAWS(IOpticalCharacterRecognition):
         for block in blocks:
             if block['Type'] == 'LINE':
                 polygon = OCRAmazonAWS.__format_polygon(block['Geometry']['Polygon'], width, height)
-                bounding_box = OCRAmazonAWS.__format_bounding_box(block['Geometry']['BoundingBox'], width, height)
+                #bounding_box = OCRAmazonAWS.__format_bounding_box(block['Geometry']['BoundingBox'], width, height)
                 text = block['DetectedText']
                 text = cyrillic_to_latin(text)
-                #pivot = Vector2I(polygon[0][0], polygon[0][1])
-                #size = Vector2I(polygon[1][0] - polygon[0][0], polygon[3][1] - polygon[0][1])
-                area, angle, pivot, size = extract_image_area(polygon, image, True)
+                area, angle, pivot, size = extract_image_area(polygon, image, True) # TODO: to simplify ?
                 textBlockList.append(OCRBlock(polygon=polygon, text=text, pivot=pivot, size=size, angle=angle))
         return OCRPage(blocks=textBlockList, src_path=img_path)
     

@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Sequence, Tuple
 from src.ocr.OCRAmazonAWS import OCRAmazonAWS
 from src.ocr.default.OCRCraftTesseract import OCRCraftTesseract
 from src.model.model import OCRConfig, OCRPage, OCRService
@@ -16,6 +16,6 @@ class OCRManager:
         return self.ocr.process_batch(img_path_list)
 
 
-    def process_img(self, img_path: str) -> OCRPage:
+    def process_img(self, img_path: str) -> Tuple[OCRPage, any]:
         """ Process an image and return a list of text and bouncing boxes """
         return self.ocr.process_img(img_path)
