@@ -2,9 +2,14 @@
 #define ENVIRONMENT_H
 
 #include <QStringList>
+#include "model/ServiceItem.h"
+#include <QFont>
 
-#include "ServiceItem.h"
+/**
+ * This file define global contants used in the software
+ */
 
+// List of OCR Services available
 const ServiceItem OCR_SERVICE_LIST[] = {
     ServiceItem("Local - Craft/Tesseract", "LOCAL_CRAFT_TESSERACT", false),
     ServiceItem("AWS Rekognition", "AWS_REKOGNITION", true, "AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY variables are required."),
@@ -12,6 +17,7 @@ const ServiceItem OCR_SERVICE_LIST[] = {
 };
 const QString SERVICE_DEFAULT_HELP = "The service require configuration variables";
 
+// List of machine Translation services
 #define TRANSLATE_DISABLED "Disable"
 const TranslationServiceItem TRANS_SERVICE_LIST[] = {
     TranslationServiceItem(TRANSLATE_DISABLED, "DISABLE", false),
@@ -27,6 +33,7 @@ const TranslationServiceItem TRANS_SERVICE_LIST[] = {
     TranslationServiceItem("Libre", "LIBRE", true, "TRAD_KEY_LIBRE and TRAD_LIBRE_BASE_URL variables are required")
 };
 
+// Supported image extensions
 const QList<QString> SUPPORTED_EXTENSION = {
     "*.png",
     "*.jpg",
@@ -39,8 +46,10 @@ const QList<QString> SUPPORTED_EXTENSION_SUFFIX = {
 };
 #define IMG_SELECT_FILTER "Images (*.png *.jpeg *.jpg)"
 
+// URL of the CORE module's API
 #define API_URL "http://127.0.0.1:5000"
 
+/////////////////////////////////
 // Style
 
 #define EDITOR_BG 0xF2F2F2
@@ -66,25 +75,35 @@ const QList<QString> SUPPORTED_EXTENSION_SUFFIX = {
 #define EDITOR_PAGE_SHADOW_RADIUS 80
 #define EDITOR_PAGE_SHADOW_COLOR QColor(170, 170, 170)
 
-
+/////////////////////////////////
 // Asset
 
 #define IMG_LOADING ":/asset/img/loading.gif"
 #define FONT_DIR_REG ":/asset/font/regular/"
 #define FONT_DIR_SFX ":/asset/font/sfx/"
 
+/////////////////////////////////
 // Config
 
 #define DEF_LINE_HEIGHT 100 // Editor -> Text
 #define DEF_EDITAREA_SIZE 100, 50 // Editor
 
-#define DEF_EDIT_LINE_HEIGHT 0 // Edition/render config
+#define DEF_EDIT_LINE_HEIGHT 20 // Edition/render config
 #define DEF_EDIT_STROKE_WIDTH 4 // Normal
 #define DEF_EDIT_FONT "Wild Words"
 #define DEF_EDIT_COLOR QColor(Qt::black)
 
-#include <QFont>
-static const QFont::Weight weightChoices[] = {QFont::Thin, QFont::ExtraLight, QFont::Light, QFont::Normal, QFont::Medium, QFont::DemiBold, QFont::Bold, QFont::ExtraBold, QFont::Black};
+static const QFont::Weight weightChoices[] = {
+    QFont::Thin,
+    QFont::ExtraLight,
+    QFont::Light,
+    QFont::Normal,
+    QFont::Medium,
+    QFont::DemiBold,
+    QFont::Bold,
+    QFont::ExtraBold,
+    QFont::Black
+};
 
 // Editor page zoom key shortcut
 #define ZOOM_SHIFT 0.05 // scale shift

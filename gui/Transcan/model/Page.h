@@ -10,11 +10,16 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-#include "include/model/Utils.h"
-#include "include/models.h"
+#include "model/MathUtils.h"
+#include "model/configModels.h"
 
 using std::shared_ptr;
 using std::vector;
+
+/***
+ * This file define the main structures defining an edited document
+ * They are all serializable in JSON to be exchanged with the core module
+ **/
 
 struct OCRBlock {
     QString uuid;

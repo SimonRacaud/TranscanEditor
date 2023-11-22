@@ -4,7 +4,7 @@
 #include "widget/editor/propertyTab/APropertyTab.h"
 #include "include/environment.h"
 #include "edit/ClusterStyleConfig.h"
-#include "include/models.h"
+#include "model/configModels.h"
 
 #include <QFontComboBox>
 #include <QSpinBox>

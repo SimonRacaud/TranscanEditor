@@ -5,6 +5,10 @@
 #include <QLabel>
 #include <QTimer>
 
+/**
+ * @brief The Notification class : Briefly show a message on the user's screen
+ * Useful to show error messages to the user
+ */
 class Notification : public QWidget
 {
     Q_OBJECT

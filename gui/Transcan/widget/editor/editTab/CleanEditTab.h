@@ -4,6 +4,9 @@
 #include "NetEditTab.h"
 #include "widget/editor/box/SelectAreaBox.h"
 
+/**
+ * @brief The CleanEditTab class : To remove text on pages
+ */
 class CleanEditTab : public NetEditTab
 {
     Q_OBJECT

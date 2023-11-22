@@ -4,6 +4,13 @@
 #include <QString>
 #include <QStringList>
 
+/***
+ * Those data classes are used in the project configuration form
+ **/
+
+/**
+ * @brief The ServiceItem class is used to define a distant service
+ */
 class ServiceItem {
 public:
     const QString name;
@@ -19,6 +26,9 @@ public:
     {}
 };
 
+/**
+ * @brief The TranslationServiceItem class : used to define a translation service
+ */
 class TranslationServiceItem : public ServiceItem {
 public:
     const QStringList srcLang;

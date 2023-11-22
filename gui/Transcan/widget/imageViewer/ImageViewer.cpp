@@ -1,5 +1,5 @@
 #include "ImageViewer.h"
-#include "utils/FileUtils.h"
+#include "utility/FileUtils.h"
 
 #include <QHBoxLayout>
 #include <QScrollBar>

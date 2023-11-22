@@ -13,7 +13,7 @@ static const QList<QString> RES_FONT_REG = {
     FONT_DIR_REG"mangatb.ttf",
     FONT_DIR_REG"mangati.ttf",
     FONT_DIR_REG"wildwordsbold.ttf",
-    //FONT_DIR_REG"wildwordsbolditalic.TTF",
+    //FONT_DIR_REG"wildwordsbolditalic.TTF", // Italic not supported yet
     //FONT_DIR_REG"wildwordsitalic.TTF",
     FONT_DIR_REG"wildwordsroman.TTF",
 };

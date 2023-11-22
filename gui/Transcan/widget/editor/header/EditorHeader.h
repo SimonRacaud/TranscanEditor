@@ -6,6 +6,9 @@
 #include <QPushButton>
 #include <QtSvgWidgets/QSvgWidget>
 
+/**
+ * @brief The EditorHeader class : Editor page's navigation component
+ */
 class EditorHeader : public QWidget
 {
     Q_OBJECT

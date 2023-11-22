@@ -1,7 +1,7 @@
 #include "MainWindow.h"
 #include <QGridLayout>
 #include <QMessageBox>
-#include "include/models.h"
+#include "model/configModels.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _stack(nullptr), _homePage(nullptr), _viewer(nullptr)
 {

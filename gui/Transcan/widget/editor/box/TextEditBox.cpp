@@ -208,6 +208,8 @@ int TextEditBox::computeOptimalFontSize(int *heightMargin, QString const &) cons
     const int MAX_FONTSIZE = 100;
     int fontSize = 1;
     int prevHeightMargin = 0;
+    QSize widgetSize = this->_textEdit->size();
+
 //    const QRegularExpression regExpr("[\\s\\t]");
 //    const QSize &rect = _textEdit->size();
 //    int marginHeight = 0;
@@ -225,10 +227,8 @@ int TextEditBox::computeOptimalFontSize(int *heightMargin, QString const &) cons
 
         QFont font = QFont(_data.style.font.families(), fontSize);
         font.setWeight(weightChoices[_data.style.strokeWidth - 1]);
-
         this->_textEdit->setFont(font);
         QSizeF textSize = this->_textEdit->document()->size();
-        QSize widgetSize = this->_textEdit->size();
 
         bool tooTall = (int)textSize.height() > widgetSize.height();
         bool tooLarge = (int)textSize.width() > widgetSize.width();
@@ -287,7 +287,13 @@ void TextEditBox::formatText()
     if (text.isEmpty()) {
         text = _textEdit->placeholderText();
     }
+//    auto start = QDateTime::currentMSecsSinceEpoch(); // DEBUG
     int fontSize = this->computeOptimalFontSize(&heightMargin, text);
+//    auto end = QDateTime::currentMSecsSinceEpoch(); // DEBUG
+//    static auto counter = 0; // DEBUG
+//    counter += end - start; // DEBUG
+//    qDebug() << "Elapsed: " << end - start << ", " << counter; // DEBUG
+
     _data.style.font = QFont(_data.style.font.families(), fontSize);
     if (_data.style.strokeWidth > 9 || !_data.style.strokeWidth)
         throw std::runtime_error("TextEditBox::formatText invalid font weight");

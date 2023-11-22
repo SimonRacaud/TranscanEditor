@@ -1,7 +1,7 @@
-#ifndef MODELS_H
-#define MODELS_H
+#ifndef CONFIGMODELS_H
+#define CONFIGMODELS_H
 
-#include "environment.h"
+#include "include/environment.h"
 
 #include <QString>
 #include <QFont>
@@ -85,4 +85,4 @@ public:
     }
 };
 
-#endif // MODELS_H
+#endif // CONFIGMODELS_H

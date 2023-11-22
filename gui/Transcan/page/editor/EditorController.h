@@ -5,6 +5,9 @@
 #include "EditorView.h"
 #include "net/APIClient.h"
 
+/**
+ * @brief The EditorController class : Editor page's logic
+ */
 class EditorController : public EditorView
 {
     Q_OBJECT

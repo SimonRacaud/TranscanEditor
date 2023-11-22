@@ -3,6 +3,9 @@
 
 #include "ATextEditTab.h"
 
+/**
+ * @brief The EditorEditTab class : To edit pages' new text
+ */
 class EditorEditTab : public ATextEditTab
 {
     Q_OBJECT

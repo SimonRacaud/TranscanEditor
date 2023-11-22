@@ -123,7 +123,7 @@ void ViewerWindow::loadDirectory(QString const &dirPath)
         this->_title->setText(title);
     }
     // Filter image files
-    for (size_t i = 0; i < ViewerWindow::SUPPORTED_EXTENSION.size(); i++) {
+    for (qsizetype i = 0; i < ViewerWindow::SUPPORTED_EXTENSION.size(); i++) {
         filter << ViewerWindow::SUPPORTED_EXTENSION.at(i);
     }
     dir.setNameFilters(filter);
@@ -178,7 +178,7 @@ void ViewerWindow::resizeImages(const int width)
         return;
     }
     int newWidth = (width - this->_scrollArea->verticalScrollBar()->width()) /* * (_zoom / 100.0f)*/;
-    for (size_t i = 0; i < this->_listImgLabel.size(); i++) {
+    for (qsizetype i = 0; i < this->_listImgLabel.size(); i++) {
         QLabel *label = this->_listImgLabel.at(i);
         QImage *img = this->_listImage.at(i);
         QPixmap pixmap = QPixmap::fromImage(*img).scaledToWidth(newWidth);

@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "include/models.h"
+#include "model/configModels.h"
 #include "model/Page.h"
 #include "include/environment.h"
 
@@ -14,6 +14,10 @@
 using NetCallback = std::function<void(OCRPage const& page)>;
 using NetErrCallback = std::function<void(QString const& errMsg)>;
 
+/**
+ * @brief The APIClient class : Network interface of the application
+ * Used to communicate with the CORE module
+ */
 class APIClient : public QObject
 {
     Q_OBJECT

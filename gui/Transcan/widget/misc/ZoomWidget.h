@@ -5,6 +5,9 @@
 #include <QSlider>
 #include <QLabel>
 
+/**
+ * @brief The ZoomWidget class : Slider used to manage the zoom in the editor
+ */
 class ZoomWidget : public QWidget
 {
     Q_OBJECT

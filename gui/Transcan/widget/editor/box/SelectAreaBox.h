@@ -6,6 +6,10 @@
 
 #include "model/Page.h"
 
+/**
+ * @brief The SelectAreaBox class : Used to select areas on a page (clean process)
+ * This widget is only clickable (selected or ignored)
+ */
 class SelectAreaBox : public QGraphicsObject
 {
     Q_OBJECT

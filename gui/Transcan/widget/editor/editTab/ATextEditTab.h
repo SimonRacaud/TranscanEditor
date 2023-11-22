@@ -5,6 +5,9 @@
 #include "widget/editor/box/TextEditBox.h"
 #include "NetEditTab.h"
 
+/**
+ * @brief The ATextEditTab class : Used by any viewer managing TextEditBoxes
+ */
 class ATextEditTab : public NetEditTab
 {
     Q_OBJECT

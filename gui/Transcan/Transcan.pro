@@ -11,19 +11,19 @@ CONFIG += c++17
 SOURCES += \
 	main.cpp \
         model/Page.cpp \
-    utility/FontManager.cpp \
-    widget/editor/box/TextEditBox.cpp \
-    widget/editor/editTab/ATextEditTab.cpp \
-    widget/editor/editTab/CleanEditTab.cpp \
-    widget/editor/editTab/EditorEditTab.cpp \
-    widget/editor/editTab/ExtractionEditTab.cpp \
+        utility/FontManager.cpp \
+        widget/editor/box/TextEditBox.cpp \
+        widget/editor/editTab/ATextEditTab.cpp \
+        widget/editor/editTab/CleanEditTab.cpp \
+        widget/editor/editTab/EditorEditTab.cpp \
+        widget/editor/editTab/ExtractionEditTab.cpp \
         widget/editor/editTab/NetEditTab.cpp \
-    widget/editor/editTab/SaveEditTab.cpp \
-    widget/editor/header/EditorHeader.cpp \
-    widget/misc/FontSelect.cpp \
-    widget/misc/Notification.cpp \
-    widget/misc/ZoomWidget.cpp \
-    widget/editor/propertyTab/edit/ClusterStyleConfig.cpp \
+        widget/editor/editTab/SaveEditTab.cpp \
+        widget/editor/header/EditorHeader.cpp \
+        widget/misc/FontSelect.cpp \
+        widget/misc/Notification.cpp \
+        widget/misc/ZoomWidget.cpp \
+        widget/editor/propertyTab/edit/ClusterStyleConfig.cpp \
         window/MainWindow.cpp \
         window/ViewerWindow.cpp \
         page/editor/EditorView.cpp \
@@ -38,12 +38,14 @@ SOURCES += \
         widget/imageViewer/ImageViewer.cpp \
         widget/imageViewer/PageGraphicsView.cpp \
         net/APIClient.cpp \
-	utils/FileUtils.cpp 
+        utility/FileUtils.cpp
 
 HEADERS += \
-    include/ServiceItem.h \
+    model/MathUtils.h \
+    model/ServiceItem.h \
     include/resource_font.h \
     model/Page.h \
+    model/configModels.h \
     utility/FontManager.h \
     widget/editor/box/TextEditBox.h \
     widget/editor/editTab/ATextEditTab.h \
@@ -60,8 +62,6 @@ HEADERS += \
     window/MainWindow.h \
     window/ViewerWindow.h \
     include/environment.h \
-    include/models.h \
-    include/model/Utils.h \
     page/editor/EditorView.h \
     page/editor/EditorController.h \
     page/home/HomePage.h \
@@ -71,11 +71,11 @@ HEADERS += \
     widget/editor/propertyTab/EditPropertyTab.h \
     widget/editor/propertyTab/SavePropertyTab.h \
     widget/editor/box/SelectAreaBox.h \
-    include/IEditTab.h \
+    widget/editor/editTab/IEditTab.h \
     widget/imageViewer/ImageViewer.h \
     widget/imageViewer/PageGraphicsView.h \
     net/APIClient.h \
-    utils/FileUtils.h
+    utility/FileUtils.h
 
 FORMS += \
     ui/home_page.ui

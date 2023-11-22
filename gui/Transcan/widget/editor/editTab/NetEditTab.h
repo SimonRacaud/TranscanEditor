@@ -2,14 +2,14 @@
 #define NETEDITTAB_H
 
 #include "widget/imageViewer/ImageViewer.h"
-#include "include/IEditTab.h"
+#include "IEditTab.h"
 
 #include "net/APIClient.h"
-#include "include/models.h"
+#include "model/configModels.h"
 
 /**
  * @brief The NetEditTab class
- * Give the ability to communication for the core to the Editor's tabs
+ * Allow a page viewer to communicate with the CORE
  */
 class NetEditTab : public ImageViewer, public IEditTab
 {

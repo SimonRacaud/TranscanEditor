@@ -21,6 +21,9 @@
 #include "include/environment.h"
 #include "widget/editor/header/EditorHeader.h"
 
+/**
+ * @brief The EditorView class : Editor page's view
+ */
 class EditorView : public QWidget
 {
     Q_OBJECT

@@ -8,9 +8,13 @@
 #include <QColorDialog>
 
 #include "model/Page.h"
-#include "include/models.h"
+#include "model/configModels.h"
 #include "widget/misc/FontSelect.h"
 
+/**
+ * @brief The ClusterStyleConfig class : Small config box used to configure
+ * a text block's style (line height, boldness, font family, color, ...)
+ */
 class ClusterStyleConfig : public QFrame
 {
     Q_OBJECT

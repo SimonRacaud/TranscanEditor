@@ -15,6 +15,9 @@ enum class RectMode {
     EDIT_TRAN, // edit translation
 };
 
+/**
+ * @brief The TextEditBox class : used to insert, move, resize and edit text on a page
+ */
 class TextEditBox : public QGraphicsProxyWidget
 {
     Q_OBJECT

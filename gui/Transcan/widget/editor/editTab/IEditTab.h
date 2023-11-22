@@ -11,13 +11,13 @@ public:
 
     /**
      * @brief load : reload display with pages
-     *  May launch API call.
+     *  May start an API call.
      * @param pages : pages to display
      */
     virtual void load(std::vector<OCRPage> const &pages = {}) = 0;
 
     /**
-     * @brief loadAPI : send API request for auto processing
+     * @brief loadAPI : send API request (CORE module)
      */
     virtual void loadAPI() = 0;
 
@@ -28,8 +28,8 @@ public:
     virtual void loadPage(OCRPage const &page) = 0;
 
     /**
-     * @brief unload : Called when quitting the tab
-     * Abort current API request (is needed)
+     * @brief unload : Called when unfocusing the tab
+     * Abort current API request (if needed)
      */
     virtual void unload() = 0;
 };

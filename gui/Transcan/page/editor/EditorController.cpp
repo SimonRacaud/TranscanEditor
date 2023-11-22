@@ -1,7 +1,7 @@
 #include "EditorController.h"
 #include "../../window/MainWindow.h"
 #include "widget/misc/Notification.h"
-#include "utils/FileUtils.h"
+#include "utility/FileUtils.h"
 
 #include <functional>
 #include <QMessageBox>

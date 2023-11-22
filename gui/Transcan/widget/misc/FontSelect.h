@@ -4,6 +4,11 @@
 #include <QLabel>
 
 ///
+/// FontSelect is a custom widget allowing the user to select font families
+/// The font families are separated in 3 categories
+///
+
+///
 
 #include <QListView>
 
@@ -51,6 +56,7 @@ private:
 class FontSelect : public QWidget, public QDesignerCustomWidgetInterface
 {
     Q_OBJECT
+    Q_INTERFACES(QDesignerCustomWidgetInterface)
 public:
     explicit FontSelect(QWidget *parent = nullptr);
 

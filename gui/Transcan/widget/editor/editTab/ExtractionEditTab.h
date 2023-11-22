@@ -6,6 +6,9 @@
 #include "include/environment.h"
 #include "model/Page.h"
 
+/**
+ * @brief The ExtractionEditTab class : To extract pages' old text
+ */
 class ExtractionEditTab : public ATextEditTab
 {
     Q_OBJECT
