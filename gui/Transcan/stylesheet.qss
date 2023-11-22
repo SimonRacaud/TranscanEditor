@@ -1,9 +1,9 @@
 /* Generic Elements */
 
 QPushButton {
-    height: 30px;
-    background-color: #00B5FF;
-    border-radius: 8px;
+    height: 40px;
+    background-color: #3a86ff;
+    border-radius: 10px;
 
     font-family: 'Inter';
     font-style: normal;
@@ -22,6 +22,14 @@ QPushButton:pressed {
 }
 QPushButton:hover:!pressed {
     background-color: #009cff;
+}
+
+QLineEdit {
+    background-color: #EAEAEA;
+    border-radius: 4px;
+    height: 30px;
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
 QComboBox {
@@ -59,7 +67,7 @@ QLabel {
     font-family: 'Inter';
     font-style: normal;
     font-weight: 400;
-    font-size: 16px;
+    font-size: 14px;
     line-height: 19px;
 
     color: #000000;
@@ -117,7 +125,14 @@ QListView::item:hover {
     background-color: #EAEAEA;
 }
 
+/* ------------------------------------ */
 /* Home Page */
+
+#project_frame, #viewer_frame {
+    border-radius: 10px;
+    border: none;
+    background-color: rgb(255, 255, 255);
+}
 
 #ocrWarningLabel, #transWarningLabel {
     font-size: 12px;
@@ -128,14 +143,13 @@ QLabel#TitleProject, #TitleViewer {
     font-family: 'Inter';
     font-style: normal;
     font-weight: 700;
-    font-size: 24px;
+    font-size: 20px;
     line-height: 29px;
     color: #000000;
 }
 
 #CreateProjectTitle {
     font-weight: 700;
-    height: 20px;
 }
 
 #ViewerLayout, #OpenDirBox, #projectListView, #ProjectLayout > QFrame {
@@ -144,6 +158,7 @@ QLabel#TitleProject, #TitleViewer {
 
 #projectListView {
     min-height: 400px;
+    padding: 5px;
 }
 
 /* Viewer */

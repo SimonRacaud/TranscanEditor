@@ -3,6 +3,7 @@
 
 #include "window/MainWindow.h"
 #include "include/env_services.h"
+#include "include/env_style.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -28,6 +29,22 @@ HomePage::HomePage(QWidget *parent)
     this->destDirectory = "/home/simon/scanTranslator/data/result";
     this->ui->ocrComboBox->setCurrentIndex(1); // AWS
     this->ui->transComboBox->setCurrentIndex(1); // GOOGLE
+
+    //// : Style
+    QGraphicsDropShadowEffect* shadowEffect = new QGraphicsDropShadowEffect();
+    shadowEffect->setBlurRadius(200);
+    shadowEffect->setXOffset(2);
+    shadowEffect->setColor(QColor(0, 0, 0, 64));
+    this->ui->project_frame->setGraphicsEffect(shadowEffect);
+    QGraphicsDropShadowEffect* shadowEffect2 = new QGraphicsDropShadowEffect();
+    shadowEffect2->setBlurRadius(200);
+    shadowEffect2->setXOffset(2);
+    shadowEffect2->setColor(QColor(0, 0, 0, 64));
+    this->ui->viewer_frame->setGraphicsEffect(shadowEffect2);
+
+    // Set background color
+    this->setAutoFillBackground(true);
+    this->setPalette(QPalette(QColor(COLOR_LGREEN)));
 }
 
 HomePage::~HomePage()

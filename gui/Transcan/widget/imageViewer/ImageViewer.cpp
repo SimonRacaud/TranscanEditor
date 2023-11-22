@@ -15,7 +15,7 @@ using namespace std;
 ImageViewer::ImageViewer(ImageMode mode, QWidget *parent) : QWidget{parent}, _mode(mode)
 {
     // Set background color
-    QPalette pal = QPalette(QColor(EDITOR_EDITA_BG));
+    QPalette pal = QPalette(QColor(COLOR_LGREEN));
     this->setAutoFillBackground(true);
     this->setPalette(pal);
     //
