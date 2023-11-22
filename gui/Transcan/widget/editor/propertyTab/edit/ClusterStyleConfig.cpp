@@ -2,7 +2,7 @@
 
 #include <QFormLayout>
 #include <QLabel>
-#include "include/environment.h"
+#include "include/env_style.h"
 
 ClusterStyleConfig::ClusterStyleConfig(QString const &title) : QFrame()
 {

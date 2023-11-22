@@ -1,7 +1,7 @@
 #ifndef CONFIGMODELS_H
 #define CONFIGMODELS_H
 
-#include "include/environment.h"
+#include "include/env_config.h"
 
 #include <QString>
 #include <QFont>

@@ -1,7 +1,6 @@
 #ifndef ATEXTEDITTAB_H
 #define ATEXTEDITTAB_H
 
-#include "include/environment.h"
 #include "widget/editor/box/TextEditBox.h"
 #include "NetEditTab.h"
 

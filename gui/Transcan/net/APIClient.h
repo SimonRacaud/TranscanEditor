@@ -5,7 +5,7 @@
 
 #include "model/configModels.h"
 #include "model/Page.h"
-#include "include/environment.h"
+#include "include/env_config.h"
 
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
@@ -22,7 +22,7 @@ class APIClient : public QObject
 {
     Q_OBJECT
 public:
-    APIClient(QString const &url = API_URL);
+    APIClient(QString const &url = CORE_API_URL);
 
     /**
      * @brief sendToOCR Text detection and extraction

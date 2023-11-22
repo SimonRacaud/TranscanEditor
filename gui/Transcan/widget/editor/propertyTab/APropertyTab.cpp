@@ -1,4 +1,6 @@
 #include "APropertyTab.h"
+
+#include "include/env_style.h"
 #include <QMessageBox>
 #include <iostream>
 #include <QScrollBar>

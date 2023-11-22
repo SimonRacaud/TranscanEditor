@@ -4,7 +4,6 @@
 #include <QWidget>
 #include <QStringListModel>
 
-#include "include/environment.h"
 #include "widget/misc/FontSelect.h"
 
 QT_BEGIN_NAMESPACE

@@ -1,4 +1,6 @@
 #include "CleanPropertyTab.h"
+
+#include "include/env_config.h"
 #include <QHBoxLayout>
 #include <QFileDialog>
 

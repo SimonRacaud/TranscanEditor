@@ -1,4 +1,5 @@
 #include "ViewerWindow.h"
+#include "include/env_config.h"
 
 #include <QSizePolicy>
 #include <QKeyEvent>

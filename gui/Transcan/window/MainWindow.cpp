@@ -2,6 +2,7 @@
 #include <QGridLayout>
 #include <QMessageBox>
 #include "model/configModels.h"
+#include "include/env_style.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _stack(nullptr), _homePage(nullptr), _viewer(nullptr)
 {

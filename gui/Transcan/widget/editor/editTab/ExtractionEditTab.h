@@ -3,7 +3,6 @@
 
 #include "ATextEditTab.h"
 #include "widget/editor/box/TextEditBox.h"
-#include "include/environment.h"
 #include "model/Page.h"
 
 /**

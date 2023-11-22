@@ -2,7 +2,6 @@
 #define EDITPROPERTYTAB_H
 
 #include "widget/editor/propertyTab/APropertyTab.h"
-#include "include/environment.h"
 #include "edit/ClusterStyleConfig.h"
 #include "model/configModels.h"
 

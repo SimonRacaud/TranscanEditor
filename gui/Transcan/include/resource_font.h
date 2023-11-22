@@ -1,7 +1,7 @@
 #ifndef RESOURCE_FONT_H
 #define RESOURCE_FONT_H
 
-#include "include/environment.h"
+#include "include/env_config.h"
 
 #include <QList>
 #include <QString>

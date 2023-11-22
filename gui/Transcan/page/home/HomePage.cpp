@@ -1,8 +1,10 @@
 #include "HomePage.h"
 #include "ui_home_page.h"
+
+#include "window/MainWindow.h"
+#include "include/env_services.h"
+
 #include <QFileDialog>
-#include "../../window/MainWindow.h"
-#include <memory.h>
 #include <QMessageBox>
 
 extern MainWindow *mainWindow;

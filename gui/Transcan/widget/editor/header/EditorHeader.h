@@ -2,9 +2,10 @@
 #define EDITORHEADER_H
 
 #include <QWidget>
-#include "include/environment.h"
 #include <QPushButton>
 #include <QtSvgWidgets/QSvgWidget>
+
+#include "include/env_config.h"
 
 /**
  * @brief The EditorHeader class : Editor page's navigation component

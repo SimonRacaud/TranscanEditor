@@ -41,6 +41,9 @@ SOURCES += \
         utility/FileUtils.cpp
 
 HEADERS += \
+    include/env_config.h \
+    include/env_services.h \
+    include/env_style.h \
     model/MathUtils.h \
     model/ServiceItem.h \
     include/resource_font.h \
@@ -61,7 +64,6 @@ HEADERS += \
     widget/editor/propertyTab/edit/ClusterStyleConfig.h \
     window/MainWindow.h \
     window/ViewerWindow.h \
-    include/environment.h \
     page/editor/EditorView.h \
     page/editor/EditorController.h \
     page/home/HomePage.h \

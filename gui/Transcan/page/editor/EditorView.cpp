@@ -4,6 +4,7 @@
 #include "widget/editor/propertyTab/EditPropertyTab.h"
 #include "widget/editor/propertyTab/SavePropertyTab.h"
 #include "widget/editor/editTab/ExtractionEditTab.h"
+#include "include/env_style.h"
 
 #include <QHBoxLayout>
 #include <QtSvgWidgets/QSvgWidget>

@@ -2,7 +2,6 @@
 #define SAVEPROPERTYTAB_H
 
 #include "widget/editor/propertyTab/APropertyTab.h"
-#include "include/environment.h"
 
 #include <QLabel>
 #include <QPushButton>

@@ -1,6 +1,7 @@
 #include "EditorHeader.h"
 
 #include "window/MainWindow.h"
+#include "include/env_style.h"
 
 #include <QHBoxLayout>
 

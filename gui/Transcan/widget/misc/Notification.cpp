@@ -1,5 +1,5 @@
 #include "Notification.h"
-#include "include/environment.h"
+#include "include/env_config.h"
 
 #include <QVBoxLayout>
 #include <QGraphicsOpacityEffect>

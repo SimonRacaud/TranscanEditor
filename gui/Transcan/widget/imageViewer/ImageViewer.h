@@ -7,7 +7,6 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsDropShadowEffect>
 
-#include "include/environment.h"
 #include "model/Page.h"
 #include "PageGraphicsView.h"
 

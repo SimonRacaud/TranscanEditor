@@ -2,7 +2,7 @@
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include "include/environment.h"
+#include "include/env_config.h"
 
 ZoomWidget::ZoomWidget(float zoom, QWidget *parent)
     : QWidget{parent}, _zoom(zoom)

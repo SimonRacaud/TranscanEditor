@@ -7,7 +7,6 @@
 #include <QVBoxLayout>
 #include <QScrollArea>
 
-#include "include/environment.h"
 #include "widget/misc/ZoomWidget.h"
 
 using FuncNetCall = std::function<void()>;

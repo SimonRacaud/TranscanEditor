@@ -1,6 +1,7 @@
 #include "SavePropertyTab.h"
 #include <QVBoxLayout>
 #include "window/MainWindow.h"
+#include "include/env_style.h"
 
 extern MainWindow *mainWindow;
 

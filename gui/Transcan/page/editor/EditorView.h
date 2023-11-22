@@ -18,7 +18,6 @@
 #include "widget/editor/editTab/EditorEditTab.h"
 #include "widget/editor/editTab/SaveEditTab.h"
 
-#include "include/environment.h"
 #include "widget/editor/header/EditorHeader.h"
 
 /**
