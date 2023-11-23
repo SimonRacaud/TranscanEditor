@@ -89,12 +89,9 @@ void EditorController::setZoom(float value)
 
 void EditorController::networkError(QString const &message)
 {
-    static bool firstCall = true;
     std::cerr << "Network error : " << message.toStdString() << std::endl;
-    if (firstCall) {
-        firstCall = false;
-        Notification::Build("Error: Unable to communicate with the core daemon.", this);
-    }
+
+    Notification::Build("Error: Unable to communicate with the core daemon.", this);
 }
 
 void EditorController::onStart(ProjectConfig const &config)

@@ -78,6 +78,7 @@ void APIClient::abortRequests()
         req->reply->deleteLater();
     }
     _pendingReplies.clear();
+    _requestQueue.clear();
 }
 
 bool APIClient::pendingReply() const
@@ -146,6 +147,7 @@ void APIClient::onReceiveReply(QNetworkReply *reply, QByteArray const &rawData,
     if (reply->error() != QNetworkReply::NoError) {
         qDebug() << "Network Error: " << reply->errorString()
                  << reply->error() << " Body: " << rawData;
+        this->abortRequests();
         errorFun(reply->errorString());
         emit this->sigNetError(reply->errorString());
     } else {
