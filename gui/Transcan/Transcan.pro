@@ -11,6 +11,7 @@ CONFIG += c++17
 SOURCES += \
 	main.cpp \
         model/Page.cpp \
+    net/CoreRequest.cpp \
         utility/FontManager.cpp \
         widget/editor/box/TextEditBox.cpp \
         widget/editor/editTab/ATextEditTab.cpp \
@@ -44,6 +45,7 @@ HEADERS += \
     include/env_config.h \
     include/env_services.h \
     include/env_style.h \
+    net/CoreRequest.h \
     model/MathUtils.h \
     model/ServiceItem.h \
     include/resource_font.h \

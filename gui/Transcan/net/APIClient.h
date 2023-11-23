@@ -2,17 +2,18 @@
 #define APICLIENT_H
 
 #include <QObject>
+#include <QQueue>
 
 #include "model/configModels.h"
 #include "model/Page.h"
 #include "include/env_config.h"
+#include "CoreRequest.h"
 
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
 
-using NetCallback = std::function<void(OCRPage const& page)>;
-using NetErrCallback = std::function<void(QString const& errMsg)>;
+#define MAX_PENDING 2
 
 /**
  * @brief The APIClient class : Network interface of the application
@@ -22,6 +23,12 @@ class APIClient : public QObject
 {
     Q_OBJECT
 public:
+    enum Target {
+        OCR,
+        CLEAN,
+        TRANSLATE
+    };
+
     APIClient(QString const &url = CORE_API_URL);
 
     /**
@@ -78,17 +85,38 @@ signals:
 
 protected:
     /**
-     * @brief sendRequest Send POST request to the core
-     * @param target Target endpoint (ex: "ocr")
-     * @param body JSON
+     * @brief tryFlushRequest : If Possible, send queued request(s)
      */
-    void sendRequest(QString const& target, QByteArray const &body,
+    void tryFlushRequest();
+
+    /**
+     * @brief pushRequest : Add request to the queue
+     * @param target : Target endpoint
+     * @param body : Request body
+     * @param callback : Callback called in case of success
+     * @param errFunc : Callback called in case of error
+     */
+    void pushRequest(Target target, QByteArray const &body,
                      NetCallback &callback, NetErrCallback &errFunc);
+
+    /**
+     * @brief sendRequest Send POST request to the core
+     */
+    void sendRequest(std::shared_ptr<CoreRequest> const req);
+protected slots:
+    /**
+     * @brief onReceiveReply : Called when a reply has been received
+     */
+    void onReceiveReply(QNetworkReply *reply, QByteArray const &rawData,
+                        NetErrCallback errorFun, NetCallback successFun);
 
 private:
     QString _url;
     QNetworkAccessManager _netManager;
-    QList<QNetworkReply*> _pendingReplies;
+    QQueue<std::shared_ptr<CoreRequest>> _requestQueue;
+    QList<std::shared_ptr<CoreRequest>> _pendingReplies;
+
+    static const std::unordered_map<Target, QString> _target;
 };
 
 #endif // APICLIENT_H
