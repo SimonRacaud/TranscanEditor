@@ -125,6 +125,7 @@ void APIClient::sendRequest(shared_ptr<CoreRequest> const req)
     QUrl url(QString("%1/%2").arg(_url, req->target));
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    request.setTransferTimeout(NET_TIMEOUT_MS);
     QNetworkReply *reply = _netManager.post(request, req->body);
 
     QObject::connect(reply, &QNetworkReply::finished, req.get(), &CoreRequest::onReceiveResponse);

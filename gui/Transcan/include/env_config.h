@@ -10,6 +10,7 @@
 
 // URL of the CORE module's API
 #define CORE_API_URL "http://127.0.0.1:5000"
+#define NET_TIMEOUT_MS QNetworkRequest::DefaultTransferTimeoutConstant // 3 seconds
 
 // Supported image extensions
 const QList<QString> SUPPORTED_EXTENSION = {
