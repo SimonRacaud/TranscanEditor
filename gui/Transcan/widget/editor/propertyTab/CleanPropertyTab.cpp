@@ -35,12 +35,11 @@ void CleanPropertyTab::fillHelp()
 
 void CleanPropertyTab::initProperties()
 {
-    QHBoxLayout *inputLayout = new QHBoxLayout;
+    QVBoxLayout *inputLayout = new QVBoxLayout;
     this->_fileSelect = new QPushButton("Select file");
     this->_fileSelectLabel = new QLabel("Replace current page: ");
     inputLayout->addWidget(_fileSelectLabel);
     inputLayout->addWidget(_fileSelect);
-    inputLayout->setAlignment(Qt::AlignmentFlag::AlignHCenter);
     //
     this->_propertiesLayout->addLayout(inputLayout);
     connect(_fileSelect, &QPushButton::clicked, this, &CleanPropertyTab::onFileSelectButtonClicked);

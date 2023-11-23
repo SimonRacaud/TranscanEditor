@@ -2,6 +2,8 @@
 
 QPushButton {
     height: 40px;
+    min-width: 120px;
+
     background-color: #3a86ff;
     border-radius: 10px;
 
@@ -15,7 +17,6 @@ QPushButton {
 
     padding-left: 8px;
     padding-right: 8px;
-    min-width: 100px;
 }
 QPushButton:pressed {
     background-color: #0088ff;
@@ -125,6 +126,34 @@ QListView::item:hover {
     background-color: #EAEAEA;
 }
 
+QScrollBar:vertical * {
+    /*background-color: #F6F6F6FF;*/
+    width:15px;
+    /*margin: 0px 0px 0px 0px;*/
+    /*border: 1px solid #999999;*/
+}
+QScrollBar::handle:vertical {
+    background-color: #D9D9D9;
+    border-radius: 5px;
+}
+
+/*QSlider::handle:horizontal {
+    border-radius: 10px;
+    background-color: #2A2D34;
+    width: 10px;
+    height: 10px;
+}*/
+/*QSlider::groove:horizontal {
+    background-color: #D9D9D9;
+    height: 5px;
+}*/
+/*QSlider::add-page:vertical {
+    background: #D9D9D9;
+}
+QSlider::sub-page:vertical {
+    background: pink;
+}*/
+
 /* ------------------------------------ */
 /* Home Page */
 
@@ -176,23 +205,27 @@ QLabel#TitleProject, #TitleViewer {
     padding: 0 10px;
 }
 
-/* Editor */
+/*** Editor ***/
+
+/** Editor:Header */
 
 #EditorHeader {
-    /*background-color: #354052;*/
-    /*border-bottom: 1px solid #E2E2E2;*/
+    /* background-color: #1D3557; */
+    /* border-bottom: 1px solid #E2E2E2; */
     height: 50px;
 }
 
-#EditorHeadShowSourceButton:!checked {
+/*#EditorHeadShowSourceButton:!checked {
     background: #F7F9F9;
     color: #2A2D34
-}
+}*/
 
 #MiddleHeaderWidget > QPushButton:enabled {
     background: #F7F9F9;
     color: #2A2D34
 }
+
+/** Editor:Viewer */
 
 #EditorPropTitle, #EditorHelpTitle {
     font-family: 'Inter';
@@ -201,14 +234,24 @@ QLabel#TitleProject, #TitleViewer {
     line-height: 17px;
     color: #000000;
 }
-#EditorHelpText {
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 17px;
-    color: rgba(0, 0, 0, 0.8);
-}
 
 /* #EditorNextStepButton {} */
+
+/** Style Config Widget **/
+
+#ClusterStyleConfig {
+    border-radius: 10px;
+    background: #FFF;
+    width: 250px;
+    height: 179px;
+    border: none;
+}
+
+/** Editor:Property */
+
+APropertyTab {
+    width: 350px;
+}
 
 APropertyTab QPushButton:!enabled {
     background: #F7F9F9;
@@ -227,11 +270,41 @@ APropertyTab QLabel {
     color: rgb(80, 80, 80);
 }
 
+#ZoomWidget {
+    background-color: white;
+    border-radius: 10px;
+    height: 20px;
+    padding: 5px 10px;
+}
+
+#PropertiesArea, #helpContainer {
+    background-color: white;
+    border-radius: 10px;
+    padding: 5px 10px;
+}
+#propertiesContainer {
+    background-color: white;
+    border: none;
+}
+#EditorHelpText {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 17px;
+    color: rgba(0, 0, 0, 0.8);
+}
+
 /*** Notification ***/
+
+#Notification {
+    height: 50px;
+    min-width: 400px;
+    border-radius: 10px;
+}
 
 #NotificationLabel {
     font-size: 12px;
     font-weight: bold;
+    color: white;
 }
 
 /*** FONT SELECT WIDGET ***/

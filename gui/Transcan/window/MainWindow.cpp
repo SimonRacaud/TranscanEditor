@@ -14,7 +14,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _stack(nullptr), 
 
     this->setPage(Page::HOME);
 
-     this->resize(EDITOR_DEF_SIZE);
+    //this->resize(EDITOR_DEF_SIZE);
+    this->showMaximized();
 }
 
 MainWindow::~MainWindow()

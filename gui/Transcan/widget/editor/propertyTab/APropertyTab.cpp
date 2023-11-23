@@ -4,13 +4,12 @@
 #include <QMessageBox>
 #include <iostream>
 #include <QScrollBar>
+#include <QGraphicsDropShadowEffect>
 
 APropertyTab::APropertyTab(FuncNetCall &reloadFunc, QWidget *parent)
     : QWidget{parent}, _netCallback(reloadFunc)
 {
     QVBoxLayout *rootLayout = new QVBoxLayout;
-    QVBoxLayout *upperLayout = new QVBoxLayout;
-    QVBoxLayout *lowerLayout = new QVBoxLayout;
 
     // Zoom
     _zoomWidget = new ZoomWidget(0);
@@ -23,53 +22,62 @@ APropertyTab::APropertyTab(FuncNetCall &reloadFunc, QWidget *parent)
     this->_title->setObjectName("EditorPropTitle");
     this->_title->setText("Properties:");
     this->_title->setAlignment(Qt::AlignmentFlag::AlignHCenter);
+
     this->_reloadButton = new QPushButton("Reload");
-    upperLayout->setSpacing(EDITOR_PROP_SPACING);
-    upperLayout->addWidget(_title);
-    upperLayout->addWidget(_reloadButton);
-    upperLayout->setAlignment(Qt::AlignmentFlag::AlignTop);
-    QWidget *propertiesContainer = new QWidget;
+
+    QWidget *propertiesContainer = new QWidget();
+    propertiesContainer->setContentsMargins(0, 0, 0, 0);
+    propertiesContainer->setObjectName("propertiesContainer");
     this->_propertiesLayout = new QVBoxLayout(propertiesContainer);
+    _propertiesLayout->setAlignment(Qt::AlignmentFlag::AlignTop);
+    _propertiesLayout->setSpacing(EDITOR_PROP_SPACING);
     this->_propertiesLayout->setAlignment(Qt::AlignmentFlag::AlignTop);
+    _propertiesLayout->addWidget(_title);
+    _propertiesLayout->addWidget(_reloadButton);
+
     this->_propScollArea = new QScrollArea;
+    this->_propScollArea->setObjectName("PropertiesArea");
     this->_propScollArea->horizontalScrollBar()->setEnabled(false);
     this->_propScollArea->setStyleSheet("QScrollArea { border: none; }");
     this->_propScollArea->setWidgetResizable(true);
     this->_propScollArea->setWidget(propertiesContainer);
     this->_propScollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    this->_propScollArea->setBackgroundRole(QPalette::Base);
-    upperLayout->addWidget(_propScollArea);
 
     // Lower section (help)
+    QFrame *helpContainer = new QFrame();
+    helpContainer->setContentsMargins(0, 0, 0, 0);
+    QVBoxLayout *helpLayout = new QVBoxLayout;
+    helpContainer->setObjectName("helpContainer");
+    helpContainer->setLayout(helpLayout);
     this->_helpTitle = new QLabel();
     this->_helpTitle->setText("Help:");
     this->_helpTitle->setObjectName("EditorHelpTitle");
     this->_helpTitle->setAlignment(Qt::AlignmentFlag::AlignHCenter);
-    lowerLayout->setSpacing(EDITOR_PROP_SPACING);
-    lowerLayout->addWidget(_helpTitle);
-    lowerLayout->setAlignment(Qt::AlignmentFlag::AlignBottom);
+    helpLayout->setSpacing(EDITOR_PROP_SPACING);
+    helpLayout->addWidget(_helpTitle);
+    helpLayout->setAlignment(Qt::AlignmentFlag::AlignBottom);
     this->_help = new QLabel();
     this->_help->setObjectName("EditorHelpText");
+    //this->_help->setTextFormat(Qt::TextFormat::MarkdownText);
     this->_help->setMinimumHeight(EDITOR_PROP_HELP_MIN_HEIGHT);
     this->_help->setAlignment(Qt::AlignmentFlag::AlignTop);
     this->_help->setWordWrap(true);
-    lowerLayout->addWidget(_help);
+    helpLayout->addWidget(_help);
+
     QHBoxLayout *nextButtonLay = new QHBoxLayout();
     this->_nextButton = new QPushButton("Next step");
     this->_nextButton->setObjectName("EditorNextStepButton");
     nextButtonLay->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Expanding));
     nextButtonLay->addWidget(_nextButton);
     nextButtonLay->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Expanding));
-    lowerLayout->addLayout(nextButtonLay);
     //
-    rootLayout->addLayout(upperLayout);
-    rootLayout->addLayout(lowerLayout);
+    rootLayout->addWidget(_propScollArea);
+    rootLayout->addWidget(helpContainer);
+    rootLayout->addSpacing(8);
+    rootLayout->addLayout(nextButtonLay);
+    rootLayout->addSpacing(2);
     this->setLayout(rootLayout);
-    // Set background color
-    QPalette pal = QPalette(QColor(EDITOR_PROPTAB_BG));
-    this->setAutoFillBackground(true);
-    this->setPalette(pal);
-    this->setFixedWidth(EDITOR_PROPTAB_WIDTH);
+
     // EVENT
     connect(_nextButton, &QPushButton::clicked, [this]() { emit this->nextStep(); });
     FuncNetCall &reloadCallback = _netCallback;
@@ -83,7 +91,27 @@ APropertyTab::APropertyTab(FuncNetCall &reloadFunc, QWidget *parent)
                 std::cerr << "Fail to reload. " << err.what();
             }
         }
-    });    
+    });
+
+    /// STYLE
+    QGraphicsDropShadowEffect* shadowEffectProp = new QGraphicsDropShadowEffect();
+    shadowEffectProp->setBlurRadius(STYLE_SHADOW_RADIUS_S);
+    shadowEffectProp->setXOffset(STYLE_SHADOW_OFFSET);
+    shadowEffectProp->setYOffset(STYLE_SHADOW_OFFSET);
+    shadowEffectProp->setColor(STYLE_SHADOW_COLOR);
+    this->_propScollArea->setGraphicsEffect(shadowEffectProp);
+
+    QGraphicsDropShadowEffect* shadowEffectHelp = new QGraphicsDropShadowEffect();
+    shadowEffectHelp->setBlurRadius(STYLE_SHADOW_RADIUS_S);
+    shadowEffectHelp->setXOffset(STYLE_SHADOW_OFFSET);
+    shadowEffectHelp->setYOffset(STYLE_SHADOW_OFFSET);
+    shadowEffectHelp->setColor(STYLE_SHADOW_COLOR);
+    helpContainer->setGraphicsEffect(shadowEffectHelp);
+    // Set background color
+    QPalette pal = QPalette(QColor(COLOR_LGREEN));
+    this->setAutoFillBackground(true);
+    this->setPalette(pal);
+    this->setFixedWidth(EDITOR_PROPTAB_WIDTH);
 }
 
 void APropertyTab::unlockReloadButton()

@@ -23,7 +23,11 @@
 
 #define LOADING_ICON_SIZE 80 // Page viewer
 
-#define EDITOR_PAGE_SHADOW_RADIUS 80
-#define EDITOR_PAGE_SHADOW_COLOR QColor(170, 170, 170)
+// Shadow:
+#define STYLE_SHADOW_RADIUS_L 100
+#define STYLE_SHADOW_RADIUS_S 40
+
+#define STYLE_SHADOW_OFFSET 2
+#define STYLE_SHADOW_COLOR QColor(66, 66, 66, 64)
 
 #endif // ENV_STYLE_H

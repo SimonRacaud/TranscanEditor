@@ -20,9 +20,9 @@ EditorHeader::EditorHeader(QWidget *)
 
     // Left layout
     leftHeaderLay->setAlignment(Qt::AlignmentFlag::AlignLeft);
-    _showSourceButton->setText("Show source");
     _showSourceButton->setObjectName("EditorHeadShowSourceButton");
     _showSourceButton->setCheckable(true);
+    this->setShowSourceButtonState(false);
     leftHeaderLay->addWidget(_showSourceButton);
     // Middle layout
     this->_separator1 = new QSvgWidget(EDITOR_HEAD_SEPARATOR);
@@ -35,6 +35,7 @@ EditorHeader::EditorHeader(QWidget *)
     middleHeaderWidget->setObjectName("MiddleHeaderWidget");
     middleHeaderWidget->setLayout(middleHeaderLay);
     middleHeaderLay->setAlignment(Qt::AlignmentFlag::AlignCenter);
+    middleHeaderLay->setContentsMargins(0, 0, 0, 0);
     _extractButton->setText("EXTRACT");
     middleHeaderLay->addWidget(_extractButton);
     middleHeaderLay->addWidget(_separator1);
@@ -49,7 +50,7 @@ EditorHeader::EditorHeader(QWidget *)
     middleHeaderLay->setSpacing(EDITOR_HEAD_MIDDLE_SPACING);
     // Right layout
     rightHeaderLay->setAlignment(Qt::AlignmentFlag::AlignRight);
-    _exitButton->setText("Exit");
+    _exitButton->setText("Quit");
     rightHeaderLay->addWidget(_exitButton);
     //
     rootHeaderLay->addLayout(leftHeaderLay);
@@ -59,7 +60,7 @@ EditorHeader::EditorHeader(QWidget *)
     this->setLayout(rootHeaderLay);
 
     // Set background color
-    QPalette pal = QPalette(QColor(0x354052));
+    QPalette pal = QPalette(QColor(0x1D3557));
     this->setAutoFillBackground(true);
     this->setPalette(pal);
 
@@ -82,6 +83,11 @@ void EditorHeader::setSelectionTabHeader(EditorTab currentTab)
 
 void EditorHeader::setShowSourceButtonState(bool enable)
 {
+    if (!enable) {
+        this->_showSourceButton->setText("Show source ▶");
+    } else {
+        this->_showSourceButton->setText("Hide source ◀");
+    }
     this->_showSourceButton->setChecked(enable);
 }
 

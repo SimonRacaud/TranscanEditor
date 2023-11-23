@@ -7,6 +7,7 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QGraphicsDropShadowEffect>
 
 extern MainWindow *mainWindow;
 
@@ -32,14 +33,16 @@ HomePage::HomePage(QWidget *parent)
 
     //// : Style
     QGraphicsDropShadowEffect* shadowEffect = new QGraphicsDropShadowEffect();
-    shadowEffect->setBlurRadius(200);
-    shadowEffect->setXOffset(2);
-    shadowEffect->setColor(QColor(0, 0, 0, 64));
+    shadowEffect->setBlurRadius(STYLE_SHADOW_RADIUS_L);
+    shadowEffect->setXOffset(STYLE_SHADOW_OFFSET);
+    shadowEffect->setYOffset(STYLE_SHADOW_OFFSET);
+    shadowEffect->setColor(STYLE_SHADOW_COLOR);
     this->ui->project_frame->setGraphicsEffect(shadowEffect);
     QGraphicsDropShadowEffect* shadowEffect2 = new QGraphicsDropShadowEffect();
-    shadowEffect2->setBlurRadius(200);
-    shadowEffect2->setXOffset(2);
-    shadowEffect2->setColor(QColor(0, 0, 0, 64));
+    shadowEffect2->setBlurRadius(STYLE_SHADOW_RADIUS_L);
+    shadowEffect2->setXOffset(STYLE_SHADOW_OFFSET);
+    shadowEffect2->setYOffset(STYLE_SHADOW_OFFSET);
+    shadowEffect2->setColor(STYLE_SHADOW_COLOR);
     this->ui->viewer_frame->setGraphicsEffect(shadowEffect2);
 
     // Set background color

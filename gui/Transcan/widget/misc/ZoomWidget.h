@@ -1,14 +1,14 @@
 #ifndef ZOOMWIDGET_H
 #define ZOOMWIDGET_H
 
-#include <QWidget>
+#include <QFrame>
 #include <QSlider>
 #include <QLabel>
 
 /**
  * @brief The ZoomWidget class : Slider used to manage the zoom in the editor
  */
-class ZoomWidget : public QWidget
+class ZoomWidget : public QFrame
 {
     Q_OBJECT
 public:

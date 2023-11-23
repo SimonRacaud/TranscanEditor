@@ -2,11 +2,16 @@
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QGraphicsDropShadowEffect>
 #include "include/env_config.h"
+#include "include/env_style.h"
 
 ZoomWidget::ZoomWidget(float zoom, QWidget *parent)
-    : QWidget{parent}, _zoom(zoom)
+    : QFrame(parent), _zoom(zoom)
 {
+    this->setObjectName("ZoomWidget");
+
+    QLabel *zoomLabel = new QLabel(tr("zoom"));
     this->_level = new QLabel();
     _level->setFixedWidth(40);
     this->_slider = new QSlider(Qt::Orientation::Horizontal);
@@ -14,13 +19,23 @@ ZoomWidget::ZoomWidget(float zoom, QWidget *parent)
     _slider->setMaximum(ZOOM_MAX_INT);
     //
     auto rootVLay = new QHBoxLayout;
-    rootVLay->addWidget(_level);
+    rootVLay->setContentsMargins(0, 0, 0, 0);
+    rootVLay->addWidget(zoomLabel);
     rootVLay->addWidget(_slider);
+    rootVLay->addWidget(_level);
     this->setLayout(rootVLay);
     //
     this->setZoom(zoom);
     // Event
     connect(_slider, &QSlider::valueChanged, this, &ZoomWidget::sliderMoved);
+
+    // STYLE
+    QGraphicsDropShadowEffect* shadowEffect = new QGraphicsDropShadowEffect();
+    shadowEffect->setBlurRadius(STYLE_SHADOW_RADIUS_S);
+    shadowEffect->setXOffset(STYLE_SHADOW_OFFSET);
+    shadowEffect->setYOffset(STYLE_SHADOW_OFFSET);
+    shadowEffect->setColor(STYLE_SHADOW_COLOR);
+    this->setGraphicsEffect(shadowEffect);
 }
 
 /** PUBLIC SLOT **/

@@ -9,13 +9,14 @@
 #include <QtGlobal>
 #include <QDir>
 #include <stdexcept>
+#include <QGraphicsDropShadowEffect>
 
 using namespace std;
 
 ImageViewer::ImageViewer(ImageMode mode, QWidget *parent) : QWidget{parent}, _mode(mode)
 {
     // Set background color
-    QPalette pal = QPalette(QColor(COLOR_LGREEN));
+    QPalette pal = QPalette(Qt::white);
     this->setAutoFillBackground(true);
     this->setPalette(pal);
     //
@@ -83,9 +84,10 @@ void ImageViewer::setPages(vector<OCRPage> const &pages)
         }
         // Show page in GUI:
         QGraphicsDropShadowEffect* effect = new QGraphicsDropShadowEffect();
-        effect->setBlurRadius(EDITOR_PAGE_SHADOW_RADIUS);
-        effect->setXOffset(0);
-        effect->setColor(EDITOR_PAGE_SHADOW_COLOR);
+        effect->setBlurRadius(STYLE_SHADOW_RADIUS_L);
+        effect->setXOffset(STYLE_SHADOW_OFFSET);
+        effect->setYOffset(STYLE_SHADOW_OFFSET);
+        effect->setColor(STYLE_SHADOW_COLOR);
         auto *item = new QGraphicsPixmapItem(img);
         item->setGraphicsEffect(effect);
         item->setPos(0, offsetY);

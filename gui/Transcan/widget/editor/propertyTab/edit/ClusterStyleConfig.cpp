@@ -2,10 +2,13 @@
 
 #include <QFormLayout>
 #include <QLabel>
+#include <QGraphicsDropShadowEffect>
 #include "include/env_style.h"
 
 ClusterStyleConfig::ClusterStyleConfig(QString const &title) : QFrame()
 {
+    this->setObjectName("ClusterStyleConfig");
+
     QLabel *titleWidget = new QLabel(title);
     titleWidget->setObjectName("PropertyTitle");
     _inLineHeight = new QSpinBox();
@@ -34,13 +37,18 @@ ClusterStyleConfig::ClusterStyleConfig(QString const &title) : QFrame()
     rootLay->addLayout(layout);
 
     connect(_selectColorButton, &QPushButton::clicked, this, &ClusterStyleConfig::onSelectColorButtonClicked);
-
-    this->setFixedWidth(EDITOR_PROPTAB_WIDTH * 0.85f);
-
     connect(_inStrokeWidth, &QSpinBox::valueChanged, [this](){ emit this->onUpdate(); });
     connect(_colorSelect, &QDialog::finished, [this](){ emit this->onUpdate(); });
     connect(_inFont, &FontSelect::currentIndexChanged, [this](){ emit this->onUpdate(); });
     connect(_inLineHeight, &QSpinBox::valueChanged, [this](){ emit this->onUpdate(); });
+
+    // Style
+    QGraphicsDropShadowEffect* shadowEffect = new QGraphicsDropShadowEffect();
+    shadowEffect->setBlurRadius(STYLE_SHADOW_RADIUS_S);
+    shadowEffect->setXOffset(STYLE_SHADOW_OFFSET);
+    shadowEffect->setYOffset(STYLE_SHADOW_OFFSET);
+    shadowEffect->setColor(STYLE_SHADOW_COLOR);
+    this->setGraphicsEffect(shadowEffect);
 }
 
 void ClusterStyleConfig::setCluster(BlockCluster const &cluster)
