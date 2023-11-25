@@ -143,9 +143,9 @@ FontSelectList::FontSelectList(QWidget *)
     _sfxFontList->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _localFontList = new FontListView();
     _localFontList->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    this->addTab(_regularFontList, "Regular");
-    this->addTab(_sfxFontList, "SFX");
-    this->addTab(_localFontList, "Computer");
+    this->addTab(_regularFontList, tr("Regular"));
+    this->addTab(_sfxFontList, tr("SFX"));
+    this->addTab(_localFontList, tr("Computer"));
 
     const FontManager &fm = FontManager::getInstance();
     // Make data

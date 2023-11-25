@@ -66,14 +66,16 @@ void ImageViewer::setPages(vector<OCRPage> const &pages)
         QString path = this->_getPathFromMode(page);
         bool loaded = img.load(path);
         if (!loaded) { // Failed to load image
-            if (_mode != SOURCE && _mode != NONE) {
-                // In the case that the cleaned image has not been received yet
+            if (_mode != SOURCE && _mode != NONE && _mode != RENDER) {
+                // In case, the cleaned image has not been received yet
                 loaded = img.load(page.sourceImagePath); // Load source image instead
             }
             if (!loaded) {
                 throw std::invalid_argument("ImageViewer::setPages Failed to load image :"+path.toStdString());
             }
         }
+        qDebug() << "(info) Loaded page " << path;
+
         maxImgWidth = qMax(maxImgWidth, (size_t)img.width());
         imageList.append(img);
     }

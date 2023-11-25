@@ -43,6 +43,7 @@ SOURCES += \
 
 HEADERS += \
     include/env_config.h \
+    include/env_messages.h \
     include/env_services.h \
     include/env_style.h \
     net/CoreRequest.h \

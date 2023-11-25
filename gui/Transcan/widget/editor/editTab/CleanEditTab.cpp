@@ -71,7 +71,7 @@ void CleanEditTab::loadAPI()
         OCRPage const &page = this->getPage(i);
         NetCallback success = bind(&IEditTab::loadPage, this, std::placeholders::_1);
         NetErrCallback error = bind(&NetEditTab::netError, this, std::placeholders::_1);
-        this->_api.sendToClean(page, success, error); // TODO : to improve - network
+        this->_api.sendToClean(page, success, error);
     }
 }
 

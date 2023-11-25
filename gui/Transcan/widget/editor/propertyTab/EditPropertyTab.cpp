@@ -1,4 +1,5 @@
 #include "EditPropertyTab.h"
+#include "include/env_messages.h"
 #include <QVBoxLayout>
 
 EditPropertyTab::EditPropertyTab(FuncNetCall &reloadFunc, QWidget *parent)
@@ -6,7 +7,7 @@ EditPropertyTab::EditPropertyTab(FuncNetCall &reloadFunc, QWidget *parent)
 {
     this->fillHelp();
     this->initProperties();
-    this->_reloadButton->setText(tr("Translate"));
+    this->_reloadButton->setText(TXT_TRANSLATE);
 
     connect(_defaultStyleConfig, &ClusterStyleConfig::onUpdate, this, &EditPropertyTab::onUpdateGlobalClusterStyle);
     connect(_selectedClusterConfig, &ClusterStyleConfig::onUpdate, this, &EditPropertyTab::onUpdateSelectedClusterStyle);
@@ -29,8 +30,8 @@ void EditPropertyTab::fillHelp()
 
 void EditPropertyTab::initProperties()
 {
-    this->_defaultStyleConfig = new ClusterStyleConfig(tr("Default configuration:"));
-    this->_selectedClusterConfig = new ClusterStyleConfig(tr("Selected box:"));
+    this->_defaultStyleConfig = new ClusterStyleConfig(TXT_DEF_CONFIG);
+    this->_selectedClusterConfig = new ClusterStyleConfig(TXT_SELECT_BOX);
 
     this->_propertiesLayout->addWidget(_defaultStyleConfig);
     this->_propertiesLayout->addWidget(_selectedClusterConfig);

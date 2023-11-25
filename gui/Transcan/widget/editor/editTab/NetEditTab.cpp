@@ -1,4 +1,6 @@
 #include "NetEditTab.h"
+#include "widget/misc/Notification.h"
+#include "include/env_messages.h"
 
 NetEditTab::NetEditTab(APIClient &client, ImageMode mode, bool autoReload)
     : ImageViewer(mode), _api(client), _autoReload(autoReload)
@@ -31,7 +33,8 @@ void NetEditTab::load(std::vector<OCRPage> const &pages)
         this->setPages(pages);
     } catch (std::exception const& err) {
         std::cerr << "Fail to load pages. " << err.what() << std::endl;
-        // TODO: better error management
+        Notification::Build(ERR_FATAL_LOAD_PAGES, this);
+        throw err;
     }
     if (_autoReload) {
         // API call to render each page
@@ -39,7 +42,7 @@ void NetEditTab::load(std::vector<OCRPage> const &pages)
             this->loadAPI();
         } catch (std::exception const &err) {
             std::cerr << "Fail to send API request. " << err.what() << std::endl;
-            // TODO: better error management
+            Notification::Build(ERR_SEND_CORE_REQ, this);
         }
     }
 }

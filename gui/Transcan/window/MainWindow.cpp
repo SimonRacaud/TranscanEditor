@@ -2,7 +2,9 @@
 #include <QGridLayout>
 #include <QMessageBox>
 #include "model/configModels.h"
+#include "widget/misc/Notification.h"
 #include "include/env_style.h"
+#include "include/env_messages.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _stack(nullptr), _homePage(nullptr), _viewer(nullptr)
 {
@@ -39,8 +41,8 @@ void MainWindow::setConfig(ProjectConfig const &config)
         this->_editor->onStart(config);
     } catch (std::exception const &err) {
         qDebug("MainWindow::setConfig exception : %s\n", err.what());
-        QMessageBox::critical(this, tr("An error occured"), tr("Unable to load project"));
-        this->setPage(Page::HOME);
+        Notification::Build(ERR_FATAL_LOAD_PROJECT, this);
+        this->setPage(Page::HOME); // Go back home
     }
 }
 

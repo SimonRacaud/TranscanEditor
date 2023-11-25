@@ -2,6 +2,7 @@
 #include "../../window/MainWindow.h"
 #include "widget/misc/Notification.h"
 #include "utility/FileUtils.h"
+#include "include/env_messages.h"
 
 #include <functional>
 #include <QMessageBox>
@@ -90,8 +91,12 @@ void EditorController::setZoom(float value)
 void EditorController::networkError(QString const &message)
 {
     std::cerr << "Network error : " << message.toStdString() << std::endl;
+    Notification::Build(ERR_NET_CORE, this);
 
-    Notification::Build("Error: Unable to communicate with the core daemon.", this);
+    auto *prop = dynamic_cast<APropertyTab *>(_stackProp->currentWidget());
+    if (prop) {
+        prop->onNetworkError();
+    }
 }
 
 void EditorController::onStart(ProjectConfig const &config)
@@ -102,7 +107,12 @@ void EditorController::onStart(ProjectConfig const &config)
     this->_editEditTab->setConfig(_config);
     this->_saveEditTab->setConfig(_config);
     //
-    this->setTab(EditorTab::EXTRACT); // Extraction step
+    try {
+        this->setTab(EditorTab::EXTRACT); // Extraction step
+    } catch (std::exception const &err) {
+        throw err; // Relay to main window
+    }
+
     this->showSourcePageTab(true);
     // Load source images
     vector<OCRPage> pages = this->_sourcePages->loadPagesFromPath(_config->srcPath);
@@ -126,7 +136,7 @@ void EditorController::onStart(ProjectConfig const &config)
 void EditorController::setTab(EditorTab tab)
 {
     if ((int)tab > (int)_lastTab + 1) {
-        QMessageBox::information(this, "Tab access", "Please, do not skip any step of the process.");
+        Notification::Build(INFO_CANT_SWITCH_TAB, this, Notification::INFO);
         return;
     } else if ((int)tab > (int)_lastTab) {
         _lastTab = tab;
@@ -158,7 +168,12 @@ void EditorController::setTab(EditorTab tab)
     connect(prop, &APropertyTab::nextStep, [this, tab]() {
         EditorTab next = ((int)tab + 1) >= (int)EditorTab::LAST_VALUE
             ? EditorTab::EXTRACT : (EditorTab)((int)tab + 1);
-        this->setTab(next);
+        try {
+            this->setTab(next);
+        } catch (std::exception const& err) {
+            qDebug() << "APropertyTab::nextStep emit : exception on setTab, " << err.what();
+            Notification::Build(ERR_FATAL_SWITCH_TAB, this);
+        }
     });
     this->_header->setSelectionTabHeader(tab);
     connect(newEditor, &ImageViewer::horizontalScrollValueChanged, _sourcePages, &ImageViewer::setHorizontalScrollPosition);

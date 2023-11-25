@@ -1,6 +1,7 @@
 #include "APropertyTab.h"
 
 #include "include/env_style.h"
+#include "include/env_messages.h"
 #include <QMessageBox>
 #include <iostream>
 #include <QScrollBar>
@@ -82,7 +83,7 @@ APropertyTab::APropertyTab(FuncNetCall &reloadFunc, QWidget *parent)
     connect(_nextButton, &QPushButton::clicked, [this]() { emit this->nextStep(); });
     FuncNetCall &reloadCallback = _netCallback;
     connect(_reloadButton, &QPushButton::clicked, [reloadCallback, this]() {
-        auto box = QMessageBox::question(this, "Action confirmation", "This action will overwrite the current modifications. Continue?");
+        auto box = QMessageBox::question(this, INFO_TITLE_CONFIRMATION, WARN_QUESTION_OVERWRITE);
         if (box == QMessageBox::Yes) {
             try {
                 this->_reloadButton->setEnabled(false);
@@ -112,6 +113,11 @@ APropertyTab::APropertyTab(FuncNetCall &reloadFunc, QWidget *parent)
     this->setAutoFillBackground(true);
     this->setPalette(pal);
     this->setFixedWidth(EDITOR_PROPTAB_WIDTH);
+}
+
+void APropertyTab::onNetworkError()
+{
+    this->unlockReloadButton();
 }
 
 void APropertyTab::unlockReloadButton()

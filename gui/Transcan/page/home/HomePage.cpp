@@ -4,6 +4,8 @@
 #include "window/MainWindow.h"
 #include "include/env_services.h"
 #include "include/env_style.h"
+#include "include/env_messages.h"
+#include "widget/misc/Notification.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -24,7 +26,7 @@ HomePage::HomePage(QWidget *parent)
     // Create project form
     this->loadNewProjectFormContent();
 
-    // TODO : DEBUG auto fill form
+    // TODO : (to remove on release) DEBUG auto fill form
     this->ui->projectName->setText("TestProject");
     this->sourceDirectory = "/home/simon/scanTranslator/data/dataset/debug";
     this->destDirectory = "/home/simon/scanTranslator/data/result";
@@ -93,7 +95,7 @@ void HomePage::loadNewProjectFormContent()
 // Open specific directory in viewer
 void HomePage::on_chapterViewerOpenButton_clicked()
 {
-    const QString folderPath = QFileDialog::getExistingDirectory(this, tr("Image folder"));
+    const QString folderPath = QFileDialog::getExistingDirectory(this, TXT_IMG_DIR);
 
     this->openViewer(folderPath);
     if (!folderPath.isEmpty()) {
@@ -112,7 +114,7 @@ void HomePage::on_projectListView_doubleClicked(const QModelIndex &index)
 // Project create form : Choose source directory
 void HomePage::on_srcSelectButton_clicked()
 {
-    const QString folderPath = QFileDialog::getExistingDirectory(this, tr("Source image folder"));
+    const QString folderPath = QFileDialog::getExistingDirectory(this, TXT_SRC_IMG_DIR);
 
     if (!folderPath.isEmpty()) {
         this->sourceDirectory = folderPath;
@@ -124,7 +126,7 @@ void HomePage::on_srcSelectButton_clicked()
 // Project create form : Choose destination directory
 void HomePage::on_destButton_clicked()
 {
-    const QString folderPath = QFileDialog::getExistingDirectory(this, tr("Destination image folder"));
+    const QString folderPath = QFileDialog::getExistingDirectory(this, TXT_DEST_IMG_DIR);
 
     if (!folderPath.isEmpty()) {
         this->destDirectory = folderPath;
@@ -146,7 +148,7 @@ void HomePage::on_submitButton_clicked()
     const QString &projectName = this->ui->projectName->text();
 
     if (projectName.isEmpty()) {
-        QMessageBox::information(this, tr("Missing information"), tr("Project name required"));
+        Notification::Build(ERR_FORM_REQ_PROJECT_NAME, this);
         return; // Abort
     }
     //

@@ -2,6 +2,7 @@
 #include <QVBoxLayout>
 #include "window/MainWindow.h"
 #include "include/env_style.h"
+#include "include/env_messages.h"
 
 extern MainWindow *mainWindow;
 
@@ -41,7 +42,7 @@ void SavePropertyTab::fillHelp()
 void SavePropertyTab::initProperties()
 {
     QVBoxLayout *destSelectLayout = new QVBoxLayout;
-    this->_destinationTitle = new QLabel("Destination:");
+    this->_destinationTitle = new QLabel(TXT_DESTINATION);
     this->_destinationTitle->setObjectName("PropertyTitle");
     this->_destinationTitle->setAlignment(Qt::AlignmentFlag::AlignHCenter);
     this->_selectedPath = new QLabel("<>");
@@ -49,7 +50,7 @@ void SavePropertyTab::initProperties()
     _selectedPath->setObjectName("SavePropTabDestPath");
     _selectedPath->setWordWrap(true);
     this->_selectedPath->setMaximumWidth(EDITOR_PROP_FORM_WIDTH);
-    this->_selectDirectoryButton = new QPushButton("Change directory");
+    this->_selectDirectoryButton = new QPushButton("Change directory"); // TODO : refactor
     destSelectLayout->addWidget(_destinationTitle);
     destSelectLayout->addWidget(_selectedPath);
     destSelectLayout->addWidget(_selectDirectoryButton);
@@ -72,7 +73,7 @@ void SavePropertyTab::setProjectDestinationPath(QString const &path)
 
 void SavePropertyTab::onClickSelectDestinationPath()
 {
-    const QString folderPath = QFileDialog::getExistingDirectory(this, tr("Destination image folder"));
+    const QString folderPath = QFileDialog::getExistingDirectory(this, TXT_DEST_IMG_DIR);
 
     if (!folderPath.isEmpty()) {
         emit this->sigUpdateProjectDestinationPath(folderPath);

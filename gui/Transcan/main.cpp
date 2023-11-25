@@ -14,31 +14,36 @@ MainWindow *mainWindow = nullptr;
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    int status;
+    int status = 0;
 
     // Setup app stylesheet
-    QFontDatabase::addApplicationFont(":/font/Inter.ttf");
-    QFile stylesheetFile(":/stylesheet.qss");
-    if (!stylesheetFile.open(QFile::ReadOnly)) {
-        std::cerr << "ERROR: fail to open stylesheet file." << std::endl;
-    }
-    QString stylesheet = QLatin1String(stylesheetFile.readAll());
-    app.setStyleSheet(stylesheet);
-
-    QTranslator translator;
-    const QStringList uiLanguages = QLocale::system().uiLanguages();
-    for (const QString &locale : uiLanguages)
-    {
-        const QString baseName = "Transcan_" + QLocale(locale).name();
-        if (translator.load(":/i18n/" + baseName))
-        {
-            app.installTranslator(&translator);
-            break;
+    try {
+        QFontDatabase::addApplicationFont(":/font/Inter.ttf");
+        QFile stylesheetFile(":/stylesheet.qss");
+        if (!stylesheetFile.open(QFile::ReadOnly)) {
+            std::cerr << "ERROR: fail to open stylesheet file." << std::endl;
         }
+        QString stylesheet = QLatin1String(stylesheetFile.readAll());
+        app.setStyleSheet(stylesheet);
+
+        QTranslator translator;
+        const QStringList uiLanguages = QLocale::system().uiLanguages();
+        for (const QString &locale : uiLanguages)
+        {
+            const QString baseName = "Transcan_" + QLocale(locale).name();
+            if (translator.load(":/i18n/" + baseName))
+            {
+                app.installTranslator(&translator);
+                break;
+            }
+        }
+        mainWindow = new MainWindow();
+        mainWindow->show();
+        status = app.exec();
+        delete mainWindow;
+    } catch (std::exception const &err) {
+        std::cerr << "Fatal error: failed to launch. " << err.what();
+        return 1;
     }
-    mainWindow = new MainWindow();
-    mainWindow->show();
-    status = app.exec();
-    delete mainWindow;
     return status;
 }

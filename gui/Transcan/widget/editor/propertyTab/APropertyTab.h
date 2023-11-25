@@ -22,6 +22,8 @@ public:
      */
     explicit APropertyTab(FuncNetCall &reloadFunc, QWidget *parent = nullptr);
 
+    void onNetworkError();
+
 public slots:
     void unlockReloadButton();
     void setZoom(float value);

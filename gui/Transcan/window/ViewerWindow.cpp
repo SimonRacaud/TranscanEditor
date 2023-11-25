@@ -1,5 +1,6 @@
 #include "ViewerWindow.h"
 #include "include/env_config.h"
+#include "include/env_messages.h"
 
 #include <QSizePolicy>
 #include <QKeyEvent>
@@ -23,9 +24,9 @@ ViewerWindow::ViewerWindow(QWidget *parent, bool integratedMode): QWidget{parent
         headerWidget = new QWidget();
         headerWidget->setLayout(headerLayout);
         headerWidget->setObjectName("ViewerHeader");
-        this->_backButton = new QPushButton("Go Back");
-        this->_title = new QLabel("Chapter viewer");
-        this->_openFolderButton = new QPushButton("Open folder");
+        this->_backButton = new QPushButton(TXT_GO_BACK);
+        this->_title = new QLabel(TXT_CHAPTER_VIEWER);
+        this->_openFolderButton = new QPushButton(TXT_OPEN_FOLDER);
         headerLayout->addWidget(this->_backButton, 0, Qt::AlignLeft);
         headerLayout->addWidget(this->_title, 0, Qt::AlignCenter);
         this->_title->setAlignment(Qt::AlignRight);
@@ -67,7 +68,7 @@ ViewerWindow::ViewerWindow(QWidget *parent, bool integratedMode): QWidget{parent
 
 void ViewerWindow::openFolderSlot()
 {
-    const QString folderPath = QFileDialog::getExistingDirectory(this, tr("Image folder"));
+    const QString folderPath = QFileDialog::getExistingDirectory(this, TXT_IMG_DIR);
 
     if (folderPath.isEmpty() == false) {
         this->loadDirectory(folderPath);

@@ -12,9 +12,6 @@ SaveEditTab::SaveEditTab(APIClient &client) : NetEditTab(client, RENDER)
 
 void SaveEditTab::loadAPI()
 {
-    for (OCRPage const &page : _pages) {
-        this->loadPage(page);
-    }
 }
 
 /** SLOTS **/
@@ -34,15 +31,15 @@ void SaveEditTab::onExport()
     if (!_config) {
         throw std::runtime_error("SaveEditTab::onExport : null config.");
     }
-    for (OCRPage const &page : pages) {
-        if (FileUtils::checkImgFilePath(page.renderImagePath)) {
-            if (!FileUtils::copyToDestination(page.renderImagePath, _config->destPath)) {
-                std::cerr << "SaveEditTab::onExport : Fail to copy file " << page.renderImagePath.toStdString()
-                          << " to directory " << _config->destPath.toStdString() << std::endl;
-            }
-        }
-    }
-    QMessageBox::information(this, "Project export", "operation completed");
+//    for (OCRPage const &page : pages) {
+//        if (FileUtils::checkImgFilePath(page.renderImagePath)) {
+//            if (!FileUtils::copyToDestination(page.renderImagePath, _config->destPath)) {
+//                std::cerr << "SaveEditTab::onExport : Fail to copy file " << page.renderImagePath.toStdString()
+//                          << " to directory " << _config->destPath.toStdString() << std::endl;
+//            }
+//        }
+//    }
+    //QMessageBox::information(this, "Project export", "operation completed");
 }
 
 /** PRIVATE **/
