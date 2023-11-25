@@ -11,7 +11,7 @@ using namespace std;
 
 extern MainWindow *mainWindow;
 
-EditorController::EditorController(QWidget *parent) : EditorView(_api, parent), _lastTab(EditorTab::EXTRACT)
+EditorController::EditorController(QWidget *parent) : EditorView(_api, parent), _maxTab(EditorTab::EXTRACT)
 {
     this->setupEvents();
 }
@@ -135,59 +135,68 @@ void EditorController::onStart(ProjectConfig const &config)
 
 void EditorController::setTab(EditorTab tab)
 {
-    if ((int)tab > (int)_lastTab + 1) {
-        Notification::Build(INFO_CANT_SWITCH_TAB, this, Notification::INFO);
-        return;
-    } else if ((int)tab > (int)_lastTab) {
-        _lastTab = tab;
-    }
-    auto *prop = dynamic_cast<APropertyTab *>(_stackProp->currentWidget());
-    auto *editor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
-
-    // Tab change, data flow
-    IEditTab *prevEditTab = dynamic_cast<IEditTab *>(editor);
-    prevEditTab->unload(); // Unload previous tab
-    // Nota: important to unload table before getting the pages for the Edit tab.
-    // ...since the renderImagePath attribute will get updated
-    std::vector<OCRPage> pages = editor->getPages();
-
-    // Disconnect previous event flow
-    disconnect(prop, &APropertyTab::nextStep, nullptr, nullptr);
-    disconnect(editor, &ImageViewer::horizontalScrollValueChanged, nullptr, nullptr);
-    disconnect(editor, &ImageViewer::verticalScrollValueChanged, nullptr, nullptr);
-    disconnect(_sourcePages, &ImageViewer::horizontalScrollValueChanged, nullptr, nullptr);
-    disconnect(_sourcePages, &ImageViewer::verticalScrollValueChanged, nullptr, nullptr);
-
-    // Select new tabs
-    this->_stackEdit->setCurrentIndex((int)tab);
-    this->_stackProp->setCurrentIndex((int)tab);
-
-    // Connect new event flow
-    prop = dynamic_cast<APropertyTab *>(_stackProp->currentWidget());
-    ImageViewer *newEditor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
-    connect(prop, &APropertyTab::nextStep, [this, tab]() {
-        EditorTab next = ((int)tab + 1) >= (int)EditorTab::LAST_VALUE
-            ? EditorTab::EXTRACT : (EditorTab)((int)tab + 1);
-        try {
-            this->setTab(next);
-        } catch (std::exception const& err) {
-            qDebug() << "APropertyTab::nextStep emit : exception on setTab, " << err.what();
-            Notification::Build(ERR_FATAL_SWITCH_TAB, this);
+    try {
+        if ((int)tab > (int)_maxTab + 1) {
+            Notification::Build(INFO_CANT_SWITCH_TAB, this, Notification::INFO);
+            return;
+        } else if ((int)tab > (int)_maxTab) {
+            _maxTab = tab;
         }
-    });
-    this->_header->setSelectionTabHeader(tab);
-    connect(newEditor, &ImageViewer::horizontalScrollValueChanged, _sourcePages, &ImageViewer::setHorizontalScrollPosition);
-    connect(newEditor, &ImageViewer::verticalScrollValueChanged, _sourcePages, &ImageViewer::setVerticalScrollPosition);
-    connect(_sourcePages, &ImageViewer::horizontalScrollValueChanged, newEditor, &ImageViewer::setHorizontalScrollPosition);
-    connect(_sourcePages, &ImageViewer::verticalScrollValueChanged, newEditor, &ImageViewer::setVerticalScrollPosition);
-    //
-    prop->setZoom(_sourcePages->getZoom());
+        /// Previous Property tab, Viewer tab
+        auto *prevProp = dynamic_cast<APropertyTab *>(_stackProp->currentWidget());
+        auto *prevEditor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
 
-    // Load new tab
-    IEditTab *newEditTab = dynamic_cast<IEditTab *>(newEditor);
-    newEditTab->load(pages); // Load new tab
-    newEditor->setZoom(_sourcePages->getZoom()); // Update Tab zoom
-    _sourcePages->emitScrollPosition();
+        /// Tab change, data flow
+        IEditTab *prevEditTab = dynamic_cast<IEditTab *>(prevEditor);
+        prevEditTab->unload(); // Unload previous tab
+        // Warning: important to unload table before getting the pages for the Edit tab.
+        // ...since the renderImagePath attribute will get updated
+        std::vector<OCRPage> pages = prevEditor->getPages(); // Get tab result
+
+        /// Disconnect previous event flow
+        disconnect(prevProp, &APropertyTab::nextStep, nullptr, nullptr);
+        disconnect(prevEditor, &ImageViewer::horizontalScrollValueChanged, nullptr, nullptr);
+        disconnect(prevEditor, &ImageViewer::verticalScrollValueChanged, nullptr, nullptr);
+        disconnect(_sourcePages, &ImageViewer::horizontalScrollValueChanged, nullptr, nullptr);
+        disconnect(_sourcePages, &ImageViewer::verticalScrollValueChanged, nullptr, nullptr);
+
+        /// Select new tabs
+        this->_stackEdit->setCurrentIndex((int)tab);
+        this->_stackProp->setCurrentIndex((int)tab);
+
+        /// New Property tab, New Viewer tab
+        APropertyTab *newProp = dynamic_cast<APropertyTab *>(_stackProp->currentWidget());
+        ImageViewer *newEditor = dynamic_cast<ImageViewer *>(_stackEdit->currentWidget());
+
+        /// Connect new event flow
+        connect(newProp, &APropertyTab::nextStep, [this, tab]() {
+            EditorTab next = ((int)tab + 1) >= (int)EditorTab::LAST_VALUE
+                ? EditorTab::EXTRACT : (EditorTab)((int)tab + 1);
+            try {
+                this->setTab(next);
+            } catch (std::exception const& err) {
+                qDebug() << "APropertyTab::nextStep emit : exception on setTab, " << err.what();
+                Notification::Build(ERR_FATAL_SWITCH_TAB, this);
+            }
+        });
+        connect(newEditor, &ImageViewer::horizontalScrollValueChanged, _sourcePages, &ImageViewer::setHorizontalScrollPosition);
+        connect(newEditor, &ImageViewer::verticalScrollValueChanged, _sourcePages, &ImageViewer::setVerticalScrollPosition);
+        connect(_sourcePages, &ImageViewer::horizontalScrollValueChanged, newEditor, &ImageViewer::setHorizontalScrollPosition);
+        connect(_sourcePages, &ImageViewer::verticalScrollValueChanged, newEditor, &ImageViewer::setVerticalScrollPosition);
+
+        /// Update editor header state
+        this->_header->setSelectionTabHeader(tab);
+
+        /// Load new tabs
+        IEditTab *newEditTab = dynamic_cast<IEditTab *>(newEditor);
+        newEditTab->load(pages); // Load new tab
+        newEditor->setZoom(_sourcePages->getZoom()); // Update Tab zoom
+        newProp->setZoom(_sourcePages->getZoom());
+        _sourcePages->emitScrollPosition();
+    } catch (std::exception const &err) {
+        qDebug() << "EditorController::setTab exception : " << err.what();
+        Notification::Build(ERR_FATAL_SWITCH_TAB, this);
+    }
 }
 
 void EditorController::showSourcePageTab(bool enable)

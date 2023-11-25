@@ -49,7 +49,7 @@ protected:
     virtual void keyPressEvent(QKeyEvent *event) override;
 
 private:
-    EditorTab _lastTab; // Last tab accessed.
+    EditorTab _maxTab; // Maximum step accessed (to prevent skipping step).
     shared_ptr<ProjectConfig> _config;
     APIClient _api;
 };
