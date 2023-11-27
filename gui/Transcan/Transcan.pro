@@ -22,6 +22,8 @@ SOURCES += \
         widget/editor/editTab/SaveEditTab.cpp \
         widget/editor/header/EditorHeader.cpp \
         widget/misc/FontSelect.cpp \
+    widget/misc/LoadingAnimation.cpp \
+    widget/misc/NetworkRetryDialog.cpp \
         widget/misc/Notification.cpp \
         widget/misc/ZoomWidget.cpp \
         widget/editor/propertyTab/edit/ClusterStyleConfig.cpp \
@@ -62,6 +64,8 @@ HEADERS += \
     widget/editor/editTab/SaveEditTab.h \
     widget/editor/header/EditorHeader.h \
     widget/misc/FontSelect.h \
+    widget/misc/LoadingAnimation.h \
+    widget/misc/NetworkRetryDialog.h \
     widget/misc/Notification.h \
     widget/misc/ZoomWidget.h \
     widget/editor/propertyTab/edit/ClusterStyleConfig.h \

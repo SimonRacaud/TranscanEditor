@@ -24,6 +24,10 @@ QPushButton:pressed {
 QPushButton:hover:!pressed {
     background-color: #009cff;
 }
+QPushButton:disabled {
+    background-color: #EAEAEA;
+    color: #4F4F4F;
+}
 
 QLineEdit {
     background-color: #EAEAEA;
@@ -220,10 +224,10 @@ QLabel#TitleProject, #TitleViewer {
     color: #2A2D34
 }*/
 
-#MiddleHeaderWidget > QPushButton:enabled {
+/*#MiddleHeaderWidget > QPushButton:enabled {
     background: #F7F9F9;
     color: #2A2D34
-}
+}*/
 
 /** Editor:Viewer */
 
@@ -253,10 +257,10 @@ APropertyTab {
     width: 350px;
 }
 
-APropertyTab QPushButton:!enabled {
+/*APropertyTab QPushButton:disabled {
     background: #F7F9F9;
     color: #999999;
-}
+}*/
 
 APropertyTab QLabel {
     font-size: 12px;

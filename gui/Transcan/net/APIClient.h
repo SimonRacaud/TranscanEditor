@@ -80,8 +80,18 @@ public:
      */
     bool pendingReply() const;
 
+public slots:
+    /**
+     * @brief sendPing : start CORE API ping
+     * [pingResult] signal will be emitted after receiving a response
+     *  or in case of a timeout.
+     */
+    void sendPing();
+
 signals:
     void sigNetError(QString const &message);
+
+    void pingResult(bool isSuccess);
 
 protected:
     /**
@@ -115,6 +125,7 @@ private:
     QNetworkAccessManager _netManager;
     QQueue<std::shared_ptr<CoreRequest>> _requestQueue;
     QList<std::shared_ptr<CoreRequest>> _pendingReplies;
+    QList<QNetworkReply *> _pendingPing;
 
     static const std::unordered_map<Target, QString> _target;
 };

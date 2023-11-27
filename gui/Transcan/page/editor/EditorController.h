@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "EditorView.h"
 #include "net/APIClient.h"
+#include "widget/misc/NetworkRetryDialog.h"
 
 /**
  * @brief The EditorController class : Editor page's logic
@@ -52,6 +53,7 @@ private:
     EditorTab _maxTab; // Maximum step accessed (to prevent skipping step).
     shared_ptr<ProjectConfig> _config;
     APIClient _api;
+    NetworkRetryDialog *_networkDialog{nullptr};
 };
 
 #endif // EDITORCONTROLLER_H

@@ -14,6 +14,22 @@ APIClient::APIClient(QString const &url) : _url(url), _netManager(nullptr)
 {
 }
 
+void APIClient::sendPing()
+{
+    qDebug() << "APIClient::sendPing";
+    QUrl url(QString("%1/").arg(_url));
+    QNetworkRequest request(url);
+    request.setTransferTimeout(5000); // 5 seconds
+    QNetworkReply *reply = _netManager.get(request);
+
+    QObject::connect(reply, &QNetworkReply::finished, [this, reply] () {
+        qDebug("APIClient ping reply received");
+        bool isSuccess = reply->error() == QNetworkReply::NoError;
+        emit this->pingResult(isSuccess);
+    });
+    _pendingPing.push_back(reply);
+}
+
 void APIClient::sendToOCR(ProjectConfig const& config,
                           unsigned int pageIdx,
                           QString const &pageImgPath,
@@ -79,6 +95,11 @@ void APIClient::abortRequests()
     }
     _pendingReplies.clear();
     _requestQueue.clear();
+    for (QNetworkReply *reply : _pendingPing) {
+        disconnect(reply, &QNetworkReply::finished, nullptr, nullptr);
+        reply->deleteLater();
+    }
+    _pendingPing.clear();
 }
 
 bool APIClient::pendingReply() const

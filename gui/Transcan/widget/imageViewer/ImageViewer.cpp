@@ -40,12 +40,7 @@ ImageViewer::ImageViewer(ImageMode mode, QWidget *parent) : QWidget{parent}, _mo
         emit this->horizontalScrollValueChanged(value);
     });
     // Loading icon
-    this->_loadingWidget = new QLabel(this);
-    this->_loadingImg = new QMovie();
-    _loadingImg->setFileName(IMG_LOADING);
-    this->_loadingWidget->setMovie(_loadingImg);
-    _loadingImg->setScaledSize(QSize(LOADING_ICON_SIZE, LOADING_ICON_SIZE));
-    _loadingWidget->resize(LOADING_ICON_SIZE, LOADING_ICON_SIZE);
+    this->_loadingWidget = new LoadingAnimation(this);
 }
 
 /** PUBLIC **/
@@ -188,13 +183,9 @@ void ImageViewer::setLoadingState(bool enable)
 {
     this->_loading = enable;
     if (enable) {
-        this->_loadingWidget->show();
-        _loadingWidget->move(this->width() / 2 - _loadingWidget->width() / 2,
-                             this->height() / 2 - _loadingWidget->height() / 2);
-        _loadingImg->start();
+        this->_loadingWidget->start(this->size());
     } else {
-        this->_loadingImg->stop();
-        this->_loadingWidget->hide();
+        this->_loadingWidget->stop();
     }
 }
 
@@ -240,8 +231,7 @@ void ImageViewer::resizeEvent(QResizeEvent *event)
     int now = QTime::currentTime().msecsSinceStartOfDay();
     if ((now - _timePreviousResize) > EDITOR_TIME_REFRESH_RESIZE) {
         if (_loading) {
-            _loadingWidget->move(this->width() / 2 - _loadingWidget->width() / 2,
-                                 this->height() / 2 - _loadingWidget->height() / 2);
+            _loadingWidget->centerPosition(this->size());
         }
         this->_timePreviousResize = now;
     }

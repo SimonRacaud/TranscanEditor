@@ -1,5 +1,5 @@
 #include "EditorController.h"
-#include "../../window/MainWindow.h"
+#include "window/MainWindow.h"
 #include "widget/misc/Notification.h"
 #include "utility/FileUtils.h"
 #include "include/env_messages.h"
@@ -96,6 +96,11 @@ void EditorController::networkError(QString const &message)
     auto *prop = dynamic_cast<APropertyTab *>(_stackProp->currentWidget());
     if (prop) {
         prop->onNetworkError();
+    }
+    if (!_networkDialog) {
+        _networkDialog = new NetworkRetryDialog(this, _api);
+    } else {
+        _networkDialog->exec();
     }
 }
 

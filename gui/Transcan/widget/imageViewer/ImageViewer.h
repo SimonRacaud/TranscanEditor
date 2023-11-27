@@ -8,6 +8,7 @@
 
 #include "model/Page.h"
 #include "PageGraphicsView.h"
+#include "widget/misc/LoadingAnimation.h"
 
 class ImageViewer : public QWidget
 {
@@ -121,9 +122,7 @@ protected:
 
 private:
     ImageMode _mode;
-    // Loading icon
-    QMovie *_loadingImg;
-    QLabel *_loadingWidget;
+    LoadingAnimation *_loadingWidget; // Loading animation
     bool _loading{false};
 
     float _zoom{1.0}; // Scale of the images

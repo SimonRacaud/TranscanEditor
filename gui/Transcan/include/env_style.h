@@ -21,7 +21,9 @@
 #define EDITOR_PROP_FORM_WIDTH 260
 #define EDITOR_TIME_REFRESH_RESIZE 5 // ms
 
-#define LOADING_ICON_SIZE 80 // Page viewer
+#define LOADING_ICON_SIZE_L 50 // Page viewer
+#define LOADING_ICON_SIZE_S 10
+
 
 // Shadow:
 #define STYLE_SHADOW_RADIUS_L 100
